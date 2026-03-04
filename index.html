@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Марья — Уход, собранный под вашу кожу</title>
+  <meta name="description" content="Персональный советник по уходу за кожей. Квиз → рутина → продукты. Всё честно, без латинских терминов." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:   { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:    { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:    { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent:  { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:    { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:     { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:   { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif:  ['Georgia', 'Cambria', 'serif'],
+            sans:   ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+            'fade-up':    'fadeUp 0.6s ease-out forwards',
+            'float':      'float 6s ease-in-out infinite',
+            'marquee':    'marquee 30s linear infinite',
+          },
+          keyframes: {
+            pulseSoft: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '50%':      { transform: 'scale(1.03)' },
+            },
+            fadeUp: {
+              from: { opacity: '0', transform: 'translateY(24px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%':      { transform: 'translateY(-12px)' },
+            },
+            marquee: {
+              from: { transform: 'translateX(0)' },
+              to:   { transform: 'translateX(-50%)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, sans-serif; }
+
+    /* Night mode переход */
+    *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+    /* Hero gradient */
+    .hero-gradient {
+      background: radial-gradient(ellipse 80% 60% at 70% 50%, #F0E4D4 0%, #FDF8F3 60%, transparent 100%);
+    }
+    .dark .hero-gradient {
+      background: radial-gradient(ellipse 80% 60% at 70% 50%, #2A1F14 0%, #1A1612 60%, transparent 100%);
+    }
+
+    /* Blob анимация в Hero */
+    .blob {
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      animation: morphBlob 8s ease-in-out infinite;
+    }
+    @keyframes morphBlob {
+      0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+      50%       { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+    }
+
+    /* Карточки продуктов */
+    .product-card:hover .product-img { transform: scale(1.05); }
+    .product-img { transition: transform 0.4s ease; }
+
+    /* Ингредиент карточка flip */
+    .ingredient-card { perspective: 1000px; }
+    .ingredient-inner { transition: transform 0.6s; transform-style: preserve-3d; position: relative; }
+    .ingredient-card:hover .ingredient-inner { transform: rotateY(180deg); }
+    .ingredient-front, .ingredient-back {
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    }
+    .ingredient-back { transform: rotateY(180deg); }
+
+    /* Scroll progress */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 1000;
+      background: linear-gradient(90deg, #D4956A, #C4A882);
+      transition: width 0.1s linear;
+    }
+
+    /* Social proof marquee */
+    .marquee-track { display: flex; width: max-content; }
+
+    /* Кастомный scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 3px; }
+
+    /* Анимации при скролле */
+    .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Ховер тултип */
+    .quiz-btn .tooltip {
+      opacity: 0; transform: translateY(4px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+    }
+    .quiz-btn:hover .tooltip { opacity: 1; transform: translateY(0); }
+
+    /* Night mode toggle */
+    .toggle-thumb { transition: transform 0.3s ease; }
+    .dark .toggle-thumb { transform: translateX(20px); }
+
+    /* Footer gradient */
+    .footer-gradient {
+      background: linear-gradient(180deg, #FDF8F3 0%, #F0E4D4 100%);
+    }
+    .dark .footer-gradient {
+      background: linear-gradient(180deg, #1A1612 0%, #120E0A 100%);
+    }
+
+    /* Step connector */
+    .step-line { background: linear-gradient(90deg, #D4956A 0%, transparent 100%); }
+
+    /* Badge glow */
+    .badge-glow { box-shadow: 0 0 20px rgba(212, 149, 106, 0.3); }
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased">
+
+  <!-- Прогресс-бар скролла -->
+  <div id="progress-bar" style="width: 0%"></div>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER — sticky
+  ════════════════════════════════════════════ -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+
+      <!-- Логотип -->
+      <a href="#" class="font-serif text-2xl font-normal tracking-wide text-ink dark:text-ink-dark hover:text-accent transition-colors">
+        Марья
+      </a>
+
+      <!-- Навигация (desktop) -->
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+        <a href="#catalog"     class="hover:text-ink dark:hover:text-ink-dark transition-colors">Уход</a>
+        <a href="#catalog"     class="hover:text-ink dark:hover:text-ink-dark transition-colors">Каталог</a>
+        <a href="#how-it-works" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Рутина</a>
+        <a href="#ingredients" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Обучение</a>
+        <a href="#community"   class="hover:text-ink dark:hover:text-ink-dark transition-colors">Сообщество</a>
+        <a href="#about"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      </nav>
+
+      <!-- Иконки правые -->
+      <div class="flex items-center gap-3">
+        <!-- Поиск -->
+        <button class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Поиск">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+        <!-- Профиль -->
+        <button class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Профиль">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="7" r="4" stroke-width="2"/>
+          </svg>
+        </button>
+        <!-- Корзина -->
+        <button class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+            <path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/>
+          </svg>
+          <span class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+        </button>
+        <!-- Night Mode Toggle -->
+        <button id="night-toggle" onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium" aria-label="Ночной режим">
+          <span id="sun-icon" class="block dark:hidden">☀️</span>
+          <span id="moon-icon" class="hidden dark:block">🌙</span>
+          <span class="hidden sm:block">Ночной</span>
+        </button>
+        <!-- Hamburger (mobile) -->
+        <button id="menu-btn" onclick="toggleMenu()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Меню">
+          <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu (bottom sheet) -->
+    <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 translate-y-full transition-transform duration-300">
+      <div class="flex flex-col gap-4 text-base font-medium">
+        <a href="#catalog"      onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Уход</a>
+        <a href="#catalog"      onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+        <a href="#how-it-works" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Рутина</a>
+        <a href="#ingredients"  onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Обучение</a>
+        <a href="#community"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Сообщество</a>
+        <a href="#about"        onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">О бренде</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- ═══════════════════════════════════════════
+         HERO — fullscreen
+    ════════════════════════════════════════════ -->
+    <section class="relative min-h-screen flex items-center overflow-hidden pt-[60px] hero-gradient">
+
+      <!-- Фоновый декор-блоб -->
+      <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[45vw] h-[70vh] blob bg-gradient-to-br from-sand/60 to-warm/30 dark:from-sand-dark/30 dark:to-warm-dark/20 -z-0 opacity-60"></div>
+
+      <!-- Молекулярные точки (декор) -->
+      <div class="absolute inset-0 -z-10 overflow-hidden">
+        <svg class="absolute top-20 right-[10%] w-64 h-64 text-sand/40 dark:text-sand-dark/20 animate-float" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="40"  r="8" fill="currentColor" opacity="0.5"/>
+          <circle cx="160" cy="100" r="5" fill="currentColor" opacity="0.3"/>
+          <circle cx="40"  cy="130" r="10" fill="currentColor" opacity="0.4"/>
+          <circle cx="130" cy="170" r="6" fill="currentColor" opacity="0.3"/>
+          <circle cx="60"  cy="60"  r="4" fill="currentColor" opacity="0.5"/>
+          <line x1="100" y1="40" x2="160" y2="100" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+          <line x1="160" y1="100" x2="130" y2="170" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+          <line x1="40"  y1="130" x2="100" y2="40"  stroke="currentColor" stroke-width="1" opacity="0.2"/>
+        </svg>
+        <svg class="absolute bottom-20 left-[5%] w-48 h-48 text-accent/20 animate-float" style="animation-delay:-3s" viewBox="0 0 200 200" fill="none">
+          <circle cx="100" cy="50"  r="6" fill="currentColor"/>
+          <circle cx="150" cy="120" r="8" fill="currentColor" opacity="0.6"/>
+          <circle cx="50"  cy="150" r="5" fill="currentColor" opacity="0.4"/>
+          <line x1="100" y1="50" x2="150" y2="120" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+          <line x1="150" y1="120" x2="50" y2="150" stroke="currentColor" stroke-width="1" opacity="0.3"/>
+        </svg>
+      </div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-12 items-center py-16">
+
+        <!-- Текстовая часть -->
+        <div class="relative z-10 space-y-8">
+          <!-- Теглайн -->
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-warm/10 dark:bg-warm-dark/10 border border-warm/20 dark:border-warm-dark/20 rounded-full text-sm text-warm dark:text-warm-dark font-medium">
+            <span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
+            Персональная рутина за 60 секунд
+          </div>
+
+          <!-- Headline -->
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-tight text-ink dark:text-ink-dark">
+            Уход, собранный<br/>
+            <span class="text-accent">под вашу кожу.</span><br/>
+            За 60 секунд.
+          </h1>
+
+          <!-- Subline -->
+          <p class="text-lg sm:text-xl text-muted dark:text-muted-dark leading-relaxed max-w-md">
+            Квиз → рутина → ингредиенты без химии слов.<br/>
+            <span class="text-ink/70 dark:text-ink-dark/70">Всё честно.</span>
+          </p>
+
+          <!-- CTA Stack -->
+          <div class="flex flex-col sm:flex-row gap-3">
+            <a href="#quiz"
+               class="animate-pulse-soft inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full shadow-lg shadow-accent/20 transition-all hover:shadow-accent/30 hover:-translate-y-0.5 text-base">
+              Подобрать уход
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </a>
+            <a href="#catalog"
+               class="inline-flex items-center justify-center gap-2 px-8 py-4 border border-sand dark:border-sand-dark/50 hover:border-warm/50 text-ink dark:text-ink-dark font-medium rounded-full transition-all hover:bg-sand/30 dark:hover:bg-sand-dark/20 text-base">
+              Посмотреть каталог
+            </a>
+          </div>
+
+          <!-- Мини-стата -->
+          <div class="flex items-center gap-5 text-sm text-muted dark:text-muted-dark">
+            <div class="flex items-center gap-1.5">
+              <div class="flex -space-x-1">
+                <div class="w-6 h-6 rounded-full bg-sand dark:bg-sand-dark border-2 border-cream dark:border-cream-dark"></div>
+                <div class="w-6 h-6 rounded-full bg-warm/40 border-2 border-cream dark:border-cream-dark"></div>
+                <div class="w-6 h-6 rounded-full bg-accent/30 border-2 border-cream dark:border-cream-dark"></div>
+              </div>
+              <span>47 000+ рутин</span>
+            </div>
+            <div class="flex items-center gap-1">
+              <span class="text-amber-400">★★★★★</span>
+              <span>4.9</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Визуальная часть (Hero Image placeholder) -->
+        <div class="hidden lg:flex justify-center items-center relative">
+          <div class="relative w-[400px] h-[480px]">
+            <!-- Главный круг с изображением -->
+            <div class="absolute inset-0 rounded-[40%_60%_60%_40%/40%_40%_60%_60%] overflow-hidden bg-gradient-to-br from-sand to-warm/60 dark:from-sand-dark dark:to-warm-dark/40 blob">
+              <!-- Реальное изображение из проекта -->
+              <img src="девушка мажет на лицо крем.png" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal"/>
+            </div>
+            <!-- Карточка-оверлей — "AI подбор" -->
+            <div class="absolute -left-12 bottom-16 bg-cream/95 dark:bg-cream-dark/95 backdrop-blur-sm border border-sand/60 dark:border-sand-dark/30 rounded-2xl px-4 py-3 shadow-xl animate-float">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-sage/20 dark:bg-sage-dark/20 rounded-full flex items-center justify-center text-sage dark:text-sage-dark text-sm">✓</div>
+                <div>
+                  <div class="text-xs font-semibold text-ink dark:text-ink-dark">AI подобрал рутину</div>
+                  <div class="text-[10px] text-muted dark:text-muted-dark">3 продукта · Сухая кожа</div>
+                </div>
+              </div>
+            </div>
+            <!-- Карточка-оверлей — "Совместимость" -->
+            <div class="absolute -right-8 top-20 bg-cream/95 dark:bg-cream-dark/95 backdrop-blur-sm border border-sand/60 dark:border-sand-dark/30 rounded-2xl px-4 py-3 shadow-xl animate-float" style="animation-delay:-2s">
+              <div class="text-xs font-semibold text-ink dark:text-ink-dark mb-1">Совместимость</div>
+              <div class="flex items-center gap-1 text-[10px] text-sage dark:text-sage-dark">
+                <span>✓</span> Гиалуронка + Ниацинамид
+              </div>
+              <div class="flex items-center gap-1 text-[10px] text-amber-500 mt-0.5">
+                <span>⚠</span> Ретинол → только вечером
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scroll hint -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-muted dark:text-muted-dark text-xs">
+        <span>Листайте</span>
+        <div class="w-px h-8 bg-gradient-to-b from-muted/50 to-transparent dark:from-muted-dark/50 animate-bounce"></div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         SOCIAL PROOF BAR
+    ════════════════════════════════════════════ -->
+    <div class="bg-sand/40 dark:bg-sand-dark/20 border-y border-sand/60 dark:border-sand-dark/20 py-4 overflow-hidden">
+      <div class="marquee-track gap-12 px-4">
+        <!-- Дублируем для seamless loop -->
+        <template id="proof-items">
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">47 000+ персональных рутин собрано</span>
+          </div>
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">4.9★ — 12 000 отзывов</span>
+          </div>
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">Доставка за 1–3 дня по России</span>
+          </div>
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">Возврат 14 дней без вопросов</span>
+          </div>
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">Дерматологически протестировано</span>
+          </div>
+          <div class="flex items-center gap-3 whitespace-nowrap">
+            <span class="text-accent text-lg">✦</span>
+            <span class="text-sm font-medium text-ink dark:text-ink-dark">Без парабенов · Без силиконов</span>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         БЫСТРЫЙ ВХОД В КВИЗ
+    ════════════════════════════════════════════ -->
+    <section id="quiz" class="py-20 bg-cream dark:bg-cream-dark">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center reveal">
+        <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">С чего начать?</p>
+        <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark mb-4">
+          Не знаете, с чего начать?
+        </h2>
+        <p class="text-muted dark:text-muted-dark mb-10 text-lg">
+          Выберите то, что беспокоит — и мы подберём рутину прямо сейчас
+        </p>
+
+        <div class="flex flex-col sm:flex-row justify-center gap-4">
+          <!-- Кнопка 1 -->
+          <div class="quiz-btn relative group">
+            <button class="w-full sm:w-auto px-6 py-4 bg-cream dark:bg-cream-dark border-2 border-sand dark:border-sand-dark/50 hover:border-accent/50 hover:bg-accent/5 rounded-2xl text-left transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/10 group-hover:border-accent">
+              <div class="text-2xl mb-2">🌿</div>
+              <div class="font-semibold text-ink dark:text-ink-dark">Сухая / чувствительная</div>
+              <div class="text-sm text-muted dark:text-muted-dark mt-1">Мягкое питание и защита</div>
+            </button>
+            <div class="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-ink dark:bg-ink-dark text-cream dark:text-cream-dark text-xs px-3 py-1.5 rounded-full whitespace-nowrap">
+              → 3 продукта подойдут
+            </div>
+          </div>
+
+          <!-- Кнопка 2 -->
+          <div class="quiz-btn relative group">
+            <button class="w-full sm:w-auto px-6 py-4 bg-cream dark:bg-cream-dark border-2 border-sand dark:border-sand-dark/50 hover:border-accent/50 hover:bg-accent/5 rounded-2xl text-left transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/10">
+              <div class="text-2xl mb-2">💧</div>
+              <div class="font-semibold text-ink dark:text-ink-dark">Жирная / акне</div>
+              <div class="text-sm text-muted dark:text-muted-dark mt-1">Матирование и контроль</div>
+            </button>
+            <div class="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-ink dark:bg-ink-dark text-cream dark:text-cream-dark text-xs px-3 py-1.5 rounded-full whitespace-nowrap">
+              → 4 продукта подойдут
+            </div>
+          </div>
+
+          <!-- Кнопка 3 -->
+          <div class="quiz-btn relative group">
+            <button class="w-full sm:w-auto px-6 py-4 bg-cream dark:bg-cream-dark border-2 border-sand dark:border-sand-dark/50 hover:border-accent/50 hover:bg-accent/5 rounded-2xl text-left transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-accent/10">
+              <div class="text-2xl mb-2">✨</div>
+              <div class="font-semibold text-ink dark:text-ink-dark">Хочу anti-age</div>
+              <div class="text-sm text-muted dark:text-muted-dark mt-1">Лифтинг и сияние</div>
+            </button>
+            <div class="tooltip absolute -top-10 left-1/2 -translate-x-1/2 bg-ink dark:bg-ink-dark text-cream dark:text-cream-dark text-xs px-3 py-1.5 rounded-full whitespace-nowrap">
+              → 5 продуктов подойдут
+            </div>
+          </div>
+        </div>
+
+        <p class="mt-8 text-sm text-muted dark:text-muted-dark">
+          Или пройдите полный квиз — займёт 60 секунд
+          <a href="#" class="ml-2 text-accent hover:underline font-medium">Начать →</a>
+        </p>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         ХИТЫ + ПОПУЛЯРНОЕ
+    ════════════════════════════════════════════ -->
+    <section id="catalog" class="py-20 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex items-end justify-between mb-12 reveal">
+          <div>
+            <p class="text-sm font-medium text-accent uppercase tracking-widest mb-2">Каталог</p>
+            <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark">
+              Популярное этой недели
+            </h2>
+          </div>
+          <a href="#" class="hidden sm:flex items-center gap-1 text-sm text-muted dark:text-muted-dark hover:text-ink dark:hover:text-ink-dark transition-colors font-medium">
+            Весь каталог
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+
+        <!-- Сетка продуктов -->
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+
+          <!-- Карточка 1 -->
+          <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group">
+            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-sand/60 to-warm/30 dark:from-sand-dark/40 dark:to-warm-dark/20 relative">
+              <div class="product-img w-full h-full flex items-center justify-center">
+                <div class="text-center p-6">
+                  <div class="text-6xl mb-3">🧴</div>
+                  <div class="text-xs text-muted dark:text-muted-dark font-medium">50 мл</div>
+                </div>
+              </div>
+              <div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full">Бестселлер</div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="w-8 h-8 bg-cream dark:bg-cream-dark rounded-full flex items-center justify-center shadow-md hover:bg-accent hover:text-white transition-colors text-sm">♡</button>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-accent font-semibold mb-1 uppercase tracking-wide">Увлажнение</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Крем с гиалуронкой 2%</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">Интенсивное увлажнение · Для сухой кожи</p>
+              <div class="flex items-center gap-1 mb-3">
+                <span class="text-amber-400 text-xs">★★★★★</span>
+                <span class="text-xs text-muted dark:text-muted-dark">(847)</span>
+                <span class="ml-auto text-xs text-sage dark:text-sage-dark font-medium">94% подойдёт</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-ink dark:text-ink-dark">890 ₽</span>
+                  <span class="text-xs text-muted dark:text-muted-dark line-through ml-1">1 190 ₽</span>
+                </div>
+                <button class="px-3 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-white text-xs font-semibold rounded-full transition-all">В рутину</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 2 -->
+          <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group" style="animation-delay:0.1s">
+            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-sage/20 to-sage/40 dark:from-sage-dark/10 dark:to-sage-dark/20 relative">
+              <div class="product-img w-full h-full flex items-center justify-center">
+                <div class="text-center p-6"><div class="text-6xl mb-3">💊</div><div class="text-xs text-muted dark:text-muted-dark font-medium">30 мл</div></div>
+              </div>
+              <div class="absolute top-3 left-3 px-2 py-1 bg-sage dark:bg-sage-dark text-white text-xs font-bold rounded-full">Новинка</div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="w-8 h-8 bg-cream dark:bg-cream-dark rounded-full flex items-center justify-center shadow-md hover:bg-accent hover:text-white transition-colors text-sm">♡</button>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-sage dark:text-sage-dark font-semibold mb-1 uppercase tracking-wide">Сыворотка</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Ниацинамид 10% + Цинк</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">Поры · Сияние · Акне</p>
+              <div class="flex items-center gap-1 mb-3">
+                <span class="text-amber-400 text-xs">★★★★★</span>
+                <span class="text-xs text-muted dark:text-muted-dark">(1 240)</span>
+                <span class="ml-auto text-xs text-sage dark:text-sage-dark font-medium">89% подойдёт</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><span class="font-bold text-ink dark:text-ink-dark">650 ₽</span></div>
+                <button class="px-3 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-white text-xs font-semibold rounded-full transition-all">В рутину</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 3 -->
+          <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group" style="animation-delay:0.2s">
+            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/20 dark:to-amber-900/10 relative">
+              <div class="product-img w-full h-full flex items-center justify-center">
+                <div class="text-center p-6"><div class="text-6xl mb-3">☀️</div><div class="text-xs text-muted dark:text-muted-dark font-medium">50 мл</div></div>
+              </div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="w-8 h-8 bg-cream dark:bg-cream-dark rounded-full flex items-center justify-center shadow-md hover:bg-accent hover:text-white transition-colors text-sm">♡</button>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-amber-600 font-semibold mb-1 uppercase tracking-wide">Защита</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Солнцезащитный флюид SPF 50+</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">Лёгкая текстура · Без белого следа</p>
+              <div class="flex items-center gap-1 mb-3">
+                <span class="text-amber-400 text-xs">★★★★☆</span>
+                <span class="text-xs text-muted dark:text-muted-dark">(623)</span>
+                <span class="ml-auto text-xs text-sage dark:text-sage-dark font-medium">96% подойдёт</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><span class="font-bold text-ink dark:text-ink-dark">1 290 ₽</span></div>
+                <button class="px-3 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-white text-xs font-semibold rounded-full transition-all">Купить</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 4 -->
+          <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group" style="animation-delay:0.1s">
+            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-purple-50 to-purple-100/40 dark:from-purple-950/20 dark:to-purple-900/10 relative">
+              <div class="product-img w-full h-full flex items-center justify-center">
+                <div class="text-center p-6"><div class="text-6xl mb-3">🌙</div><div class="text-xs text-muted dark:text-muted-dark font-medium">30 мл</div></div>
+              </div>
+              <div class="absolute top-3 left-3 px-2 py-1 bg-purple-400 text-white text-xs font-bold rounded-full">Хит ночи</div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="w-8 h-8 bg-cream dark:bg-cream-dark rounded-full flex items-center justify-center shadow-md hover:bg-accent hover:text-white transition-colors text-sm">♡</button>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-purple-500 font-semibold mb-1 uppercase tracking-wide">Ночная сыворотка</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Ретинол 0.3% Ночной</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">Обновление · Anti-age · Текстура</p>
+              <div class="flex items-center gap-1 mb-3">
+                <span class="text-amber-400 text-xs">★★★★★</span>
+                <span class="text-xs text-muted dark:text-muted-dark">(398)</span>
+                <span class="ml-auto text-xs text-sage dark:text-sage-dark font-medium">78% подойдёт</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><span class="font-bold text-ink dark:text-ink-dark">1 590 ₽</span></div>
+                <button class="px-3 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-white text-xs font-semibold rounded-full transition-all">В рутину</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 5 -->
+          <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group" style="animation-delay:0.2s">
+            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-teal-50 to-teal-100/40 dark:from-teal-950/20 dark:to-teal-900/10 relative">
+              <div class="product-img w-full h-full flex items-center justify-center">
+                <div class="text-center p-6"><div class="text-6xl mb-3">🫧</div><div class="text-xs text-muted dark:text-muted-dark font-medium">150 мл</div></div>
+              </div>
+              <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button class="w-8 h-8 bg-cream dark:bg-cream-dark rounded-full flex items-center justify-center shadow-md hover:bg-accent hover:text-white transition-colors text-sm">♡</button>
+              </div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-teal-600 font-semibold mb-1 uppercase tracking-wide">Очищение</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Гель для умывания без мыла</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">pH 5.5 · Мягкое очищение · Все типы</p>
+              <div class="flex items-center gap-1 mb-3">
+                <span class="text-amber-400 text-xs">★★★★★</span>
+                <span class="text-xs text-muted dark:text-muted-dark">(2 103)</span>
+                <span class="ml-auto text-xs text-sage dark:text-sage-dark font-medium">97% подойдёт</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <div><span class="font-bold text-ink dark:text-ink-dark">490 ₽</span></div>
+                <button class="px-3 py-1.5 bg-accent/10 hover:bg-accent text-accent hover:text-white text-xs font-semibold rounded-full transition-all">В рутину</button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Карточка 6 — Набор -->
+          <article class="product-card bg-gradient-to-br from-accent/10 to-warm/20 dark:from-accent/5 dark:to-warm/10 rounded-2xl overflow-hidden border-2 border-accent/20 hover:shadow-xl hover:shadow-accent/15 transition-all hover:-translate-y-1 reveal group badge-glow" style="animation-delay:0.3s">
+            <div class="aspect-[4/3] overflow-hidden relative flex items-center justify-center p-6">
+              <div class="text-center">
+                <div class="flex justify-center gap-2 mb-3">
+                  <span class="text-4xl">🧴</span>
+                  <span class="text-4xl">💊</span>
+                  <span class="text-4xl">☀️</span>
+                </div>
+                <div class="text-xs text-accent font-bold">НАБОР "УТРЕННЯЯ РУТИНА"</div>
+              </div>
+              <div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full">−20%</div>
+            </div>
+            <div class="p-4">
+              <div class="text-xs text-accent font-semibold mb-1 uppercase tracking-wide">Бандл · 3 продукта</div>
+              <h3 class="font-semibold text-ink dark:text-ink-dark mb-1 text-sm leading-tight">Набор "Утренняя рутина"</h3>
+              <p class="text-xs text-muted dark:text-muted-dark mb-3">Крем + Сыворотка + SPF · Экономия 658 ₽</p>
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="font-bold text-accent text-base">2 630 ₽</span>
+                  <span class="text-xs text-muted dark:text-muted-dark line-through ml-1">3 288 ₽</span>
+                </div>
+                <button class="px-3 py-1.5 bg-accent text-white text-xs font-semibold rounded-full hover:bg-accent/90 transition-all shadow-sm">Добавить набор</button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="mt-8 text-center sm:hidden reveal">
+          <a href="#" class="inline-flex items-center gap-1 text-sm text-muted dark:text-muted-dark hover:text-ink dark:hover:text-ink-dark transition-colors font-medium">
+            Весь каталог
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         КАК ЭТО РАБОТАЕТ
+    ════════════════════════════════════════════ -->
+    <section id="how-it-works" class="py-24 bg-cream dark:bg-cream-dark">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-16 reveal">
+          <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">Как это работает</p>
+          <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark">
+            Три шага до идеальной рутины
+          </h2>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 relative">
+          <!-- Коннектор (desktop) -->
+          <div class="hidden md:block absolute top-16 left-[calc(16.67%+2rem)] right-[calc(16.67%+2rem)] h-px bg-gradient-to-r from-accent/30 via-accent/60 to-accent/30"></div>
+
+          <!-- Шаг 1 -->
+          <div class="text-center reveal">
+            <div class="relative inline-flex mb-6">
+              <div class="w-20 h-20 bg-accent/10 dark:bg-accent/5 rounded-2xl flex items-center justify-center text-3xl border border-accent/20">
+                🧬
+              </div>
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-accent text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">1</div>
+            </div>
+            <h3 class="font-semibold text-lg text-ink dark:text-ink-dark mb-2">Квиз о вашей коже</h3>
+            <p class="text-muted dark:text-muted-dark text-sm leading-relaxed">
+              7 простых вопросов о типе кожи, проблемах и образе жизни. Получите персональную рутину за 60 секунд.
+            </p>
+          </div>
+
+          <!-- Шаг 2 -->
+          <div class="text-center reveal" style="animation-delay:0.15s">
+            <div class="relative inline-flex mb-6">
+              <div class="w-20 h-20 bg-sage/10 dark:bg-sage-dark/5 rounded-2xl flex items-center justify-center text-3xl border border-sage/20 dark:border-sage-dark/20">
+                🏗️
+              </div>
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-sage dark:bg-sage-dark text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">2</div>
+            </div>
+            <h3 class="font-semibold text-lg text-ink dark:text-ink-dark mb-2">Конструктор рутины</h3>
+            <p class="text-muted dark:text-muted-dark text-sm leading-relaxed">
+              Соберите утреннюю и вечернюю рутину. AI проверяет совместимость ингредиентов в реальном времени.
+            </p>
+          </div>
+
+          <!-- Шаг 3 -->
+          <div class="text-center reveal" style="animation-delay:0.3s">
+            <div class="relative inline-flex mb-6">
+              <div class="w-20 h-20 bg-warm/10 dark:bg-warm-dark/5 rounded-2xl flex items-center justify-center text-3xl border border-warm/20 dark:border-warm-dark/20">
+                🏆
+              </div>
+              <div class="absolute -top-2 -right-2 w-7 h-7 bg-warm dark:bg-warm-dark text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md">3</div>
+            </div>
+            <h3 class="font-semibold text-lg text-ink dark:text-ink-dark mb-2">Трекер привычки</h3>
+            <p class="text-muted dark:text-muted-dark text-sm leading-relaxed">
+              Отмечайте уход каждый день, собирайте стрики и бейджи. Напоминания в Telegram или WhatsApp.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-12 text-center reveal">
+          <a href="#quiz" class="inline-flex items-center gap-2 px-8 py-4 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full shadow-lg shadow-accent/20 transition-all hover:shadow-accent/30 hover:-translate-y-0.5">
+            Попробовать сейчас — бесплатно
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         ИНГРЕДИЕНТЫ ПО НАУКЕ
+    ════════════════════════════════════════════ -->
+    <section id="ingredients" class="py-24 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-16 reveal">
+          <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">Ингредиенты по науке</p>
+          <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark">
+            Что реально работает — и почему
+          </h2>
+          <p class="mt-4 text-muted dark:text-muted-dark max-w-xl mx-auto">
+            Наведите на карточку, чтобы узнать, с чем не смешивать
+          </p>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <!-- Гиалуронка -->
+          <div class="ingredient-card h-[220px] cursor-pointer reveal">
+            <div class="ingredient-inner w-full h-full">
+              <!-- Front -->
+              <div class="ingredient-front bg-cream dark:bg-cream-dark border border-sand/40 dark:border-sand-dark/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="w-12 h-12 bg-blue-50 dark:bg-blue-950/30 rounded-xl flex items-center justify-center text-2xl mb-4">💧</div>
+                  <h3 class="font-semibold text-ink dark:text-ink-dark mb-2">Гиалуронка</h3>
+                  <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">Удерживает воду в коже. Подходит всем типам. До 1000× веса в воде.</p>
+                </div>
+                <a href="#" class="text-xs text-accent font-medium hover:underline">Смотреть продукты →</a>
+              </div>
+              <!-- Back -->
+              <div class="ingredient-back bg-blue-50 dark:bg-blue-950/30 border border-blue-200/40 dark:border-blue-800/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-3">С чем не смешивать</div>
+                  <div class="space-y-2 text-sm text-ink dark:text-ink-dark">
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Ниацинамид, Пептиды
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Ретинол, Витамин С
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-amber-500">⚠</span> Наносите на влажную кожу
+                    </div>
+                  </div>
+                </div>
+                <a href="#" class="text-xs text-blue-600 dark:text-blue-400 font-medium hover:underline">Узнать больше →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ниацинамид -->
+          <div class="ingredient-card h-[220px] cursor-pointer reveal" style="animation-delay:0.1s">
+            <div class="ingredient-inner w-full h-full">
+              <div class="ingredient-front bg-cream dark:bg-cream-dark border border-sand/40 dark:border-sand-dark/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="w-12 h-12 bg-green-50 dark:bg-green-950/30 rounded-xl flex items-center justify-center text-2xl mb-4">🌿</div>
+                  <h3 class="font-semibold text-ink dark:text-ink-dark mb-2">Ниацинамид</h3>
+                  <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">Сужает поры, выравнивает тон. Успокаивает воспаления, матирует.</p>
+                </div>
+                <a href="#" class="text-xs text-accent font-medium hover:underline">Смотреть продукты →</a>
+              </div>
+              <div class="ingredient-back bg-green-50 dark:bg-green-950/30 border border-green-200/40 dark:border-green-800/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-bold text-green-600 dark:text-green-400 uppercase tracking-widest mb-3">С чем не смешивать</div>
+                  <div class="space-y-2 text-sm text-ink dark:text-ink-dark">
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Гиалуронка, Пептиды
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-amber-500">⚠</span> Витамин С — лучше в разное время
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> AHA/BHA кислоты
+                    </div>
+                  </div>
+                </div>
+                <a href="#" class="text-xs text-green-600 dark:text-green-400 font-medium hover:underline">Узнать больше →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ретинол -->
+          <div class="ingredient-card h-[220px] cursor-pointer reveal" style="animation-delay:0.2s">
+            <div class="ingredient-inner w-full h-full">
+              <div class="ingredient-front bg-cream dark:bg-cream-dark border border-sand/40 dark:border-sand-dark/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="w-12 h-12 bg-purple-50 dark:bg-purple-950/30 rounded-xl flex items-center justify-center text-2xl mb-4">🌙</div>
+                  <h3 class="font-semibold text-ink dark:text-ink-dark mb-2">Ретинол</h3>
+                  <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">Ускоряет обновление клеток, сглаживает морщины. Только вечером.</p>
+                </div>
+                <a href="#" class="text-xs text-accent font-medium hover:underline">Смотреть продукты →</a>
+              </div>
+              <div class="ingredient-back bg-purple-50 dark:bg-purple-950/30 border border-purple-200/40 dark:border-purple-800/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-3">С чем не смешивать</div>
+                  <div class="space-y-2 text-sm text-ink dark:text-ink-dark">
+                    <div class="flex items-center gap-2">
+                      <span class="text-red-500">✗</span> AHA/BHA — не вместе!
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-red-500">✗</span> Витамин С в одну ночь
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Гиалуронка, Пептиды
+                    </div>
+                  </div>
+                </div>
+                <a href="#" class="text-xs text-purple-600 dark:text-purple-400 font-medium hover:underline">Узнать больше →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- SPF -->
+          <div class="ingredient-card h-[220px] cursor-pointer reveal" style="animation-delay:0.3s">
+            <div class="ingredient-inner w-full h-full">
+              <div class="ingredient-front bg-cream dark:bg-cream-dark border border-sand/40 dark:border-sand-dark/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="w-12 h-12 bg-amber-50 dark:bg-amber-950/30 rounded-xl flex items-center justify-center text-2xl mb-4">☀️</div>
+                  <h3 class="font-semibold text-ink dark:text-ink-dark mb-2">SPF 50+</h3>
+                  <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">Защита от UV-А и UV-В. Главный anti-age компонент. 365 дней в году.</p>
+                </div>
+                <a href="#" class="text-xs text-accent font-medium hover:underline">Смотреть продукты →</a>
+              </div>
+              <div class="ingredient-back bg-amber-50 dark:bg-amber-950/30 border border-amber-200/40 dark:border-amber-800/20 rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                  <div class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-3">Как использовать</div>
+                  <div class="space-y-2 text-sm text-ink dark:text-ink-dark">
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Только утром, последним шагом
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-green-500">✓</span> Обновлять каждые 2–3 часа
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <span class="text-amber-500">⚠</span> Даже в пасмурную погоду
+                    </div>
+                  </div>
+                </div>
+                <a href="#" class="text-xs text-amber-600 dark:text-amber-400 font-medium hover:underline">Узнать больше →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         TRUST МОДУЛИ
+    ════════════════════════════════════════════ -->
+    <section id="about" class="py-20 bg-cream dark:bg-cream-dark">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+        <!-- Бейджи качества -->
+        <div class="flex flex-wrap justify-center gap-4 mb-16 reveal">
+          <div class="flex items-center gap-2 px-5 py-3 bg-sand/40 dark:bg-sand-dark/20 rounded-full border border-sand/60 dark:border-sand-dark/30 text-sm font-medium text-ink dark:text-ink-dark">
+            <span class="text-base">🚫</span> Без силиконов
+          </div>
+          <div class="flex items-center gap-2 px-5 py-3 bg-sand/40 dark:bg-sand-dark/20 rounded-full border border-sand/60 dark:border-sand-dark/30 text-sm font-medium text-ink dark:text-ink-dark">
+            <span class="text-base">🚫</span> Без парабенов
+          </div>
+          <div class="flex items-center gap-2 px-5 py-3 bg-sand/40 dark:bg-sand-dark/20 rounded-full border border-sand/60 dark:border-sand-dark/30 text-sm font-medium text-ink dark:text-ink-dark">
+            <span class="text-base">🔬</span> Дерматологически тестировано
+          </div>
+          <div class="flex items-center gap-2 px-5 py-3 bg-sand/40 dark:bg-sand-dark/20 rounded-full border border-sand/60 dark:border-sand-dark/30 text-sm font-medium text-ink dark:text-ink-dark">
+            <span class="text-base">🌱</span> Cruelty-free
+          </div>
+          <div class="flex items-center gap-2 px-5 py-3 bg-sand/40 dark:bg-sand-dark/20 rounded-full border border-sand/60 dark:border-sand-dark/30 text-sm font-medium text-ink dark:text-ink-dark">
+            <span class="text-base">🏭</span> Производство в России
+          </div>
+        </div>
+
+        <!-- Гарантия возврата -->
+        <div class="bg-gradient-to-r from-accent/10 to-warm/10 dark:from-accent/5 dark:to-warm/5 border border-accent/20 rounded-3xl p-8 sm:p-12 text-center reveal">
+          <div class="text-5xl mb-4">🛡️</div>
+          <h3 class="text-2xl sm:text-3xl font-serif text-ink dark:text-ink-dark mb-3">
+            Не подошло? Возврат за 14 дней
+          </h3>
+          <p class="text-muted dark:text-muted-dark text-lg mb-6 max-w-xl mx-auto">
+            Без вопросов, без объяснений. Просто напишите нам — и мы вернём деньги в течение 3 дней.
+          </p>
+          <div class="flex flex-wrap justify-center gap-6 text-sm">
+            <div class="flex items-center gap-2 text-ink dark:text-ink-dark">
+              <span class="text-sage dark:text-sage-dark text-lg">✓</span> Без вопросов
+            </div>
+            <div class="flex items-center gap-2 text-ink dark:text-ink-dark">
+              <span class="text-sage dark:text-sage-dark text-lg">✓</span> Возврат за 3 дня
+            </div>
+            <div class="flex items-center gap-2 text-ink dark:text-ink-dark">
+              <span class="text-sage dark:text-sage-dark text-lg">✓</span> Поддержка 24/7
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         СООБЩЕСТВО (preview)
+    ════════════════════════════════════════════ -->
+    <section id="community" class="py-20 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center reveal">
+        <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">Сообщество</p>
+        <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark mb-4">
+          47 000 человек уже с Марьей
+        </h2>
+        <p class="text-muted dark:text-muted-dark text-lg mb-10">Делитесь рутиной, помогайте другим, зарабатывайте бейджи</p>
+
+        <!-- Отзывы -->
+        <div class="grid sm:grid-cols-3 gap-4 mb-10">
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-5 border border-sand/40 dark:border-sand-dark/20 text-left">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-warm/30 rounded-full flex items-center justify-center text-xs font-bold text-warm dark:text-warm-dark">А</div>
+              <div>
+                <div class="text-xs font-semibold text-ink dark:text-ink-dark">Анна, 28</div>
+                <div class="text-[10px] text-muted dark:text-muted-dark">Комбинированная кожа</div>
+              </div>
+              <div class="ml-auto text-amber-400 text-xs">★★★★★</div>
+            </div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed">"Квиз подобрал мне ниацинамид и SPF. Через месяц поры почти не заметны. Честно не ожидала!"</p>
+          </div>
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-5 border border-sand/40 dark:border-sand-dark/20 text-left">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-sage/30 rounded-full flex items-center justify-center text-xs font-bold text-sage dark:text-sage-dark">М</div>
+              <div>
+                <div class="text-xs font-semibold text-ink dark:text-ink-dark">Мария, 35</div>
+                <div class="text-[10px] text-muted dark:text-muted-dark">Сухая кожа</div>
+              </div>
+              <div class="ml-auto text-amber-400 text-xs">★★★★★</div>
+            </div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed">"Наконец-то бренд, который объясняет ингредиенты по-человечески. Ретинол + гиалуронка — мой вечерний ритуал."</p>
+          </div>
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-5 border border-sand/40 dark:border-sand-dark/20 text-left">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 bg-accent/30 rounded-full flex items-center justify-center text-xs font-bold text-accent">Д</div>
+              <div>
+                <div class="text-xs font-semibold text-ink dark:text-ink-dark">Дарья, 22</div>
+                <div class="text-[10px] text-muted dark:text-muted-dark">Жирная кожа, акне</div>
+              </div>
+              <div class="ml-auto text-amber-400 text-xs">★★★★★</div>
+            </div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed">"Трекер привычек — лучшая фича! 23-дневный стрик и кожа реально стала чище. Спасибо за бейджи 🏆"</p>
+          </div>
+        </div>
+
+        <a href="#" class="inline-flex items-center gap-2 px-6 py-3 border border-accent/30 hover:border-accent text-accent font-medium rounded-full transition-all hover:bg-accent/5">
+          Все истории пользователей →
+        </a>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════
+         NEWSLETTER
+    ════════════════════════════════════════════ -->
+    <section class="py-20 footer-gradient">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6 text-center reveal">
+        <div class="text-4xl mb-4">📖</div>
+        <h2 class="text-2xl sm:text-3xl font-serif text-ink dark:text-ink-dark mb-3">
+          Получите PDF «Рутина для вашего типа кожи»
+        </h2>
+        <p class="text-muted dark:text-muted-dark mb-8">
+          Бесплатный гид с объяснением ингредиентов, схемой нанесения и советами по сочетанию. Отправим сразу.
+        </p>
+        <form class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onsubmit="handleNewsletter(event)">
+          <input
+            type="email"
+            placeholder="ваш@email.ru"
+            class="flex-1 px-5 py-3.5 bg-cream dark:bg-cream-dark border border-sand dark:border-sand-dark/50 rounded-full text-ink dark:text-ink-dark placeholder-muted/50 dark:placeholder-muted-dark/50 focus:outline-none focus:border-accent transition-colors text-sm"
+            required
+          />
+          <button type="submit" class="px-6 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 text-sm whitespace-nowrap">
+            Получить PDF
+          </button>
+        </form>
+        <p class="mt-4 text-xs text-muted dark:text-muted-dark">
+          Без спама. Отписаться в один клик. Ваши данные в безопасности.
+        </p>
+        <div id="newsletter-success" class="hidden mt-4 text-sm text-sage dark:text-sage-dark font-medium">
+          ✓ Гид отправлен! Проверьте почту.
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════ -->
+  <footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <!-- Бренд -->
+        <div>
+          <div class="font-serif text-2xl text-cream dark:text-cream mb-3">Марья</div>
+          <p class="text-sm leading-relaxed mb-4">Простой уход, который действительно работает. Персональные рутины, честные составы.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">WA</a>
+          </div>
+        </div>
+        <!-- Каталог -->
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-cream transition-colors">Сыворотки</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Увлажнение</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Очищение</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">SPF-защита</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Наборы</a></li>
+          </ul>
+        </div>
+        <!-- Помощь -->
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Помощь</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-cream transition-colors">Подобрать уход</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Доставка и оплата</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Возврат 14 дней</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">FAQ</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Связаться с нами</a></li>
+          </ul>
+        </div>
+        <!-- О бренде -->
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">О бренде</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-cream transition-colors">Наша история</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Состав и качество</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Обучение</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Сообщество</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Партнёрство</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+        <div>© 2026 Марья. Все права защищены.</div>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
+          <a href="#" class="hover:text-cream transition-colors">Оферта</a>
+          <a href="#" class="hover:text-cream transition-colors">Cookie</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ─── Night Mode ───────────────────────────────
+    const html = document.documentElement;
+    const saved = localStorage.getItem('marya-theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+    }
+    function toggleDark() {
+      html.classList.toggle('dark');
+      localStorage.setItem('marya-theme', html.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // ─── Mobile Menu ──────────────────────────────
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+    function toggleMenu() {
+      menuOpen = !menuOpen;
+      mobileMenu.style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';
+    }
+
+    // ─── Scroll Progress ──────────────────────────
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const total = document.body.scrollHeight - window.innerHeight;
+      progressBar.style.width = (window.scrollY / total * 100) + '%';
+    }, { passive: true });
+
+    // ─── Header shrink on scroll ──────────────────
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('shadow-md', window.scrollY > 20);
+    }, { passive: true });
+
+    // ─── Reveal on scroll ─────────────────────────
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // ─── Social Proof Marquee ─────────────────────
+    const track = document.querySelector('.marquee-track');
+    const tmpl  = document.getElementById('proof-items');
+    if (track && tmpl) {
+      const fragment1 = tmpl.content.cloneNode(true);
+      const fragment2 = tmpl.content.cloneNode(true);
+      track.appendChild(fragment1);
+      track.appendChild(fragment2);
+      // Запустим CSS-анимацию через JS для корректной ширины
+      track.style.animation = 'marquee 32s linear infinite';
+    }
+
+    // ─── Newsletter ───────────────────────────────
+    function handleNewsletter(e) {
+      e.preventDefault();
+      document.getElementById('newsletter-success').classList.remove('hidden');
+      e.target.reset();
+    }
+
+    // ─── Ingredient card touch (mobile flip) ──────
+    document.querySelectorAll('.ingredient-card').forEach(card => {
+      card.addEventListener('click', () => {
+        card.querySelector('.ingredient-inner').style.transform =
+          card.dataset.flipped ? '' : 'rotateY(180deg)';
+        card.dataset.flipped = card.dataset.flipped ? '' : '1';
+      });
+    });
+  </script>
+</body>
+</html>
