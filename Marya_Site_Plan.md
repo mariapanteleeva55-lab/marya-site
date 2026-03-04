@@ -1,6 +1,6 @@
 # МАРЬЯ — Детальный план сайта
-> D2C skincare e-commerce | Версия 2.0 | Обновлено: 2026-03-04
-> **Изменения v2.0:** исправлены технические ошибки (camera-scan, WebXR, schema.org, аналитика), оплата через Тинькофф Кассу, добавлены обработчики edge-cases (out-of-stock, timezone, reorder-подтверждение).
+> D2C skincare e-commerce | Версия 2.1 | Обновлено: 2026-03-04
+> **Изменения v2.1:** добавлен раздел 8 — SEO + GEO (sitemap, Core Web Vitals, контентные кластеры, E-E-A-T, оптимизация под ChatGPT/Perplexity/Яндекс Нейро).
 
 ---
 
@@ -1529,7 +1529,259 @@ Routine Builder автоматически перестраивает вечер
 
 ---
 
-## 8. ЖУРНАЛ ИЗМЕНЕНИЙ
+## 8. SEO И GEO (ОПТИМИЗАЦИЯ ПОД ПОИСКОВИКИ И НЕЙРОСЕТИ)
+
+> **GEO (Generative Engine Optimization)** — новый слой оптимизации, специально для того чтобы сайт цитировали нейросетевые поисковики: Google AI Overviews, ChatGPT Search, Perplexity AI, Яндекс Нейро.
+
+---
+
+### 8.1 Что уже есть в плане (база для хорошего SEO)
+
+| Что уже включено | Зачем это важно |
+|---|---|
+| `schema.org Product` с числовым ценой, image, url, seller | Google понимает карточку товара, показывает rich snippet |
+| `schema.org FAQPage` | FAQ блок прямо в поисковой выдаче |
+| `schema.org HowTo` | Инструкции в поиске с шагами |
+| `schema.org Article` | Статьи блога индексируются как авторитетный контент |
+| `LCP < 1.8s` | Core Web Vitals — прямой сигнал ранжирования Google |
+| WCAG AA accessibility | Google учитывает доступность сайта |
+| Блог с SEO-статьями | Органический трафик по информационным запросам |
+| Ingredient Conflict Tool | SEO-магнит: "можно ли смешивать ретинол и кислоты" |
+| Cloudflare CDN + Next.js ISR | Быстрая загрузка из любой точки России |
+
+---
+
+### 8.2 Технический SEO — что нужно реализовать
+
+#### Sitemap и robots.txt
+
+```
+/public/robots.txt:
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /cart/
+Sitemap: https://marya.ru/sitemap.xml
+```
+
+Next.js App Router генерирует sitemap автоматически через `app/sitemap.ts`:
+
+```typescript
+// app/sitemap.ts
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const products = await sanity.fetch('*[_type == "product"]{ slug, _updatedAt }');
+  const articles = await sanity.fetch('*[_type == "article"]{ slug, _updatedAt }');
+  return [
+    { url: 'https://marya.ru', lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
+    { url: 'https://marya.ru/quiz', changeFrequency: 'monthly', priority: 0.9 },
+    { url: 'https://marya.ru/catalog', changeFrequency: 'daily', priority: 0.8 },
+    ...products.map(p => ({
+      url: `https://marya.ru/products/${p.slug}`,
+      lastModified: p._updatedAt,
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    })),
+    ...articles.map(a => ({
+      url: `https://marya.ru/blog/${a.slug}`,
+      lastModified: a._updatedAt,
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    })),
+  ];
+}
+```
+
+#### Canonical URL и Open Graph
+
+Каждая страница имеет:
+
+```typescript
+// app/products/[slug]/page.tsx
+export async function generateMetadata({ params }): Promise<Metadata> {
+  const product = await getProduct(params.slug);
+  return {
+    title: `${product.name} — Марья`,
+    description: product.shortDescription,
+    alternates: { canonical: `https://marya.ru/products/${params.slug}` },
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription,
+      images: [{ url: product.imageUrl, width: 1200, height: 630 }],
+      type: 'website',
+      locale: 'ru_RU',
+      siteName: 'Марья',
+    },
+  };
+}
+```
+
+#### Core Web Vitals — чеклист
+
+| Метрика | Целевое значение | Как обеспечить |
+|---|---|---|
+| LCP (Largest Contentful Paint) | < 1.8s | `priority` на hero-image, preload шрифтов, ISR кэш |
+| INP (Interaction to Next Paint) | < 200ms | Debounce поиска, не блокировать main thread |
+| CLS (Cumulative Layout Shift) | < 0.05 | Резервировать место под изображения (`aspect-ratio`), нет layout-shifting рекламы |
+| TTFB (Time to First Byte) | < 600ms | Cloudflare edge caching + Vercel Edge Runtime |
+
+---
+
+### 8.3 Контентная SEO-стратегия
+
+#### Кластеры ключевых слов
+
+**Транзакционные** (покупательские):
+- "крем с гиалуроновой кислотой купить"
+- "набор по уходу за кожей для сухой кожи"
+- "сыворотка с ретинолом цена"
+
+**Информационные** (органический трафик и доверие):
+- "как правильно наносить ретинол"
+- "можно ли смешивать ниацинамид и витамин C"
+- "уход за кожей для начинающих пошагово"
+- "что такое кератолитики в косметике"
+
+**Navigational** (бренд):
+- "Марья косметика"
+- "Марья скинкеар квиз"
+
+#### Структура блога (SEO-пирамида)
+
+```
+Pillar page: "Полное руководство по уходу за кожей лица"
+    ├── Cluster: "Типы кожи и как их определить"
+    ├── Cluster: "Активные ингредиенты — гид"
+    │       ├── "Ретинол: инструкция и когда начинать"
+    │       ├── "Ниацинамид: для чего и с чем нельзя"
+    │       └── "Кислоты АНА/ВНА — полный разбор"
+    ├── Cluster: "Рутина ухода — как составить"
+    └── Cluster: "Частые ошибки в уходе за кожей"
+```
+
+**Правило:** каждая статья блога → ссылается на 2-3 товара + на Routine Builder (внутренняя перелинковка).
+
+---
+
+### 8.4 GEO — оптимизация под нейросетевые поисковики
+
+#### Что такое GEO и почему это важно для Марьи
+
+Нейросетевые поисковики (ChatGPT Search, Perplexity, Google AI Overviews, Яндекс Нейро) — уже сейчас дают ответ пользователю прямо в поиске, **цитируя сайты**. Если сайт Марьи будет цитироваться — это трафик и доверие без клика.
+
+Задача GEO: стать источником, которого нейросеть считает **авторитетным и точным**.
+
+#### Принципы GEO-оптимизации
+
+**1. Чёткое определение бренда как сущности (Entity)**
+
+На главной странице и в About должен быть абзац, который однозначно описывает кто такая "Марья":
+
+```
+"Марья" — российский D2C бренд по уходу за кожей, основан в Москве.
+Специализация: персональный подбор рутин ухода на основе типа кожи.
+Продукция: кремы, сыворотки, очищающие средства без агрессивной химии.
+```
+
+Это помогает нейросетям правильно понять контекст и не путать с другими брендами.
+
+**2. FAQ-контент с точными ответами**
+
+Нейросети любят чёткий формат "вопрос → ответ". В статьях и карточках товаров добавлять:
+
+```markdown
+## Часто задаваемые вопросы
+
+**Можно ли использовать этот крем под макияж?**
+Да, наносите за 10–15 минут до нанесения тональной основы. Крем впитывается без остатка.
+
+**Подойдёт ли крем для чувствительной кожи?**
+Да, формула гипоаллергенна и протестирована дерматологами.
+```
+
+Такие FAQ индексируются в `schema.org FAQPage` → Google AI Overviews прямо цитирует их.
+
+**3. Авторитетность: кто стоит за советами**
+
+Для GEO важно показать экспертизу. В блоге указывать:
+- **Автор статьи**: косметолог / дерматолог с кратким bio
+- **Дата последнего обновления** статьи (нейросети проверяют актуальность)
+- **Источники**: ссылки на PubMed-исследования для статей об ингредиентах
+
+```typescript
+// schema.org для статьи с экспертом
+{
+  "@type": "Article",
+  "author": {
+    "@type": "Person",
+    "name": "Анна Смирнова",
+    "jobTitle": "Дерматолог-косметолог",
+    "url": "https://marya.ru/experts/anna-smirnova"
+  },
+  "datePublished": "2026-01-15",
+  "dateModified": "2026-03-01",
+  "citation": "https://pubmed.ncbi.nlm.nih.gov/12345678/"
+}
+```
+
+**4. Структурированный контент (Listicles, How-To, Tables)**
+
+Нейросети лучше цитируют структурированный текст. Правила для статей:
+- Заголовки H2/H3 в виде вопросов ("Как наносить сыворотку с витамином C?")
+- Нумерованные и маркированные списки
+- Таблицы сравнений ингредиентов
+- Блок "Вывод" / "Итог" в конце статьи
+
+**5. E-E-A-T сигналы (Experience, Expertise, Authoritativeness, Trustworthiness)**
+
+Google AI Overviews и другие нейропоисковики ориентируются на E-E-A-T:
+
+| Сигнал | Как реализовать |
+|---|---|
+| **Experience** | Отзывы с фото "до/после", реальные истории покупателей |
+| **Expertise** | Статьи с указанием автора-эксперта, ссылки на исследования |
+| **Authoritativeness** | Упоминания в СМИ (Vogue, RBC Style, Cosmo), обратные ссылки |
+| **Trustworthiness** | HTTPS, политика возврата, юридические документы, контакты |
+
+**6. "Марья" в ответах нейросетей — план действий**
+
+Чтобы ChatGPT, Perplexity и Яндекс Нейро начали цитировать сайт:
+
+1. **Публикуйте полные гиды** — "Полное руководство по ретинолу" привлекает цитирование
+2. **Отвечайте на длинные запросы** ("какой крем выбрать если кожа сухая и с акне одновременно")
+3. **Регистрация в Яндекс.Вебмастер и Google Search Console** — обязательно с первого дня
+4. **Wikipedia / Wikidata** — в будущем добавить страницу бренда (нейросети доверяют Wikipedia-сущностям)
+5. **Пресс-кит** на сайте: логотипы, описание бренда в 3-5 предложениях — чтобы СМИ правильно описывали бренд
+
+---
+
+### 8.5 Локальное SEO (если будет шоурум или пункты выдачи)
+
+Если появятся физические точки:
+- Зарегистрировать в **Яндекс.Бизнес** и **Google Business Profile**
+- `schema.org LocalBusiness` с адресом, часами работы, телефоном
+- Отзывы на Яндекс.Картах → сигнал доверия
+
+---
+
+### 8.6 SEO-метрики для отслеживания
+
+| Инструмент | Что отслеживать |
+|---|---|
+| Google Search Console | Клики, показы, CTR, позиции по ключевым словам |
+| Яндекс.Вебмастер | То же для Яндекса (важно для RU-аудитории) |
+| PostHog / GA4 | Органический трафик, конверсия с SEO-страниц |
+| Ahrefs / Semrush | Динамика позиций, обратные ссылки, конкуренты |
+| PageSpeed Insights | Core Web Vitals в реальном времени |
+
+**Целевые показатели через 6 месяцев после запуска:**
+- 50+ страниц в топ-10 Google/Яндекс по информационным запросам
+- Органический трафик: 5,000+ уникальных посетителей/месяц
+- Цитирование в Google AI Overviews хотя бы по 3-5 запросам об уходе за кожей
+
+---
+
+## 9. ЖУРНАЛ ИЗМЕНЕНИЙ
 
 | Версия | Дата | Изменения |
 |---|---|---|
@@ -1537,5 +1789,6 @@ Routine Builder автоматически перестраивает вечер
 | 1.1 | 2026-03-04 | Добавлены: корзина (2.10), мессенджеры (2.11), замена email → мессенджеры |
 | 1.2 | 2026-03-04 | Добавлены улучшения по мировому опыту (раздел 6) |
 | 2.0 | 2026-03-04 | **Технические исправления:** camera-scan (GDPR-текст, canplay, error handling, timeout), WebXR (camera variable, session.end(), dynamic import, добавление в DOM), schema.org (price как число, image/url/priceValidUntil), аналитика (concerns[], quiz_step, cart_abandon), Тинькофф Касса вместо Stripe, Sentry, SkinCare Duo WebSocket-протокол, Routine Builder mobile touch + лимит + out-of-stock, streak timezone, Telegram reorder с подтверждением и аутентификацией бота |
+| 2.1 | 2026-03-04 | Добавлен раздел 8: SEO + GEO (оптимизация под нейросетевые поисковики: sitemap, Core Web Vitals, контентные кластеры, E-E-A-T, schema.org Author, GEO-стратегия для ChatGPT/Perplexity/Яндекс Нейро) |
 
 *Версия для команды разработки и дизайна.*
