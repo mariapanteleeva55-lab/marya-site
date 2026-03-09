@@ -174,6 +174,13 @@
     .dark .dest-link{color:#A89880}
     .dark .dest-link:hover{color:#F5EDE4}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const _supabase = window.supabase.createClient(
+      'https://cizdsiqolarjcgmwbafp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+    );
+  </script>
 </head>
 <body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
 
@@ -225,6 +232,9 @@
       <a href="catalog.html" class="hidden sm:flex p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
         <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
       </a>
+      <button id="auth-nav-btn" onclick="openAuthModal()" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors hidden sm:flex" aria-label="Профиль">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke-width="2"/></svg>
+      </button>
       <button class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
         <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
         <span id="header-cart-count" class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
@@ -851,18 +861,57 @@ const CART_PRODUCTS = [
     price:1290, oldPrice:1590, color:'from-pink-50 to-rose-100', qty:1 },
 ];
 
-function loadCart() {
+const PRODUCTS_MAP = {
+  1:  { name:'Пенка для умывания с пребиотиками',       emoji:'🫧', price:890,  volume:'150 мл', color:'from-teal-50 to-cyan-100' },
+  2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', price:990,  volume:'250 мл', color:'from-sky-50 to-blue-100' },
+  3:  { name:'Мицеллярная вода',                         emoji:'🌊', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
+  4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', price:2490, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  5:  { name:'Крем дневной омолаживающий',               emoji:'☀️', price:1990, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  6:  { name:'Крем ночной омолаживающий',                emoji:'🌙', price:1990, volume:'50 мл',  color:'from-purple-50 to-violet-100' },
+  7:  { name:'Крем для век от отёков и тёмных кругов',  emoji:'👁️', price:1490, volume:'30 мл',  color:'from-rose-50 to-pink-100' },
+  8:  { name:'Маска очищающая с каолином',               emoji:'🪨', price:990,  volume:'100 мл', color:'from-stone-50 to-amber-100' },
+  9:  { name:'Маска мгновенной красоты',                 emoji:'✨', price:1190, volume:'100 мл', color:'from-yellow-50 to-amber-100' },
+  10: { name:'Скраб для лица и тела с фундуком',        emoji:'🌰', price:890,  volume:'200 мл', color:'from-amber-50 to-warm/30' },
+  11: { name:'Нежный солевой скраб',                    emoji:'🧂', price:790,  volume:'200 мл', color:'from-gray-50 to-slate-100' },
+  12: { name:'Энзимный скраб для тела',                 emoji:'🍍', price:990,  volume:'200 мл', color:'from-yellow-50 to-lime-100' },
+  13: { name:'Антицеллюлитный скраб',                   emoji:'🌶️', price:990,  volume:'200 мл', color:'from-red-50 to-orange-100' },
+  14: { name:'Крем SPF 15',                              emoji:'🌞', price:1490, volume:'50 мл',  color:'from-orange-50 to-amber-100' },
+  15: { name:'Антиоксидантная сыворотка',               emoji:'🍊', price:1890, volume:'30 мл',  color:'from-orange-50 to-red-100' },
+  16: { name:'Шампунь для волос',                       emoji:'🧴', price:890,  volume:'250 мл', color:'from-green-50 to-emerald-100' },
+  17: { name:'Кондиционер для волос',                   emoji:'💚', price:890,  volume:'250 мл', color:'from-teal-50 to-green-100' },
+};
+
+async function loadCart() {
   try {
-    const saved = JSON.parse(localStorage.getItem('marya_cart'));
-    if (saved && saved.length > 0) return saved;
+    const { data: { session } } = await _supabase.auth.getSession();
+    if (session) {
+      const { data: rows } = await _supabase.from('cart_items').select('product_id, qty').eq('user_id', session.user.id);
+      if (rows && rows.length > 0) {
+        return rows.map(r => ({ id: r.product_id, qty: r.qty, ...PRODUCTS_MAP[r.product_id] })).filter(p => p.name);
+      }
+    } else {
+      const saved = JSON.parse(localStorage.getItem('marya_cart'));
+      if (saved && saved.length > 0) return saved;
+    }
   } catch {}
-  return CART_PRODUCTS.map(p => ({...p}));
-}
-function saveCart() {
-  localStorage.setItem('marya_cart', JSON.stringify(cart));
+  return [];
 }
 
-let cart = loadCart();
+async function saveCart() {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (session) {
+    await _supabase.from('cart_items').delete().eq('user_id', session.user.id);
+    if (cart.length > 0) {
+      await _supabase.from('cart_items').insert(
+        cart.map(p => ({ user_id: session.user.id, product_id: p.id, qty: p.qty }))
+      );
+    }
+  } else {
+    localStorage.setItem('marya_cart', JSON.stringify(cart));
+  }
+}
+
+let cart = [];
 
 const FREE_DELIVERY = 2000;
 const PROMOS = { 'MARYA10':'10%', 'WELCOME':'free_delivery' };
@@ -974,18 +1023,18 @@ function renderCartItem(p){
   </div>`;
 }
 
-function removeItem(id){
+async function removeItem(id){
   cart = cart.filter(p => p.id !== id);
-  saveCart();
+  await saveCart();
   renderCart();
   showToast('Товар удалён из корзины');
 }
 
-function changeQty(id, delta){
+async function changeQty(id, delta){
   const item = cart.find(p => p.id === id);
   if (!item) return;
   item.qty = Math.max(1, Math.min(10, item.qty + delta));
-  saveCart();
+  await saveCart();
   renderCart();
 }
 
@@ -1260,76 +1309,77 @@ function renderCheckoutMini(){
 }
 
 // ── PLACE ORDER ───────────────────────────────────────────────────
-function placeOrder(){
+async function placeOrder(){
   const btn = document.getElementById('pay-btn-final');
   btn.textContent = 'Обработка...';
   btn.disabled    = true;
   btn.classList.add('opacity-70');
 
-  setTimeout(() => {
-    const orderId  = '#' + (Math.floor(Math.random() * 9000) + 1000);
-    const today    = new Date();
-    const d1       = new Date(today); d1.setDate(d1.getDate() + 2);
-    const d2       = new Date(today); d2.setDate(d2.getDate() + 3);
-    const months   = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-    const dateStr  = d1.getDate()+' – '+d2.getDate()+' '+months[d2.getMonth()];
+  const orderId    = 'ORD-' + (Math.floor(Math.random() * 9000) + 1000);
+  const today      = new Date();
+  const d1         = new Date(today); d1.setDate(d1.getDate() + 2);
+  const d2         = new Date(today); d2.setDate(d2.getDate() + 3);
+  const months     = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  const dateStr    = d1.getDate()+' – '+d2.getDate()+' '+months[d2.getMonth()];
+  const orderTotal = total();
+  const bonusUsed  = state.usePoints ? pointsDiscount() : 0;
+  const bonusEarned = calcBonusEarn(orderTotal);
+  const deliveryEl = document.querySelector('[data-group="delivery"].selected');
+  const addrParts  = [
+    document.getElementById('f-city')?.value,
+    document.getElementById('f-addr')?.value,
+    document.getElementById('f-apt')?.value,
+  ].filter(Boolean).join(', ');
 
-    document.getElementById('success-order-num').textContent   = orderId;
-    document.getElementById('success-delivery-date').textContent = dateStr;
+  const { data: { session } } = await _supabase.auth.getSession();
 
-    const messengerNames = {telegram:'Telegram',whatsapp:'WhatsApp',vk:'ВКонтакте',push:'Push-уведомление'};
-    const mesVal = document.querySelector('[data-group="messenger"].selected')?.dataset.val || 'telegram';
-    document.getElementById('success-messenger').textContent = messengerNames[mesVal] || 'Telegram';
-
-    // ── Сохраняем заказ ───────────────────────────────────────────
-    const orderTotal  = total();
-    const bonusUsed   = state.usePoints ? pointsDiscount() : 0;
-    const bonusEarned = calcBonusEarn(orderTotal);
-
-    // Сохраняем в историю заказов
-    const orders = (() => { try { return JSON.parse(localStorage.getItem('marya_orders')) || []; } catch { return []; } })();
-    const deliveryEl = document.querySelector('[data-group="delivery"].selected');
-    const addrParts = [
-      document.getElementById('f-city')?.value,
-      document.getElementById('f-addr')?.value,
-      document.getElementById('f-apt')?.value,
-    ].filter(Boolean).join(', ');
-    orders.unshift({
+  if (session) {
+    // Сохраняем заказ в Supabase
+    await _supabase.from('orders').insert({
       id:           orderId,
-      date:         new Date().toISOString(),
+      user_id:      session.user.id,
       status:       'processing',
-      items:        cart.map(p => ({ id:p.id, name:p.name, emoji:p.emoji, volume:p.volume, price:p.price, qty:p.qty })),
       total:        orderTotal,
       delivery:     deliveryEl?.dataset.val || 'courier',
       address:      addrParts,
-      bonusEarned,
-      bonusUsed,
+      bonus_earned: bonusEarned,
+      bonus_used:   bonusUsed,
     });
-    if (orders.length > 50) orders.length = 50;
-    localStorage.setItem('marya_orders', JSON.stringify(orders));
 
-    // Обновляем бонусный баланс
-    const bonus = getBonus();
-    bonus.totalSpent = (bonus.totalSpent || 0) + orderTotal;
-    if (bonusUsed > 0) {
-      bonus.balance = Math.max(0, bonus.balance - bonusUsed);
-      bonus.history.unshift({ date: new Date().toISOString(), amount: -bonusUsed, reason: 'Списано по заказу ' + orderId, orderId });
-    }
-    bonus.balance += bonusEarned;
-    bonus.history.unshift({ date: new Date().toISOString(), amount: bonusEarned, reason: 'Заказ ' + orderId, orderId });
-    saveBonus(bonus);
+    // Позиции заказа
+    await _supabase.from('order_items').insert(
+      cart.map(p => ({ order_id: orderId, product_id: p.id, name: p.name, price: p.price, qty: p.qty }))
+    );
 
-    // Показываем начисленные баллы на экране успеха
-    if (bonusEarned > 0) {
-      document.getElementById('success-bonus-amount').textContent = '+' + bonusEarned + ' баллов';
-      document.getElementById('success-bonus-row').classList.remove('hidden');
-    }
+    // Бонусный счёт
+    const { data: bonusRow } = await _supabase.from('bonus_accounts').select('*').eq('user_id', session.user.id).single();
+    const curBalance    = bonusRow?.balance || 0;
+    const curTotalSpent = bonusRow?.total_spent || 0;
+    const newBalance    = Math.max(0, curBalance - bonusUsed) + bonusEarned;
+    await _supabase.from('bonus_accounts').upsert({ user_id: session.user.id, balance: newBalance, total_spent: curTotalSpent + orderTotal });
 
-    cart = [];
-    saveCart();
-    showView('success');
-    window.scrollTo({top:0, behavior:'smooth'});
-  }, 1400);
+    // История бонусов
+    const historyRows = [];
+    if (bonusUsed > 0) historyRows.push({ user_id: session.user.id, amount: -bonusUsed, reason: 'Списано по заказу ' + orderId, order_id: orderId });
+    if (bonusEarned > 0) historyRows.push({ user_id: session.user.id, amount: bonusEarned, reason: 'Заказ ' + orderId, order_id: orderId });
+    if (historyRows.length) await _supabase.from('bonus_history').insert(historyRows);
+  }
+
+  document.getElementById('success-order-num').textContent    = orderId;
+  document.getElementById('success-delivery-date').textContent = dateStr;
+  const messengerNames = {telegram:'Telegram',whatsapp:'WhatsApp',vk:'ВКонтакте',push:'Push-уведомление'};
+  const mesVal = document.querySelector('[data-group="messenger"].selected')?.dataset.val || 'telegram';
+  document.getElementById('success-messenger').textContent = messengerNames[mesVal] || 'Telegram';
+
+  if (bonusEarned > 0) {
+    document.getElementById('success-bonus-amount').textContent = '+' + bonusEarned + ' баллов';
+    document.getElementById('success-bonus-row').classList.remove('hidden');
+  }
+
+  cart = [];
+  await saveCart();
+  showView('success');
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 // ── PHONE FORMAT ──────────────────────────────────────────────────
@@ -1390,7 +1440,7 @@ window.addEventListener('scroll',()=>{
 },{passive:true});
 
 // ── INIT ──────────────────────────────────────────────────────────
-renderCart();
+(async () => { cart = await loadCart(); renderCart(); })();
 
 // ─── Catalog Mega-Menu ────────────────────────
 const catalogData = {
@@ -1516,6 +1566,124 @@ function switchZone(zone) {
   }).join('');
 }
 switchZone('face');
+</script>
+
+<!-- ═══════════════════ AUTH MODAL ═══════════════════ -->
+<div id="auth-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeAuthModal()"></div>
+  <div class="relative bg-cream dark:bg-cream-dark rounded-2xl shadow-2xl w-full max-w-md p-8">
+    <button onclick="closeAuthModal()" class="absolute top-4 right-4 text-muted dark:text-muted-dark hover:text-ink dark:hover:text-ink-dark transition-colors">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="flex gap-1 bg-sand/50 dark:bg-sand-dark/30 rounded-xl p-1 mb-6">
+      <button id="tab-login" onclick="switchAuthTab('login')" class="flex-1 py-2 rounded-lg text-sm font-medium transition-colors bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark shadow-sm">Войти</button>
+      <button id="tab-register" onclick="switchAuthTab('register')" class="flex-1 py-2 rounded-lg text-sm font-medium transition-colors text-muted dark:text-muted-dark">Регистрация</button>
+    </div>
+    <div id="form-login">
+      <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-5">Добро пожаловать</h2>
+      <div class="space-y-4">
+        <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Email</label><input id="login-email" type="email" placeholder="your@email.com" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Пароль</label><input id="login-password" type="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        <div id="login-error" class="hidden text-xs text-red-500 px-1"></div>
+        <button onclick="doLogin()" class="w-full py-3 bg-accent hover:bg-accent/90 text-white rounded-xl text-sm font-medium transition-colors">Войти</button>
+        <button type="button" onclick="switchAuthTab('reset')" class="w-full text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors text-center pt-1">Забыли пароль?</button>
+      </div>
+    </div>
+    <div id="form-reset" class="hidden">
+      <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Восстановление пароля</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-5">Введите email — пришлём ссылку для сброса пароля.</p>
+      <div class="space-y-4">
+        <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Email</label><input id="reset-email" type="email" placeholder="your@email.com" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        <div id="reset-error" class="hidden text-xs text-red-500 px-1"></div>
+        <button onclick="doResetPassword()" class="w-full py-3 bg-accent hover:bg-accent/90 text-white rounded-xl text-sm font-medium transition-colors">Отправить ссылку</button>
+        <button type="button" onclick="switchAuthTab('login')" class="w-full text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors text-center pt-1">← Вернуться ко входу</button>
+      </div>
+    </div>
+    <div id="form-register" class="hidden">
+      <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-5">Создать аккаунт</h2>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Имя</label><input id="reg-name" type="text" placeholder="Мария" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+          <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Фамилия</label><input id="reg-lastname" type="text" placeholder="Иванова" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        </div>
+        <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Email</label><input id="reg-email" type="email" placeholder="your@email.com" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        <div><label class="block text-xs text-muted dark:text-muted-dark mb-1">Пароль</label><input id="reg-password" type="password" placeholder="Минимум 6 символов" class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/></div>
+        <div id="reg-error" class="hidden text-xs text-red-500 px-1"></div>
+        <button onclick="doRegister()" class="w-full py-3 bg-accent hover:bg-accent/90 text-white rounded-xl text-sm font-medium transition-colors">Создать аккаунт</button>
+      </div>
+    </div>
+    <div id="form-success" class="hidden text-center py-4">
+      <div class="text-4xl mb-3">✓</div>
+      <p id="success-msg" class="text-ink dark:text-ink-dark font-medium"></p>
+    </div>
+  </div>
+</div>
+<script>
+  async function initAuth() {
+    const { data: { session } } = await _supabase.auth.getSession();
+    updateAuthUI(session?.user || null);
+  }
+  function updateAuthUI(user) {
+    const btn = document.getElementById('auth-nav-btn');
+    if (!btn) return;
+    const svg = btn.querySelector('svg');
+    if (user) { btn.onclick = () => window.location.href = 'profile.html'; svg.style.color = '#D4956A'; }
+    else { btn.onclick = openAuthModal; svg.style.color = ''; }
+  }
+  function openAuthModal() { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.body.style.overflow = 'hidden'; }
+  function closeAuthModal() { const m = document.getElementById('auth-modal'); m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
+  function switchAuthTab(tab) {
+    const isLogin = tab === 'login'; const isRegister = tab === 'register'; const isReset = tab === 'reset';
+    document.getElementById('form-login').classList.toggle('hidden', !isLogin);
+    document.getElementById('form-register').classList.toggle('hidden', !isRegister);
+    document.getElementById('form-reset').classList.toggle('hidden', !isReset);
+    document.getElementById('form-success').classList.add('hidden');
+    document.getElementById('tab-login').className = `flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${isLogin ? 'bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark shadow-sm' : 'text-muted dark:text-muted-dark'}`;
+    document.getElementById('tab-register').className = `flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${isRegister ? 'bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark shadow-sm' : 'text-muted dark:text-muted-dark'}`;
+  }
+  async function doResetPassword() {
+    const email = document.getElementById('reset-email').value.trim();
+    const errEl = document.getElementById('reset-error');
+    errEl.classList.add('hidden');
+    if (!email) { errEl.textContent = 'Введите email'; errEl.classList.remove('hidden'); return; }
+    const { error } = await _supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/profile.html' });
+    if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+    document.getElementById('form-reset').classList.add('hidden');
+    const s = document.getElementById('form-success'); s.classList.remove('hidden');
+    document.getElementById('success-msg').textContent = 'Ссылка отправлена! Проверьте почту.';
+  }
+  async function doLogin() {
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.classList.add('hidden');
+    if (!email || !password) { errEl.textContent = 'Введите email и пароль'; errEl.classList.remove('hidden'); return; }
+    const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
+    if (error) { errEl.textContent = error.message === 'Invalid login credentials' ? 'Неверный email или пароль' : error.message; errEl.classList.remove('hidden'); return; }
+    updateAuthUI(data.user);
+    closeAuthModal();
+  }
+  async function doRegister() {
+    const name = document.getElementById('reg-name').value.trim();
+    const lastname = document.getElementById('reg-lastname').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const errEl = document.getElementById('reg-error');
+    errEl.classList.add('hidden');
+    if (!email || !password) { errEl.textContent = 'Введите email и пароль'; errEl.classList.remove('hidden'); return; }
+    if (password.length < 6) { errEl.textContent = 'Пароль — минимум 6 символов'; errEl.classList.remove('hidden'); return; }
+    const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { name, lastname } } });
+    if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+    if (data.user) { await _supabase.from('profiles').upsert({ id: data.user.id, name, lastname, updated_at: new Date().toISOString() }); }
+    document.getElementById('form-register').classList.add('hidden');
+    const s = document.getElementById('form-success');
+    s.classList.remove('hidden');
+    document.getElementById('success-msg').textContent = 'Аккаунт создан! Добро пожаловать.';
+    updateAuthUI(data.user);
+    setTimeout(() => { closeAuthModal(); window.location.href = 'profile.html'; }, 1500);
+  }
+  initAuth();
+  _supabase.auth.onAuthStateChange((_event, session) => { updateAuthUI(session?.user || null); });
 </script>
 </body>
 </html>

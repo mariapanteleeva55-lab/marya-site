@@ -119,6 +119,13 @@
     .dark .dest-link{color:#A89880}
     .dark .dest-link:hover{color:#F5EDE4}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const _supabase = window.supabase.createClient(
+      'https://cizdsiqolarjcgmwbafp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+    );
+  </script>
 </head>
 <body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
 
@@ -198,6 +205,10 @@
           <span id="hero-tier-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-sand dark:bg-sand-dark/50 text-muted dark:text-muted-dark font-medium">Старт · 5%</span>
         </div>
       </div>
+      <button onclick="logout()" class="ml-auto flex items-center gap-1.5 text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" stroke-width="2" stroke-linecap="round"/></svg>
+        Выйти
+      </button>
     </div>
 
     <!-- Tab nav -->
@@ -595,8 +606,32 @@ function fmtDate(iso){
 }
 
 // ── DATA HELPERS ───────────────────────────────────────────────────
-function getUser(){ try{ return JSON.parse(localStorage.getItem('marya_user')) || {}; } catch{ return {}; } }
-function saveUser(u){ localStorage.setItem('marya_user', JSON.stringify(u)); }
+let _currentUser = null;
+
+async function getUser(){
+  if (_currentUser) return _currentUser;
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) return {};
+  const { data } = await _supabase.from('profiles').select('*').eq('id', session.user.id).single();
+  _currentUser = { ...data, email: session.user.email };
+  return _currentUser || {};
+}
+
+async function saveUser(u){
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) return;
+  await _supabase.from('profiles').upsert({
+    id:         session.user.id,
+    name:       u.name,
+    lastname:   u.lastname,
+    phone:      u.phone,
+    birthdate:  u.birthdate || null,
+    skin_type:  u.skinType,
+    address:    u.address,
+    updated_at: new Date().toISOString()
+  });
+  _currentUser = { ..._currentUser, ...u };
+}
 
 function getBonus(){ try{ return JSON.parse(localStorage.getItem('marya_bonus')) || {balance:0,totalSpent:0,history:[]}; } catch{ return {balance:0,totalSpent:0,history:[]}; } }
 function bonusTier(totalSpent){
@@ -627,17 +662,24 @@ function switchTab(name){
 }
 
 // ── HERO ───────────────────────────────────────────────────────────
-function renderHero(){
-  const u = getUser();
+async function renderHero(){
+  const u = await getUser();
   const fullName = [u.name, u.lastname].filter(Boolean).join(' ');
   if (fullName){
     document.getElementById('hero-name').textContent = fullName;
     const initials = [u.name, u.lastname].filter(Boolean).map(s => s[0].toUpperCase()).join('');
     document.getElementById('avatar').textContent = initials || 'М';
   }
-  const bonus = getBonus();
-  const tier  = bonusTier(bonus.totalSpent || 0);
-  document.getElementById('hero-bonus').textContent = bonus.balance;
+  // Бонусы из Supabase
+  const { data: { session } } = await _supabase.auth.getSession();
+  let bonusBalance = 0, totalSpent = 0;
+  if (session) {
+    const { data: bonusRow } = await _supabase.from('bonus_accounts').select('balance, total_spent').eq('user_id', session.user.id).single();
+    bonusBalance = bonusRow?.balance || 0;
+    totalSpent   = bonusRow?.total_spent || 0;
+  }
+  const tier = bonusTier(totalSpent);
+  document.getElementById('hero-bonus').textContent = bonusBalance;
   const badge = document.getElementById('hero-tier-badge');
   badge.textContent = tier.name + ' · ' + Math.round(tier.rate*100) + '%';
   badge.className = 'text-[11px] px-2 py-0.5 rounded-full font-medium ' +
@@ -645,61 +687,80 @@ function renderHero(){
      tier.name === 'Серебро' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400' :
                                'bg-sand dark:bg-sand-dark/50 text-muted dark:text-muted-dark');
 
-  // Wishlist badge
-  const wl = getWishlist();
-  const wbadge = document.getElementById('wishlist-count-badge');
-  if (wl.length > 0){ wbadge.textContent = wl.length; wbadge.classList.remove('hidden'); wbadge.classList.add('flex'); }
-  else { wbadge.classList.add('hidden'); }
+  // Wishlist badge из Supabase
+  if (session) {
+    const { count: wlCount } = await _supabase.from('wishlist').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+    const wbadge = document.getElementById('wishlist-count-badge');
+    if (wlCount > 0){ wbadge.textContent = wlCount; wbadge.classList.remove('hidden'); wbadge.classList.add('flex'); }
+    else { wbadge.classList.add('hidden'); }
 
-  // Orders badge
-  const orders = getOrders();
-  const obadge = document.getElementById('orders-count-badge');
-  if (orders.length > 0){ obadge.textContent = orders.length; obadge.classList.remove('hidden'); obadge.classList.add('flex'); }
-  else { obadge.classList.add('hidden'); }
-
-  // Cart badge
-  const cartItems = getCart();
-  const total = cartItems.reduce((s,i) => s + i.qty, 0);
-  const cb = document.getElementById('cart-count');
-  if (total > 0){ cb.textContent = total; cb.classList.remove('hidden'); cb.classList.add('flex'); }
-  else { cb.classList.add('hidden'); }
+    // Orders badge из Supabase
+    const { count: ordCount } = await _supabase.from('orders').select('*', { count: 'exact', head: true }).eq('user_id', session.user.id);
+    const obadge = document.getElementById('orders-count-badge');
+    if (ordCount > 0){ obadge.textContent = ordCount; obadge.classList.remove('hidden'); obadge.classList.add('flex'); }
+    else { obadge.classList.add('hidden'); }
+  }
 }
 
 // ── ПРОФИЛЬ ───────────────────────────────────────────────────────
-function renderProfileForm(){
-  const u = getUser();
-  if (u.name)      document.getElementById('p-name').value     = u.name;
-  if (u.lastname)  document.getElementById('p-lastname').value  = u.lastname;
-  if (u.email)     document.getElementById('p-email').value    = u.email;
-  if (u.phone)     document.getElementById('p-phone').value    = u.phone;
-  if (u.birthdate) document.getElementById('p-birth').value    = u.birthdate;
-  if (u.skinType)  document.getElementById('p-skintype').value = u.skinType;
-  if (u.address)   document.getElementById('p-address').value  = u.address;
+async function renderProfileForm(){
+  const u = await getUser();
+  if (u.name)      document.getElementById('p-name').value      = u.name;
+  if (u.lastname)  document.getElementById('p-lastname').value   = u.lastname;
+  if (u.email)     document.getElementById('p-email').value     = u.email;
+  if (u.phone)     document.getElementById('p-phone').value     = u.phone;
+  if (u.birthdate) document.getElementById('p-birth').value     = u.birthdate;
+  if (u.skin_type) document.getElementById('p-skintype').value  = u.skin_type;
+  if (u.address)   document.getElementById('p-address').value   = u.address;
 }
 
-function saveProfile(e){
+async function saveProfile(e){
   e.preventDefault();
   const u = {
     name:      document.getElementById('p-name').value.trim(),
     lastname:  document.getElementById('p-lastname').value.trim(),
-    email:     document.getElementById('p-email').value.trim(),
     phone:     document.getElementById('p-phone').value.trim(),
     birthdate: document.getElementById('p-birth').value,
     skinType:  document.getElementById('p-skintype').value,
     address:   document.getElementById('p-address').value.trim(),
-    updatedAt: new Date().toISOString(),
   };
-  if (!u.name && !u.email){ showToast('Укажите хотя бы имя или email'); return; }
-  saveUser(u);
-  renderHero();
+  if (!u.name){ showToast('Укажите имя'); return; }
+  await saveUser(u);
+  await renderHero();
   showToast('Данные сохранены');
 }
 
+// ── СПРАВОЧНИК ПРОДУКТОВ (для wishlist) ───────────────────────────
+const PRODUCTS_MAP = {
+  1:  { name:'Пенка для умывания с пребиотиками',       emoji:'🫧', price:890,  volume:'150 мл', color:'from-teal-50 to-cyan-100' },
+  2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', price:990,  volume:'250 мл', color:'from-sky-50 to-blue-100' },
+  3:  { name:'Мицеллярная вода',                         emoji:'🌊', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
+  4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', price:2490, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  5:  { name:'Крем дневной омолаживающий',               emoji:'☀️', price:1990, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  6:  { name:'Крем ночной омолаживающий',                emoji:'🌙', price:1990, volume:'50 мл',  color:'from-purple-50 to-violet-100' },
+  7:  { name:'Крем для век от отёков и тёмных кругов',  emoji:'👁️', price:1490, volume:'30 мл',  color:'from-rose-50 to-pink-100' },
+  8:  { name:'Маска очищающая с каолином',               emoji:'🪨', price:990,  volume:'100 мл', color:'from-stone-50 to-amber-100' },
+  9:  { name:'Маска мгновенной красоты',                 emoji:'✨', price:1190, volume:'100 мл', color:'from-yellow-50 to-amber-100' },
+  10: { name:'Скраб для лица и тела с фундуком',        emoji:'🌰', price:890,  volume:'200 мл', color:'from-amber-50 to-warm/30' },
+  11: { name:'Нежный солевой скраб',                    emoji:'🧂', price:790,  volume:'200 мл', color:'from-gray-50 to-slate-100' },
+  12: { name:'Энзимный скраб для тела',                 emoji:'🍍', price:990,  volume:'200 мл', color:'from-yellow-50 to-lime-100' },
+  13: { name:'Антицеллюлитный скраб',                   emoji:'🌶️', price:990,  volume:'200 мл', color:'from-red-50 to-orange-100' },
+  14: { name:'Крем SPF 15',                              emoji:'🌞', price:1490, volume:'50 мл',  color:'from-orange-50 to-amber-100' },
+  15: { name:'Антиоксидантная сыворотка',               emoji:'🍊', price:1890, volume:'30 мл',  color:'from-orange-50 to-red-100' },
+  16: { name:'Шампунь для волос',                       emoji:'🧴', price:890,  volume:'250 мл', color:'from-green-50 to-emerald-100' },
+  17: { name:'Кондиционер для волос',                   emoji:'💚', price:890,  volume:'250 мл', color:'from-teal-50 to-green-100' },
+};
+
 // ── ИЗБРАННОЕ ─────────────────────────────────────────────────────
-function renderWishlist(){
-  const list = getWishlist();
+async function renderWishlist(){
   const grid  = document.getElementById('wishlist-grid');
   const empty = document.getElementById('wishlist-empty');
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) { grid.innerHTML = ''; grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+
+  const { data: rows } = await _supabase.from('wishlist').select('product_id, added_at').eq('user_id', session.user.id).order('added_at', { ascending: false });
+  const list = (rows || []).map(r => ({ id: r.product_id, ...PRODUCTS_MAP[r.product_id] })).filter(p => p.name);
+
   if (!list.length){ grid.innerHTML = ''; grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
   grid.classList.remove('hidden'); empty.classList.add('hidden');
   grid.innerHTML = list.map(p => `
@@ -723,27 +784,22 @@ function renderWishlist(){
     </div>`).join('');
 }
 
-function removeFromWishlist(id){
-  let list = getWishlist();
-  list = list.filter(p => p.id !== id);
-  saveWishlist(list);
+async function removeFromWishlist(id){
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) return;
+  await _supabase.from('wishlist').delete().eq('user_id', session.user.id).eq('product_id', id);
   renderWishlist();
-  renderHero();
   showToast('Удалено из избранного');
 }
 
 function addWishlistToCart(id){
-  const item = getWishlist().find(p => p.id === id);
-  if (!item) return;
+  const p = PRODUCTS_MAP[id];
+  if (!p) return;
   const cart = getCart();
   const existing = cart.find(i => i.id === id);
   if (existing){ existing.qty = Math.min(10, existing.qty + 1); }
-  else {
-    const CAT_COLORS = {serum:'from-blue-50 to-blue-100',toner:'from-pink-50 to-rose-100',cream:'from-amber-50 to-orange-100',cleanser:'from-teal-50 to-cyan-100',mask:'from-purple-50 to-violet-100',spf:'from-orange-50 to-amber-100',hair:'from-green-50 to-emerald-100'};
-    cart.push({ id:item.id, name:item.name, emoji:item.emoji, volume:item.volume, price:item.price, oldPrice:item.oldPrice||null, color:CAT_COLORS[item.category]||'from-sand/30 to-warm/30', qty:1 });
-  }
+  else { cart.push({ id, name:p.name, emoji:p.emoji, volume:p.volume, price:p.price, oldPrice:null, color:p.color, qty:1 }); }
   saveCartLS(cart);
-  renderHero();
   showToast('Добавлено в корзину');
 }
 
@@ -759,22 +815,26 @@ function orderStatusBadge(status){
   return `<span class="text-[11px] font-semibold px-2.5 py-1 rounded-full ${cls}">${label}</span>`;
 }
 
-function renderOrders(){
-  const orders = getOrders();
-  const list   = document.getElementById('orders-list');
-  const empty  = document.getElementById('orders-empty');
-  if (!orders.length){ list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+async function renderOrders(){
+  const list  = document.getElementById('orders-list');
+  const empty = document.getElementById('orders-empty');
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) { list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+
+  const { data: orders } = await _supabase.from('orders').select('*, order_items(*)').eq('user_id', session.user.id).order('created_at', { ascending: false });
+  if (!orders || !orders.length){ list.innerHTML = ''; empty.classList.remove('hidden'); return; }
   empty.classList.add('hidden');
-  list.innerHTML = orders.map((o,i) => `
+  list.innerHTML = orders.map((o,i) => {
+    const items = o.order_items || [];
+    const firstEmoji = items[0] ? (PRODUCTS_MAP[items[0].product_id]?.emoji || '📦') : '📦';
+    return `
     <div class="rounded-2xl border border-sand dark:border-sand-dark/30 overflow-hidden bg-cream dark:bg-cream-dark">
       <button onclick="toggleOrder('order-${i}')" class="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-sand/20 dark:hover:bg-sand-dark/10 transition-colors">
         <div class="flex items-center gap-3 min-w-0">
-          <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-sand/50 dark:bg-sand-dark/30 flex items-center justify-center text-lg">
-            ${o.items?.[0]?.emoji || '📦'}
-          </div>
+          <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-sand/50 dark:bg-sand-dark/30 flex items-center justify-center text-lg">${firstEmoji}</div>
           <div class="min-w-0">
             <p class="text-sm font-semibold text-ink dark:text-ink-dark">${o.id}</p>
-            <p class="text-xs text-muted dark:text-muted-dark">${fmtDate(o.date)} · ${o.items?.length || 0} ${o.items?.length === 1 ? 'товар' : 'товара'}</p>
+            <p class="text-xs text-muted dark:text-muted-dark">${fmtDate(o.created_at)} · ${items.length} ${items.length === 1 ? 'товар' : 'товара'}</p>
           </div>
         </div>
         <div class="flex items-center gap-3 flex-shrink-0">
@@ -785,24 +845,26 @@ function renderOrders(){
       </button>
       <div class="order-items" id="order-${i}">
         <div class="px-4 pb-4 space-y-2 border-t border-sand dark:border-sand-dark/20 pt-3">
-          ${(o.items||[]).map(it => `
-            <div class="flex items-center gap-3">
-              <span class="text-xl w-7 text-center">${it.emoji}</span>
+          ${items.map(it => {
+            const p = PRODUCTS_MAP[it.product_id] || {};
+            return `<div class="flex items-center gap-3">
+              <span class="text-xl w-7 text-center">${p.emoji || '📦'}</span>
               <div class="flex-1 min-w-0">
                 <p class="text-xs font-medium text-ink dark:text-ink-dark truncate">${it.name}</p>
-                <p class="text-[11px] text-muted dark:text-muted-dark">${it.volume} · ${it.qty} шт.</p>
+                <p class="text-[11px] text-muted dark:text-muted-dark">${p.volume || ''} · ${it.qty} шт.</p>
               </div>
               <span class="text-xs font-semibold text-ink dark:text-ink-dark flex-shrink-0">${fmt(it.price * it.qty)}</span>
-            </div>`).join('')}
+            </div>`;
+          }).join('')}
           <div class="pt-2 border-t border-sand dark:border-sand-dark/20 flex items-center justify-between text-xs text-muted dark:text-muted-dark">
-            <span>Итого</span>
-            <span class="font-semibold text-ink dark:text-ink-dark">${fmt(o.total)}</span>
+            <span>Итого</span><span class="font-semibold text-ink dark:text-ink-dark">${fmt(o.total)}</span>
           </div>
-          ${o.bonusEarned > 0 ? `<p class="text-xs text-sage dark:text-sage-dark">◈ +${o.bonusEarned} баллов начислено</p>` : ''}
-          ${o.bonusUsed   > 0 ? `<p class="text-xs text-muted dark:text-muted-dark">◈ −${o.bonusUsed} баллов использовано</p>` : ''}
+          ${o.bonus_earned > 0 ? `<p class="text-xs text-sage dark:text-sage-dark">◈ +${o.bonus_earned} баллов начислено</p>` : ''}
+          ${o.bonus_used   > 0 ? `<p class="text-xs text-muted dark:text-muted-dark">◈ −${o.bonus_used} баллов использовано</p>` : ''}
         </div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleOrder(id){
@@ -817,10 +879,18 @@ function toggleOrder(id){
 // ── БОНУСЫ ────────────────────────────────────────────────────────
 function fmtRub(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
 
-function renderBonus(){
-  const bonus      = getBonus();
-  const spent      = bonus.totalSpent || 0;
-  const tier       = bonusTier(spent);
+async function renderBonus(){
+  const { data: { session } } = await _supabase.auth.getSession();
+  let bonusBalance = 0, totalSpent = 0, history = [];
+  if (session) {
+    const { data: bonusRow } = await _supabase.from('bonus_accounts').select('*').eq('user_id', session.user.id).single();
+    const { data: histRows } = await _supabase.from('bonus_history').select('*').eq('user_id', session.user.id).order('created_at', { ascending: false }).limit(20);
+    bonusBalance = bonusRow?.balance || 0;
+    totalSpent   = bonusRow?.total_spent || 0;
+    history      = histRows || [];
+  }
+  const bonus = { balance: bonusBalance, totalSpent, history };
+  const spent = totalSpent;
 
   document.getElementById('bonus-balance-big').textContent = bonus.balance;
   document.getElementById('tier-icon').textContent = tier.icon;
@@ -852,10 +922,9 @@ function renderBonus(){
   // History
   const histList  = document.getElementById('bonus-history-list');
   const histEmpty = document.getElementById('bonus-history-empty');
-  const history   = bonus.history || [];
   if (!history.length){ histList.innerHTML = ''; histEmpty.classList.remove('hidden'); return; }
   histEmpty.classList.add('hidden');
-  histList.innerHTML = history.slice(0, 20).map(h => `
+  histList.innerHTML = history.map(h => `
     <div class="flex items-center justify-between py-2.5 border-b border-sand/50 dark:border-sand-dark/20 last:border-0">
       <div class="flex items-center gap-2.5">
         <span class="w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${h.amount > 0 ? 'bg-sage/10 dark:bg-sage-dark/10' : 'bg-sand dark:bg-sand-dark/30'}">
@@ -863,7 +932,7 @@ function renderBonus(){
         </span>
         <div>
           <p class="text-xs font-medium text-ink dark:text-ink-dark">${h.reason}</p>
-          <p class="text-[11px] text-muted dark:text-muted-dark">${fmtDate(h.date)}</p>
+          <p class="text-[11px] text-muted dark:text-muted-dark">${fmtDate(h.created_at)}</p>
         </div>
       </div>
       <span class="text-sm font-bold flex-shrink-0 ${h.amount > 0 ? 'text-sage dark:text-sage-dark' : 'text-muted dark:text-muted-dark'}">
@@ -1103,10 +1172,26 @@ function switchZone(zone){
 }
 switchZone('face');
 
+// ── AUTH CHECK + LOGOUT ────────────────────────────────────────────
+async function initProfile(){
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) {
+    // Не авторизован — возвращаем на главную
+    window.location.href = 'index.html';
+    return;
+  }
+  await renderHero();
+  await renderProfileForm();
+  initFromUrl();
+}
+
+async function logout(){
+  await _supabase.auth.signOut();
+  window.location.href = 'index.html';
+}
+
 // ── INIT ──────────────────────────────────────────────────────────
-renderHero();
-renderProfileForm();
-initFromUrl();
+initProfile();
 
 </script>
 </body>
