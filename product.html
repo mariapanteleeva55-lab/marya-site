@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title id="page-title">Марья — Уходовая косметика</title>
   <meta name="description" id="page-desc" content="Натуральная косметика бренда Марья" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" id="page-canonical" href="https://mariacosmetics.ru/product.html" />
+  <meta property="og:type" content="product" />
+  <meta property="og:site_name" content="Марья" />
+  <meta property="og:title" id="og-title" content="Марья — Уходовая косметика" />
+  <meta property="og:description" id="og-desc" content="Натуральная косметика бренда Марья" />
+  <meta property="og:url" id="og-url" content="https://mariacosmetics.ru/product.html" />
+  <meta property="og:image" content="https://mariacosmetics.ru/og.jpg" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" id="tw-title" content="Марья — Уходовая косметика" />
+  <meta name="twitter:image" content="https://mariacosmetics.ru/og.jpg" />
+  <script type="application/ld+json" id="product-jsonld"></script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -898,9 +911,34 @@
       const cat = CAT[p.category] || CAT.serum;
       currentProduct = p;
 
-      // Meta
+      // Meta + SEO
+      const pageUrl = `https://mariacosmetics.ru/product.html?id=${p.id}`;
       document.getElementById('page-title').textContent = p.name + ' — Марья';
       document.getElementById('page-desc').setAttribute('content', p.desc);
+      document.getElementById('page-canonical').setAttribute('href', pageUrl);
+      document.getElementById('og-title').setAttribute('content', p.name + ' — Марья');
+      document.getElementById('og-desc').setAttribute('content', p.desc);
+      document.getElementById('og-url').setAttribute('content', pageUrl);
+      document.getElementById('tw-title').setAttribute('content', p.name + ' — Марья');
+      document.getElementById('product-jsonld').textContent = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: p.name,
+        description: p.desc,
+        brand: { '@type': 'Brand', name: 'Марья' },
+        offers: {
+          '@type': 'Offer',
+          price: p.price,
+          priceCurrency: 'RUB',
+          availability: 'https://schema.org/InStock',
+          url: pageUrl
+        },
+        aggregateRating: p.reviews > 0 ? {
+          '@type': 'AggregateRating',
+          ratingValue: p.rating,
+          reviewCount: p.reviews
+        } : undefined
+      });
 
       // Breadcrumb
       document.getElementById('breadcrumb-category-link').textContent = cat.labelPlural;

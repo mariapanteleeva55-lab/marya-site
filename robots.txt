@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /profile.html
+Disallow: /cart.html
+Disallow: /admin-reviews.html
+
+Sitemap: https://mariacosmetics.ru/sitemap.xml
