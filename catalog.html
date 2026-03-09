@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Каталог — Марья</title>
+  <meta name="description" content="Каталог средств по уходу за кожей. Фильтры по типу кожи, проблеме, ингредиентам." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:   { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:    { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:    { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent:  { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:    { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:     { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:   { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'fade-up':   'fadeUp 0.5s ease-out forwards',
+            'slide-in':  'slideIn 0.3s ease-out forwards',
+            'pulse-soft':'pulseSoft 2s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeUp:    { from: { opacity:'0', transform:'translateY(16px)' }, to: { opacity:'1', transform:'translateY(0)' } },
+            slideIn:   { from: { opacity:'0', transform:'translateX(-12px)' }, to: { opacity:'1', transform:'translateX(0)' } },
+            pulseSoft: { '0%,100%': { transform:'scale(1)' }, '50%': { transform:'scale(1.03)' } },
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, sans-serif; }
+    *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 3px; }
+
+    /* Sidebar scrollbar */
+    .sidebar-scroll::-webkit-scrollbar { width: 3px; }
+
+    /* Night mode toggle */
+    .dark .toggle-thumb { transform: translateX(20px); }
+    .toggle-thumb { transition: transform 0.3s ease; }
+
+    /* Product card */
+    .product-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(44,32,24,0.10); }
+    .dark .product-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+    .product-card .product-img-wrap { overflow: hidden; }
+    .product-card .product-img { transition: transform 0.4s ease; }
+    .product-card:hover .product-img { transform: scale(1.06); }
+
+    /* Wishlist button */
+    .btn-wish { transition: color 0.2s, transform 0.2s; }
+    .btn-wish:hover { transform: scale(1.2); }
+    .btn-wish.active { color: #D4956A; }
+
+    /* Filter checkbox */
+    .filter-checkbox { accent-color: #D4956A; }
+
+    /* Range input */
+    input[type="range"] {
+      -webkit-appearance: none; width: 100%; height: 3px;
+      background: #E8DDD0; border-radius: 2px; outline: none;
+    }
+    .dark input[type="range"] { background: #2A2420; }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 16px; height: 16px;
+      background: #D4956A; border-radius: 50%; cursor: pointer;
+      box-shadow: 0 1px 4px rgba(212,149,106,0.4);
+    }
+
+    /* Filter drawer */
+    #filter-drawer {
+      transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+      transform: translateX(-100%);
+    }
+    #filter-drawer.open { transform: translateX(0); }
+    #drawer-overlay {
+      transition: opacity 0.35s ease;
+      opacity: 0; pointer-events: none;
+    }
+    #drawer-overlay.open { opacity: 1; pointer-events: auto; }
+
+    /* Sort dropdown */
+    #sort-dropdown { transition: opacity 0.15s ease, transform 0.15s ease; }
+    #sort-dropdown.hidden { opacity: 0; transform: translateY(-6px); pointer-events: none; }
+    #sort-dropdown:not(.hidden) { opacity: 1; transform: translateY(0); }
+
+    /* Active filter chip */
+    .filter-chip { animation: fadeUp 0.2s ease-out forwards; }
+
+    /* Card appear */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .card-appear { animation: fadeUp 0.4s ease-out forwards; opacity: 0; }
+
+    /* Empty state */
+    .empty-state { animation: fadeUp 0.5s ease-out forwards; }
+
+    /* Skeleton */
+    .skeleton { background: linear-gradient(90deg, #E8DDD0 25%, #F0E4D4 50%, #E8DDD0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .dark .skeleton { background: linear-gradient(90deg, #2A2420 25%, #33291f 50%, #2A2420 75%); background-size: 200% 100%; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Progress bar */
+    #progress-bar { position: fixed; top: 0; left: 0; height: 2px; z-index: 1000; background: linear-gradient(90deg, #D4956A, #C4A882); transition: width 0.1s linear; }
+
+    /* Мега-меню каталога */
+    .catalog-mega { opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease; background-color: #FFFFFF; }
+    .dark .catalog-mega { background-color: #1D1510; }
+    .catalog-wrap:hover .catalog-mega { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .catalog-bridge { position: absolute; top: 100%; left: -20px; right: -20px; height: 12px; }
+    .zone-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: #7A6A5A; cursor: pointer; background: none; border: none; text-align: left; text-decoration: none; transition: background 0.12s, color 0.12s; }
+    .zone-btn:hover { background: rgba(232,221,208,0.6); color: #2C2018; }
+    .zone-btn.zone-active { background: rgba(232,221,208,0.8); color: #2C2018; }
+    .dark .zone-btn { color: #A89880; }
+    .dark .zone-btn:hover, .dark .zone-btn.zone-active { background: rgba(42,36,32,0.7); color: #F5EDE4; }
+    .cat-link { display: block; padding: 6px 0; font-size: 14px; color: #7A6A5A; text-decoration: none; transition: color 0.12s; }
+    .cat-link:hover { color: #2C2018; }
+    .cat-link.cat-highlight { color: #D4956A; font-weight: 500; }
+    .dark .cat-link { color: #A89880; }
+    .dark .cat-link:hover { color: #F5EDE4; }
+    .dark .cat-link.cat-highlight { color: #E8A87A; }
+    .dest-link { display: block; padding: 5px 0; font-size: 13px; color: #7A6A5A; text-decoration: none; transition: color 0.12s; }
+    .dest-link:hover { color: #2C2018; }
+    .dark .dest-link { color: #A89880; }
+    .dark .dest-link:hover { color: #F5EDE4; }
+
+    /* Sticky sidebar */
+    .sidebar-sticky { position: sticky; top: 76px; max-height: calc(100vh - 92px); overflow-y: auto; }
+
+    /* Badge "Вам подходит" */
+    .badge-match { background: linear-gradient(135deg, rgba(139,168,136,0.15), rgba(139,168,136,0.05)); }
+    .dark .badge-match { background: linear-gradient(135deg, rgba(107,138,104,0.2), rgba(107,138,104,0.05)); }
+
+    /* View toggle */
+    .view-btn.active { background: #D4956A; color: white; }
+    .dark .view-btn.active { background: #E8A87A; color: #1A1612; }
+
+    /* List view card */
+    .list-view .product-card { display: flex; flex-direction: row; }
+    .list-view .product-card .product-img-wrap { width: 160px; flex-shrink: 0; }
+    .list-view .product-card .card-body { flex: 1; }
+    @media (max-width: 640px) {
+      .list-view .product-card { flex-direction: column; }
+      .list-view .product-card .product-img-wrap { width: 100%; }
+    }
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased">
+
+<!-- Прогресс-бар скролла -->
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- ═══════════════════════════════ HEADER ═══════════════════════════════ -->
+<header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+
+    <a href="index.html" class="font-serif text-2xl font-normal tracking-wide text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+
+    <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+      <div class="catalog-wrap relative">
+        <a href="catalog.html" class="text-accent font-semibold flex items-center gap-1">
+          Каталог
+          <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <div class="catalog-bridge"></div>
+        <div class="catalog-mega absolute left-0 top-[calc(100%+12px)] w-[820px] border border-sand/60 dark:border-sand-dark/30 rounded-2xl shadow-2xl shadow-ink/15 dark:shadow-black/50 overflow-hidden z-50">
+          <div class="absolute -top-[6px] left-10 w-3 h-3 bg-white dark:bg-[#1D1510] border-l border-t border-sand/60 dark:border-sand-dark/30 rotate-45"></div>
+          <div class="flex" style="min-height:340px">
+            <div class="w-48 flex-shrink-0 bg-[#F0E8DC] dark:bg-[#231A12] border-r border-sand/40 dark:border-sand-dark/20 py-5 px-3 flex flex-col gap-0.5">
+              <button class="zone-btn zone-active" data-zone="face" onmouseenter="switchZone('face')">ЛИЦО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="body" onmouseenter="switchZone('body')">ТЕЛО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hands" onmouseenter="switchZone('hands')">РУКИ И НОГИ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hair" onmouseenter="switchZone('hair')">ВОЛОСЫ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <div class="my-2 border-t border-sand/40 dark:border-sand-dark/20"></div>
+              <a href="catalog.html?zone=men" class="zone-btn">КОСМЕТИКА ДЛЯ МУЖЧИН</a>
+              <a href="catalog.html?zone=sets" class="zone-btn">НАБОРЫ</a>
+              <a href="catalog.html?zone=gift" class="zone-btn">ПОДАРОЧНЫЕ КАРТЫ</a>
+            </div>
+            <div class="w-[300px] flex-shrink-0 px-6 py-5 border-r border-sand/30 dark:border-sand-dark/20">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Категории</p>
+              <div id="mega-cat-list"></div>
+            </div>
+            <div class="flex-1 px-6 py-5">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Назначения</p>
+              <div id="mega-dest-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="index.html#about"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="index.html#quiz"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+      <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <!-- Поиск -->
+      <button onclick="toggleSearch()" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Поиск">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <!-- Профиль -->
+      <button onclick="window.location.href='profile.html'" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors hidden sm:flex" aria-label="Профиль">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke-width="2"/></svg>
+      </button>
+      <!-- Корзина -->
+      <a href="cart.html" id="cart-btn" class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
+        <span id="cart-count" class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+      </a>
+      <!-- Night mode -->
+      <button onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium" aria-label="Ночной режим">
+        <span class="block dark:hidden">☀️</span>
+        <span class="hidden dark:block">🌙</span>
+        <span class="hidden sm:block">Ночной</span>
+      </button>
+      <!-- Mobile: filter button -->
+      <button onclick="openDrawer()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Фильтры">
+        <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 6h18M7 12h10M10 18h4" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- Search bar (overlay) -->
+<div id="search-bar" class="hidden fixed top-[60px] left-0 right-0 z-40 bg-cream/95 dark:bg-cream-dark/95 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 px-4 py-3">
+  <div class="max-w-2xl mx-auto relative">
+    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+    <input id="search-input" type="text" placeholder="Поиск: гиалуронка, ретинол, крем для лица..." class="w-full pl-10 pr-10 py-2.5 bg-sand/40 dark:bg-sand-dark/20 border border-sand dark:border-sand-dark/40 rounded-full text-sm text-ink dark:text-ink-dark placeholder:text-muted dark:placeholder:text-muted-dark outline-none focus:border-warm/60 dark:focus:border-warm-dark/40" oninput="handleSearch(this.value)">
+    <button onclick="toggleSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-ink dark:hover:text-ink-dark">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════ MOBILE FILTER DRAWER ═══════════════════════════════ -->
+<div id="drawer-overlay" class="fixed inset-0 bg-ink/40 dark:bg-black/60 z-50 lg:hidden" onclick="closeDrawer()"></div>
+<aside id="filter-drawer" class="fixed left-0 top-0 bottom-0 w-[300px] bg-cream dark:bg-cream-dark z-50 lg:hidden overflow-y-auto p-6 shadow-2xl">
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="font-semibold text-lg text-ink dark:text-ink-dark">Фильтры</h2>
+    <button onclick="closeDrawer()" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
+      <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  </div>
+  <div id="drawer-filter-content"><!-- Filled by JS --></div>
+  <div class="mt-6 flex gap-3">
+    <button onclick="resetFilters(); closeDrawer();" class="flex-1 py-2.5 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-muted dark:text-muted-dark hover:border-warm/50 transition-colors">Сбросить</button>
+    <button onclick="closeDrawer()" class="flex-1 py-2.5 bg-accent hover:bg-accent/90 text-white rounded-full text-sm font-semibold transition-colors">Применить</button>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════ MAIN ═══════════════════════════════ -->
+<main class="pt-[60px]">
+
+  <!-- Breadcrumb + Title -->
+  <div class="bg-sand/20 dark:bg-sand-dark/10 border-b border-sand/40 dark:border-sand-dark/20 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-xs text-muted dark:text-muted-dark">
+          <a href="index.html" class="hover:text-accent transition-colors">Главная</a>
+          <span>/</span>
+          <span class="text-ink dark:text-ink-dark font-medium">Каталог</span>
+        </nav>
+        <!-- AI-рекомендации prompt -->
+        <a href="index.html#quiz" class="inline-flex items-center gap-2 px-4 py-2 bg-sage/10 dark:bg-sage-dark/10 border border-sage/20 dark:border-sage-dark/20 rounded-full text-xs text-sage dark:text-sage-dark font-medium hover:bg-sage/20 transition-colors">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Подобрать под мою кожу
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+    <div class="flex gap-6">
+
+      <!-- ═══ SIDEBAR (desktop) ═══ -->
+      <aside class="hidden lg:block w-[220px] xl:w-[240px] flex-shrink-0">
+        <div class="sidebar-sticky sidebar-scroll pr-2 space-y-6">
+
+          <!-- Reset -->
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-sm text-ink dark:text-ink-dark">Фильтры</h2>
+            <button onclick="resetFilters()" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors font-medium">Сбросить все</button>
+          </div>
+
+          <!-- Категория -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Категория
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="all" class="filter-checkbox w-3.5 h-3.5" checked onchange="applyFilters()">
+                <span class="text-sm text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Все категории</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="serum" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Сыворотки</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">2</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="cream" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Кремы</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">3</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="cleanser" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Очищение и скрабы</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">4</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="toner" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Тоники</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">1</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="spf" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">SPF-защита</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">1</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="mask" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Маски</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">2</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="hair" class="filter-checkbox w-3.5 h-3.5" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Волосы</span>
+                <span class="ml-auto text-xs text-muted dark:text-muted-dark">2</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Тип кожи -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Тип кожи
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="checkbox" name="skintype" value="normal" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Нормальная</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="checkbox" name="skintype" value="dry" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Сухая</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="checkbox" name="skintype" value="oily" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Жирная</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="checkbox" name="skintype" value="combo" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Комбинированная</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="checkbox" name="skintype" value="sensitive" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+                <span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Чувствительная</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Проблема -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Проблема
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="acne" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Акне и высыпания</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="dryness" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Сухость и шелушение</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="dullness" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Тусклый цвет лица</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="pores" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Расширенные поры</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="aging" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Морщины и возраст</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="pigmentation" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Пигментация</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="concern" value="sensitivity" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">Покраснения</span></label>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Время применения -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Время применения
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="time" value="morning" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">☀️ Утро</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="time" value="evening" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🌙 Вечер</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="time" value="anytime" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🕐 Весь день</span></label>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Ингредиенты -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Ключевые ингредиенты
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-2">
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="hyaluronic" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">💧 Гиалуронка</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="niacinamide" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🌿 Ниацинамид</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="retinol" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🌙 Ретинол</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="vitaminc" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">✨ Витамин С</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="aha" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">⚗️ AHA/BHA кислоты</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="peptides" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🔬 Пептиды</span></label>
+              <label class="flex items-center gap-2.5 cursor-pointer group"><input type="checkbox" name="ingredient" value="ceramides" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()"><span class="text-sm text-muted dark:text-muted-dark group-hover:text-ink dark:group-hover:text-ink-dark transition-colors">🛡️ Церамиды</span></label>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Цена -->
+          <div class="filter-group">
+            <button class="filter-group-toggle flex items-center justify-between w-full text-sm font-semibold text-ink dark:text-ink-dark mb-3" onclick="toggleGroup(this)">
+              Цена
+              <svg class="chevron w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <div class="group-content space-y-4">
+              <div class="flex items-center justify-between text-xs text-muted dark:text-muted-dark">
+                <span id="price-from-label">490 ₽</span>
+                <span id="price-to-label">3 500 ₽</span>
+              </div>
+              <div class="space-y-2">
+                <input type="range" id="price-min" min="490" max="3500" value="490" step="50" oninput="updatePriceRange()">
+                <input type="range" id="price-max" min="490" max="3500" value="3500" step="50" oninput="updatePriceRange()">
+              </div>
+              <!-- Быстрые кнопки -->
+              <div class="grid grid-cols-2 gap-1.5">
+                <button onclick="setPriceRange(490,1000)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">До 1 000 ₽</button>
+                <button onclick="setPriceRange(1000,2000)" class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">1–2 000 ₽</button>
+                <button onclick="setPriceRange(2000,3500)" class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">2–3 500 ₽</button>
+                <button onclick="setPriceRange(490,3500)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">Любая</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-sand/40 dark:border-sand-dark/20"></div>
+
+          <!-- Только акции -->
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input type="checkbox" id="filter-sale" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+            <span class="text-sm font-medium text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Только со скидкой</span>
+          </label>
+          <!-- Новинки -->
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input type="checkbox" id="filter-new" class="filter-checkbox w-3.5 h-3.5 rounded" onchange="applyFilters()">
+            <span class="text-sm font-medium text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Только новинки</span>
+          </label>
+
+        </div>
+      </aside>
+
+      <!-- ═══ PRODUCT AREA ═══ -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Toolbar -->
+        <div class="flex flex-wrap items-center gap-3 mb-5">
+          <!-- Results count -->
+          <p class="text-sm text-muted dark:text-muted-dark">
+            <span id="results-count" class="font-semibold text-ink dark:text-ink-dark">17</span> товаров
+          </p>
+
+          <!-- Active filters chips -->
+          <div id="active-chips" class="flex flex-wrap gap-2 flex-1"></div>
+
+          <!-- Sort -->
+          <div class="relative ml-auto">
+            <button onclick="toggleSort()" class="flex items-center gap-2 px-3 py-2 border border-sand dark:border-sand-dark/40 rounded-full text-xs font-medium text-ink dark:text-ink-dark hover:border-warm/50 transition-colors bg-cream dark:bg-cream-dark">
+              <svg class="w-3.5 h-3.5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 6h18M6 12h12M9 18h6" stroke-width="2" stroke-linecap="round"/></svg>
+              <span id="sort-label">Популярные</span>
+              <svg class="w-3 h-3 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+            <div id="sort-dropdown" class="hidden absolute right-0 top-full mt-1 w-44 bg-cream dark:bg-cream-dark border border-sand dark:border-sand-dark/40 rounded-xl shadow-lg overflow-hidden z-20">
+              <button onclick="setSort('popular', 'Популярные')"  class="sort-opt block w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/40 dark:hover:bg-sand-dark/20 transition-colors">Популярные</button>
+              <button onclick="setSort('new', 'Новинки')"         class="sort-opt block w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/40 dark:hover:bg-sand-dark/20 transition-colors">Новинки</button>
+              <button onclick="setSort('rating', 'По рейтингу')"  class="sort-opt block w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/40 dark:hover:bg-sand-dark/20 transition-colors">По рейтингу</button>
+              <button onclick="setSort('price-asc', 'Дешевле')"   class="sort-opt block w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/40 dark:hover:bg-sand-dark/20 transition-colors">Дешевле</button>
+              <button onclick="setSort('price-desc', 'Дороже')"   class="sort-opt block w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/40 dark:hover:bg-sand-dark/20 transition-colors">Дороже</button>
+            </div>
+          </div>
+
+          <!-- View toggle -->
+          <div class="flex items-center gap-1 border border-sand dark:border-sand-dark/40 rounded-full p-0.5">
+            <button id="grid-btn" onclick="setView('grid')" class="view-btn active p-1.5 rounded-full transition-colors" aria-label="Сетка">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>
+            </button>
+            <button id="list-btn" onclick="setView('list')" class="view-btn p-1.5 rounded-full transition-colors text-muted dark:text-muted-dark" aria-label="Список">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Product grid -->
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden empty-state py-20 text-center">
+          <div class="text-5xl mb-4">🔍</div>
+          <h3 class="text-xl font-serif text-ink dark:text-ink-dark mb-2">Ничего не найдено</h3>
+          <p class="text-muted dark:text-muted-dark text-sm mb-6">Попробуйте изменить фильтры или сбросить их</p>
+          <button onclick="resetFilters()" class="px-6 py-2.5 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-full transition-colors">Сбросить фильтры</button>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="mt-10 flex items-center justify-center gap-2"></div>
+
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer class="mt-16 border-t border-sand/40 dark:border-sand-dark/20 bg-sand/20 dark:bg-sand-dark/10 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <a href="index.html" class="font-serif text-xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+      <p class="text-xs text-muted dark:text-muted-dark text-center">
+        © 2026 Марья · D2C уход за кожей · Честно и по науке
+      </p>
+      <div class="flex items-center gap-4 text-xs text-muted dark:text-muted-dark">
+        <a href="#" class="hover:text-accent transition-colors">Доставка</a>
+        <a href="#" class="hover:text-accent transition-colors">Возврат</a>
+        <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════ JS ═══════════════════════════════ -->
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const PRODUCTS = [
+  {
+    id: 1, name: 'Пенка для умывания с пребиотиками', brand: 'Марья',
+    price: 890, oldPrice: null, rating: 4.8, reviews: 143,
+    zone: 'face', category: 'cleanser', categories: ['cleanser'],
+    skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
+    time: ['morning','evening'], ingredient: [],
+    badge: 'Хит', isNew: false, isSale: false, volume: '150 мл',
+    emoji: '🫧', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
+    desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.'
+  },
+  {
+    id: 2, name: 'Тоник увлажняющий с аминокислотами', brand: 'Марья',
+    price: 990, oldPrice: null, rating: 4.7, reviews: 98,
+    zone: 'face', category: 'toner', categories: ['toner'],
+    skintype: ['normal','dry','oily','combo','sensitive'], concern: ['moisture','aging'],
+    time: ['morning','evening'], ingredient: ['niacinamide'],
+    badge: null, isNew: false, isSale: false, volume: '250 мл',
+    emoji: '💦', color: 'from-sky-50 to-blue-100', darkColor: 'from-sky-950/20 to-blue-900/10',
+    desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу, восстанавливает баланс после умывания. Аминокислоты укрепляют кожный барьер и удерживают влагу, гирудин улучшает микроциркуляцию и придаёт здоровое сияние. Подходит для ежедневного применения утром и вечером.'
+  },
+  {
+    id: 3, name: 'Мицеллярная вода', brand: 'Марья',
+    price: 790, oldPrice: null, rating: 4.7, reviews: 212,
+    zone: 'face', category: 'cleanser', categories: ['cleanser','makeup'],
+    skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
+    time: ['morning','evening','anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '250 мл',
+    emoji: '🌊', color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-950/20 to-blue-900/10',
+    desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не требует смывания водой. Мицеллы захватывают и растворяют частицы макияжа и загрязнения, не нарушая защитный барьер кожи. Пантенол и экстракт алоэ успокаивают и увлажняют, а экстракт пиявки улучшает цвет лица.'
+  },
+  {
+    id: 4, name: 'Антивозрастная сыворотка с пептидами', brand: 'Марья',
+    price: 2490, oldPrice: null, rating: 4.9, reviews: 187,
+    zone: 'face', category: 'serum', categories: ['serum'],
+    skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
+    time: ['morning','evening'], ingredient: ['peptides','hyaluronic'],
+    badge: 'Хит', isNew: false, isSale: false, volume: '50 мл',
+    emoji: '🧬', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин и повышает упругость кожи. Пептидный комплекс в сочетании с гирудином запускает процессы клеточного обновления и улучшает микроциркуляцию, а гиалуроновая кислота обеспечивает глубокое и длительное увлажнение. Результат заметен уже через 2–4 недели применения.'
+  },
+  {
+    id: 5, name: 'Крем дневной омолаживающий', brand: 'Марья',
+    price: 1990, oldPrice: null, rating: 4.8, reviews: 134,
+    zone: 'face', category: 'cream', categories: ['cream'],
+    skintype: ['normal','dry'], concern: ['aging'],
+    time: ['morning'], ingredient: ['retinol'],
+    badge: null, isNew: false, isSale: false, volume: '50 мл',
+    emoji: '☀️', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и насыщает клетки кожи кислородом и питательными веществами. DMAE подтягивает овал лица, сквалан и масло ши глубоко питают и смягчают, предотвращая потерю влаги. Регулярное применение защищает от преждевременного старения и сохраняет молодость кожи.'
+  },
+  {
+    id: 6, name: 'Крем ночной омолаживающий', brand: 'Марья',
+    price: 1990, oldPrice: null, rating: 4.8, reviews: 119,
+    zone: 'face', category: 'cream', categories: ['cream'],
+    skintype: ['normal','dry'], concern: ['aging'],
+    time: ['evening'], ingredient: ['ceramides','niacinamide','hyaluronic','retinol','aha'],
+    badge: null, isNew: false, isSale: false, volume: '50 мл',
+    emoji: '🌙', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
+    desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и активирует ночные процессы восстановления кожи. Церамиды укрепляют защитный барьер, DMAE подтягивает контуры лица, ниацинамид выравнивает тон, а гиалуроновая кислота обеспечивает интенсивное увлажнение в ночное время. Утром кожа выглядит отдохнувшей, гладкой и сияющей.'
+  },
+  {
+    id: 7, name: 'Крем для век от отёков и тёмных кругов', brand: 'Марья',
+    price: 1490, oldPrice: null, rating: 4.7, reviews: 76,
+    zone: 'face', category: 'eye', categories: ['eye'], skintype: ['normal','dry','sensitive'], concern: ['aging'],
+    time: ['morning','evening'], ingredient: ['hyaluronic','peptides'],
+    badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
+    emoji: '👁️', color: 'from-rose-50 to-pink-100', darkColor: 'from-rose-950/20 to-pink-900/10',
+    desc: 'Крем для век с экстрактом пиявки активирует микроциркуляцию и уменьшает застойные явления в зоне глаз. Дипептид-2 снижает выраженность отёков, гирудин рассасывает «синяки» под глазами, а гиалуроновая кислота и пептиды разглаживают мимические морщины. Мягкая текстура крема деликатно воздействует на чувствительную кожу вокруг глаз.'
+  },
+  {
+    id: 8, name: 'Маска очищающая с каолином', brand: 'Марья',
+    price: 990, oldPrice: null, rating: 4.6, reviews: 88,
+    zone: 'face', category: 'mask', categories: ['mask','cleanser'],
+    skintype: ['oily','combo'], concern: ['cleansing','moisture','aging'],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '100 мл',
+    emoji: '🪨', color: 'from-stone-50 to-amber-100', darkColor: 'from-stone-950/20 to-stone-900/10',
+    desc: 'Очищающая маска с каолином мягко удаляет загрязнения, избыток кожного сала и омертвевшие клетки, сужает поры и выравнивает текстуру кожи. Экстракт алоэ вера и зелёного чая успокаивают и снимают воспаление, а цинк регулирует работу сальных желёз. Подходит для жирной и комбинированной кожи, склонной к расширенным порам.'
+  },
+  {
+    id: 9, name: 'Маска мгновенной красоты', brand: 'Марья',
+    price: 1190, oldPrice: null, rating: 4.8, reviews: 104,
+    zone: 'face', category: 'mask', categories: ['mask'],
+    skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
+    time: ['anytime'], ingredient: ['hyaluronic','niacinamide','aha'],
+    badge: null, isNew: false, isSale: false, volume: '100 мл',
+    emoji: '✨', color: 'from-yellow-50 to-amber-100', darkColor: 'from-yellow-950/20 to-amber-900/10',
+    desc: 'Маска мгновенной красоты — экспресс-уход для быстрого восстановления усталой и тусклой кожи. Масла авокадо, ши и виноградной косточки глубоко питают и смягчают, гиалуроновая кислота интенсивно увлажняет, а ниацинамид выравнивает тон и придаёт сияние. Уже после первого применения кожа выглядит ухоженной, гладкой и отдохнувшей.'
+  },
+  {
+    id: 10, name: 'Скраб для лица и тела с фундуком', brand: 'Марья',
+    price: 890, oldPrice: null, rating: 4.6, reviews: 67,
+    zone: 'face', category: 'scrub', categories: ['scrub','cleanser'],
+    skintype: ['normal','oily','combo'], concern: ['cleansing'],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '200 мл',
+    emoji: '🌰', color: 'from-amber-50 to-warm/30', darkColor: 'from-amber-950/20 to-warm-dark/10',
+    desc: 'Скраб для лица и тела с порошком скорлупы фундука мягко отшелушивает ороговевшие клетки, выравнивает микрорельеф и улучшает цвет кожи. Кокосовое масло питает и смягчает, экстракт пиявки улучшает микроциркуляцию, а натуральные растительные масла оставляют кожу гладкой и бархатистой. Подходит для регулярного применения на лице и теле.'
+  },
+  {
+    id: 11, name: 'Нежный солевой скраб', brand: 'Марья',
+    price: 790, oldPrice: null, rating: 4.5, reviews: 54,
+    zone: 'body', category: 'scrub', categories: ['scrub'],
+    skintype: ['normal','oily','combo'], concern: ['modelling'],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '200 мл',
+    emoji: '🧂', color: 'from-gray-50 to-slate-100', darkColor: 'from-gray-950/20 to-slate-900/10',
+    desc: 'Нежный солевой скраб с кремовой текстурой бережно отшелушивает ороговевшие клетки и полирует кожу, не вызывая раздражения. Мелкие кристаллы морской соли деликатно шлифуют поверхность, кокосовое масло питает и смягчает, а экстракт зелёного чая тонизирует и защищает от свободных радикалов. Кожа после применения гладкая, шелковистая и сияющая.'
+  },
+  {
+    id: 12, name: 'Энзимный скраб для тела', brand: 'Марья',
+    price: 990, oldPrice: null, rating: 4.7, reviews: 61,
+    zone: 'body', category: 'scrub', categories: ['scrub'],
+    skintype: ['normal','oily','combo'], concern: ['anticellulite'],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '200 мл',
+    emoji: '🍍', color: 'from-yellow-50 to-lime-100', darkColor: 'from-yellow-950/20 to-lime-900/10',
+    desc: 'Энзимный скраб для тела — интенсивный, но комфортный уход для обновления и выравнивания кожи. Бромелайн из ананаса и папаин из папайи мягко растворяют ороговевшие клетки на биохимическом уровне, без механического трения. Результат — гладкая, обновлённая и сияющая кожа уже с первого применения, без ощущения стянутости или дискомфорта.'
+  },
+  {
+    id: 13, name: 'Антицеллюлитный скраб', brand: 'Марья',
+    price: 990, oldPrice: null, rating: 4.6, reviews: 79,
+    zone: 'body', category: 'scrub', categories: ['scrub'],
+    skintype: ['normal','oily','combo'], concern: ['anticellulite'],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '200 мл',
+    emoji: '🌶️', color: 'from-red-50 to-orange-100', darkColor: 'from-red-950/20 to-orange-900/10',
+    desc: 'Антицеллюлитный солевой скраб направленно работает с проявлениями «апельсиновой корки», улучшает микроциркуляцию и лимфоотток. Экстракт красного перца разогревает кожу и стимулирует расщепление жировых отложений, гирудин активирует микроциркуляцию, а морская соль отшелушивает и минерализует. Регулярное применение делает кожу более упругой и подтянутой.'
+  },
+  {
+    id: 14, name: 'Крем SPF 15', brand: 'Марья',
+    price: 1490, oldPrice: null, rating: 4.7, reviews: 93,
+    zone: 'face', category: 'spf', categories: ['spf'],
+    skintype: ['normal','dry','oily','combo','sensitive'], concern: ['aging'],
+    time: ['morning'], ingredient: ['retinol'],
+    badge: null, isNew: false, isSale: false, volume: '50 мл',
+    emoji: '🌞', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    desc: 'Лёгкий крем SPF 15 с экстрактом пиявки для ежедневной защиты от УФ-излучения и преждевременного старения. Сквалан и витамин Е питают и защищают кожу от окислительного стресса, а лёгкая нежирная текстура идеально подходит в качестве базы под макияж. Подходит для всех типов кожи, включая чувствительную.'
+  },
+  {
+    id: 15, name: 'Сыворотка антиоксидантная', brand: 'Марья',
+    price: 1990, oldPrice: null, rating: 4.8, reviews: 112,
+    zone: 'face', category: 'serum', categories: ['serum'],
+    skintype: ['normal','dry','oily','combo'], concern: ['aging','moisture'],
+    time: ['morning','evening'], ingredient: ['vitaminc','niacinamide','hyaluronic','aha'],
+    badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
+    emoji: '🍊', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    desc: 'Антиоксидантная сыворотка с экстрактом пиявки заряжает кожу энергией и защищает от разрушительного воздействия свободных радикалов. Фульвовая кислота выводит токсины и активирует клеточный метаболизм, витамин С выравнивает тон и усиливает синтез коллагена, а ниацинамид сужает поры и улучшает текстуру кожи. Особенно эффективна для городской кожи, подверженной стрессу и загрязнениям.'
+  },
+  {
+    id: 16, name: 'Кондиционер для волос', brand: 'Марья',
+    price: 990, oldPrice: null, rating: 4.7, reviews: 84,
+    zone: 'hair', category: 'conditioner', categories: ['conditioner','hair'],
+    skintype: [], concern: [],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '400 мл',
+    emoji: '💆', color: 'from-emerald-50 to-green-100', darkColor: 'from-emerald-950/20 to-green-900/10',
+    desc: 'Кондиционер для волос «Марья» помогает быстро привести длину в порядок после мытья головы: разглаживает кутикулу, облегчает расчёсывание и придаёт волосам блеск и шелковистость. Кератин и протеины шелка восстанавливают структуру волоса, а экстракт пиявки улучшает кровообращение кожи головы и стимулирует рост волос.'
+  },
+  {
+    id: 17, name: 'Шампунь для волос', brand: 'Марья',
+    price: 890, oldPrice: null, rating: 4.6, reviews: 71,
+    zone: 'hair', category: 'shampoo', categories: ['shampoo','hair'],
+    skintype: [], concern: [],
+    time: ['anytime'], ingredient: [],
+    badge: null, isNew: false, isSale: false, volume: '400 мл',
+    emoji: '🚿', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
+    desc: 'Шампунь для волос «Марья» обеспечивает качественное очищение кожи головы и волос без пересушивания и раздражения. Мягкие сульфатсодержащие ПАВ эффективно удаляют загрязнения и избыток себума, протеины пшеницы укрепляют структуру волоса и придают объём, а экстракт пиявки улучшает питание волосяных фолликулов. Волосы после мытья чистые, лёгкие и блестящие.'
+  },
+];
+
+// ─── STATE ──────────────────────────────────────────────────────────────────
+let state = {
+  zone: 'all',
+  category: 'all',
+  skintype: [],
+  concern: [],
+  time: [],
+  ingredient: [],
+  priceMin: 490,
+  priceMax: 3500,
+  sale: false,
+  isNew: false,
+  sort: 'popular',
+  search: '',
+  view: 'grid',
+  page: 1,
+  perPage: 12,
+};
+let cartCount = 0;
+let wishlist = new Set();
+
+// ─── FILTER & SORT ────────────────────────────────────────────────────────
+function getFiltered() {
+  let items = [...PRODUCTS];
+
+  if (state.zone !== 'all')     items = items.filter(p => p.zone === state.zone);
+  if (state.category !== 'all') items = items.filter(p => (p.categories || [p.category]).includes(state.category));
+  if (state.skintype.length)    items = items.filter(p => state.skintype.some(s => p.skintype.includes(s)));
+  if (state.concern.length)     items = items.filter(p => state.concern.some(c => p.concern.includes(c)));
+  if (state.time.length)        items = items.filter(p => state.time.some(t => p.time.includes(t)));
+  if (state.ingredient.length)  items = items.filter(p => state.ingredient.some(i => p.ingredient.includes(i)));
+  items = items.filter(p => p.price >= state.priceMin && p.price <= state.priceMax);
+  if (state.sale)   items = items.filter(p => p.isSale);
+  if (state.isNew)  items = items.filter(p => p.isNew);
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    items = items.filter(p => p.name.toLowerCase().includes(q) || p.desc.toLowerCase().includes(q) || p.ingredient.join(' ').toLowerCase().includes(q));
+  }
+
+  switch (state.sort) {
+    case 'price-asc':  items.sort((a,b) => a.price - b.price); break;
+    case 'price-desc': items.sort((a,b) => b.price - a.price); break;
+    case 'rating':     items.sort((a,b) => b.rating - a.rating); break;
+    case 'new':        items.sort((a,b) => b.isNew - a.isNew); break;
+    default:           items.sort((a,b) => b.reviews - a.reviews); break;
+  }
+  return items;
+}
+
+function applyFilters() {
+  // Read checkboxes
+  state.category   = document.querySelector('input[name="category"]:checked')?.value || 'all';
+  state.skintype   = [...document.querySelectorAll('input[name="skintype"]:checked')].map(el => el.value);
+  state.concern    = [...document.querySelectorAll('input[name="concern"]:checked')].map(el => el.value);
+  state.time       = [...document.querySelectorAll('input[name="time"]:checked')].map(el => el.value);
+  state.ingredient = [...document.querySelectorAll('input[name="ingredient"]:checked')].map(el => el.value);
+  state.sale       = document.getElementById('filter-sale')?.checked || false;
+  state.isNew      = document.getElementById('filter-new')?.checked || false;
+  state.page = 1;
+  renderProducts();
+  renderChips();
+}
+
+// ─── RENDER PRODUCTS ────────────────────────────────────────────────────────
+function renderProducts() {
+  const filtered = getFiltered();
+  const total    = filtered.length;
+  const start    = (state.page - 1) * state.perPage;
+  const page     = filtered.slice(start, start + state.perPage);
+  const grid     = document.getElementById('product-grid');
+  const empty    = document.getElementById('empty-state');
+  const countEl  = document.getElementById('results-count');
+
+  countEl.textContent = total;
+
+  if (total === 0) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+  empty.classList.add('hidden');
+
+  const isListView = state.view === 'list';
+
+  if (isListView) {
+    grid.className = 'flex flex-col gap-3 list-view';
+  } else {
+    grid.className = 'grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4';
+  }
+
+  grid.innerHTML = page.map((p, i) => isListView ? renderListCard(p, i) : renderGridCard(p, i)).join('');
+
+  renderPagination(total);
+  syncDrawerFilters();
+}
+
+function stars(r) {
+  return `<span class="text-amber-400">${'★'.repeat(Math.floor(r))}</span><span class="text-sand dark:text-sand-dark">${'★'.repeat(5 - Math.floor(r))}</span>`;
+}
+
+function fmtPrice(n) {
+  return n.toLocaleString('ru-RU') + ' ₽';
+}
+
+function renderGridCard(p, i) {
+  const wished = wishlist.has(p.id);
+  const delay  = (i % 12) * 40;
+  return `
+  <article class="product-card bg-cream dark:bg-cream-dark border border-sand/50 dark:border-sand-dark/20 rounded-2xl overflow-hidden card-appear" style="animation-delay:${delay}ms" data-id="${p.id}">
+    <!-- Image -->
+    <a href="product.html?id=${p.id}" class="block">
+    <div class="product-img-wrap relative bg-gradient-to-br ${p.color} dark:bg-gradient-to-br dark:${p.darkColor} aspect-square flex items-center justify-center">
+      <span class="product-img text-6xl select-none">${p.emoji}</span>
+      <!-- Badge -->
+      ${p.badge ? `<div class="absolute top-2 left-2 px-2 py-0.5 ${p.isSale ? 'bg-accent' : p.isNew ? 'bg-sage dark:bg-sage-dark' : 'bg-warm dark:bg-warm-dark'} text-white text-[10px] font-bold rounded-full">${p.badge}</div>` : ''}
+      <!-- Wishlist -->
+      <button onclick="event.preventDefault();toggleWish(${p.id},this)" class="btn-wish absolute top-2 right-2 p-1.5 rounded-full bg-cream/80 dark:bg-cream-dark/80 backdrop-blur-sm ${wished ? 'active' : 'text-muted dark:text-muted-dark'} hover:scale-110 transition-all shadow-sm" aria-label="В избранное">
+        <svg class="w-3.5 h-3.5" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    </a>
+    <!-- Body -->
+    <div class="card-body p-3">
+      <div class="flex items-center gap-1 mb-1 text-[11px]">
+        ${stars(p.rating)}
+        <span class="text-muted dark:text-muted-dark ml-0.5">(${p.reviews})</span>
+      </div>
+      <a href="product.html?id=${p.id}" class="block hover:text-accent transition-colors">
+      <h3 class="text-xs sm:text-sm font-semibold text-ink dark:text-ink-dark leading-tight mb-1 line-clamp-2">${p.name}</h3>
+      </a>
+      <p class="text-[10px] text-muted dark:text-muted-dark mb-3 line-clamp-1">${p.volume}</p>
+      <div class="flex items-center justify-between gap-1">
+        <div>
+          <span class="font-bold text-sm ${p.isSale ? 'text-accent' : 'text-ink dark:text-ink-dark'}">${fmtPrice(p.price)}</span>
+          ${p.oldPrice ? `<span class="text-[10px] text-muted dark:text-muted-dark line-through ml-1">${fmtPrice(p.oldPrice)}</span>` : ''}
+        </div>
+        <button onclick="addToCart(${p.id})" class="px-2.5 py-1.5 bg-accent hover:bg-accent/90 text-white text-[11px] font-semibold rounded-full transition-all hover:-translate-y-0.5 shadow-sm shadow-accent/20 whitespace-nowrap">
+          В корзину
+        </button>
+      </div>
+    </div>
+  </article>`;
+}
+
+function renderListCard(p, i) {
+  const wished = wishlist.has(p.id);
+  const delay  = i * 40;
+  return `
+  <article class="product-card bg-cream dark:bg-cream-dark border border-sand/50 dark:border-sand-dark/20 rounded-2xl overflow-hidden card-appear flex gap-0" style="animation-delay:${delay}ms" data-id="${p.id}">
+    <a href="product.html?id=${p.id}" class="block">
+    <div class="product-img-wrap relative bg-gradient-to-br ${p.color} dark:${p.darkColor} w-[130px] sm:w-[180px] flex-shrink-0 flex items-center justify-center">
+      <span class="product-img text-5xl sm:text-6xl select-none">${p.emoji}</span>
+      ${p.badge ? `<div class="absolute top-2 left-2 px-2 py-0.5 ${p.isSale ? 'bg-accent' : p.isNew ? 'bg-sage dark:bg-sage-dark' : 'bg-warm'} text-white text-[10px] font-bold rounded-full">${p.badge}</div>` : ''}
+    </div>
+    </a>
+    <div class="card-body flex-1 p-4 flex flex-col justify-between">
+      <div>
+        <div class="flex items-start justify-between gap-2 mb-1">
+          <a href="product.html?id=${p.id}" class="hover:text-accent transition-colors flex-1">
+          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark leading-tight">${p.name}</h3>
+          </a>
+          <button onclick="toggleWish(${p.id},this)" class="btn-wish flex-shrink-0 p-1 ${wished ? 'active' : 'text-muted dark:text-muted-dark'}" aria-label="В избранное">
+            <svg class="w-4 h-4" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center gap-1 mb-2 text-[11px]">
+          ${stars(p.rating)}
+          <span class="text-muted dark:text-muted-dark ml-0.5">(${p.reviews})</span>
+        </div>
+        <p class="text-xs text-muted dark:text-muted-dark mb-2 line-clamp-2">${p.desc}</p>
+        <div class="flex flex-wrap gap-1 mb-3">
+          ${p.ingredient.slice(0,3).map(ing => `<span class="px-2 py-0.5 bg-sand/60 dark:bg-sand-dark/30 rounded-full text-[10px] text-muted dark:text-muted-dark">${ing}</span>`).join('')}
+        </div>
+      </div>
+      <div class="flex items-center justify-between">
+        <div>
+          <span class="font-bold text-base ${p.isSale ? 'text-accent' : 'text-ink dark:text-ink-dark'}">${fmtPrice(p.price)}</span>
+          ${p.oldPrice ? `<span class="text-xs text-muted dark:text-muted-dark line-through ml-1">${fmtPrice(p.oldPrice)}</span>` : ''}
+          <span class="text-xs text-muted dark:text-muted-dark ml-2">${p.volume}</span>
+        </div>
+        <button onclick="addToCart(${p.id})" class="px-4 py-2 bg-accent hover:bg-accent/90 text-white text-xs font-semibold rounded-full transition-all hover:-translate-y-0.5 shadow-sm shadow-accent/20">
+          В корзину
+        </button>
+      </div>
+    </div>
+  </article>`;
+}
+
+// ─── PAGINATION ────────────────────────────────────────────────────────────
+function renderPagination(total) {
+  const pages = Math.ceil(total / state.perPage);
+  const el    = document.getElementById('pagination');
+  if (pages <= 1) { el.innerHTML = ''; return; }
+
+  let html = '';
+  // Prev
+  html += `<button onclick="goPage(${state.page - 1})" ${state.page === 1 ? 'disabled' : ''} class="p-2 rounded-full border border-sand dark:border-sand-dark/40 ${state.page === 1 ? 'opacity-30 cursor-not-allowed' : 'hover:border-warm/50 hover:text-accent'} transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>`;
+
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || Math.abs(i - state.page) <= 1) {
+      html += `<button onclick="goPage(${i})" class="w-8 h-8 rounded-full text-sm font-medium transition-colors ${i === state.page ? 'bg-accent text-white' : 'hover:bg-sand/50 dark:hover:bg-sand-dark/30 text-muted dark:text-muted-dark'}">${i}</button>`;
+    } else if (Math.abs(i - state.page) === 2) {
+      html += `<span class="text-muted dark:text-muted-dark text-sm">…</span>`;
+    }
+  }
+
+  html += `<button onclick="goPage(${state.page + 1})" ${state.page === pages ? 'disabled' : ''} class="p-2 rounded-full border border-sand dark:border-sand-dark/40 ${state.page === pages ? 'opacity-30 cursor-not-allowed' : 'hover:border-warm/50 hover:text-accent'} transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg>
+  </button>`;
+
+  el.innerHTML = html;
+}
+
+function goPage(p) {
+  const filtered = getFiltered();
+  const pages    = Math.ceil(filtered.length / state.perPage);
+  if (p < 1 || p > pages) return;
+  state.page = p;
+  renderProducts();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── ACTIVE CHIPS ─────────────────────────────────────────────────────────
+const CHIP_LABELS = {
+  category:   { serum:'Сыворотки', cream:'Кремы', cleanser:'Очищение', makeup:'Снятие макияжа', toner:'Тоники', spf:'SPF', mask:'Маски', scrub:'Скрабы', shampoo:'Шампуни', conditioner:'Кондиционеры', hair:'Волосы' },
+  skintype:   { normal:'Нормальная', dry:'Сухая', oily:'Жирная', combo:'Комбинированная', sensitive:'Чувствительная' },
+  concern:    { acne:'Акне', dryness:'Сухость', dullness:'Тусклость', pores:'Поры', aging:'Антивозрастной уход', pigmentation:'Пигментация', sensitivity:'Покраснения', moisture:'Увлажнение', cleansing:'Очищение', nutrition:'Питание', lifting:'Лифтинг', firmness:'Упругость', brightening:'Осветление', anticellulite:'Антицеллюлитный уход', modelling:'Моделирование' },
+  time:       { morning:'☀️ Утро', evening:'🌙 Вечер', anytime:'🕐 Весь день' },
+  ingredient: { hyaluronic:'Гиалуронка', niacinamide:'Ниацинамид', retinol:'Ретинол', vitaminc:'Витамин С', aha:'AHA/BHA', peptides:'Пептиды', ceramides:'Церамиды' },
+};
+
+function renderChips() {
+  const container = document.getElementById('active-chips');
+  const chips     = [];
+
+  if (state.category !== 'all') chips.push({ label: CHIP_LABELS.category[state.category], remove: () => { document.querySelector('input[name="category"][value="all"]').checked = true; state.category = 'all'; applyFilters(); } });
+  state.skintype.forEach(v => chips.push({ label: CHIP_LABELS.skintype[v], remove: () => { document.querySelector(`input[name="skintype"][value="${v}"]`).checked = false; state.skintype = state.skintype.filter(x => x !== v); applyFilters(); } }));
+  state.concern.forEach(v => chips.push({ label: CHIP_LABELS.concern[v], remove: () => { document.querySelector(`input[name="concern"][value="${v}"]`).checked = false; state.concern = state.concern.filter(x => x !== v); applyFilters(); } }));
+  state.time.forEach(v => chips.push({ label: CHIP_LABELS.time[v], remove: () => { document.querySelector(`input[name="time"][value="${v}"]`).checked = false; state.time = state.time.filter(x => x !== v); applyFilters(); } }));
+  state.ingredient.forEach(v => chips.push({ label: CHIP_LABELS.ingredient[v], remove: () => { document.querySelector(`input[name="ingredient"][value="${v}"]`).checked = false; state.ingredient = state.ingredient.filter(x => x !== v); applyFilters(); } }));
+  if (state.sale) chips.push({ label: 'Со скидкой', remove: () => { document.getElementById('filter-sale').checked = false; state.sale = false; applyFilters(); } });
+  if (state.isNew) chips.push({ label: 'Новинки', remove: () => { document.getElementById('filter-new').checked = false; state.isNew = false; applyFilters(); } });
+
+  container.innerHTML = chips.map((c, i) => `
+    <button onclick="(${c.remove})()" class="filter-chip flex items-center gap-1.5 px-2.5 py-1 bg-accent/10 dark:bg-accent-dark/10 border border-accent/20 dark:border-accent-dark/20 rounded-full text-xs text-accent dark:text-accent-dark font-medium hover:bg-accent/20 transition-colors" style="animation-delay:${i*30}ms">
+      ${c.label}
+      <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+  `).join('');
+}
+
+// ─── CONTROLS ─────────────────────────────────────────────────────────────
+function resetFilters() {
+  document.querySelector('input[name="category"][value="all"]').checked = true;
+  document.querySelectorAll('input[name="skintype"], input[name="concern"], input[name="time"], input[name="ingredient"]').forEach(el => el.checked = false);
+  const saleEl = document.getElementById('filter-sale');
+  const newEl  = document.getElementById('filter-new');
+  if (saleEl) saleEl.checked = false;
+  if (newEl)  newEl.checked  = false;
+  document.getElementById('price-min').value = 490;
+  document.getElementById('price-max').value = 3500;
+  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:490, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
+  document.getElementById('price-from-label').textContent = '490 ₽';
+  document.getElementById('price-to-label').textContent   = '3 500 ₽';
+  const searchInput = document.getElementById('search-input');
+  if (searchInput) searchInput.value = '';
+  renderProducts();
+  renderChips();
+  syncDrawerFilters();
+}
+
+function setSort(key, label) {
+  state.sort = key;
+  state.page = 1;
+  document.getElementById('sort-label').textContent = label;
+  document.getElementById('sort-dropdown').classList.add('hidden');
+  document.querySelectorAll('.sort-opt').forEach(btn => btn.classList.remove('text-accent','font-semibold'));
+  event.target.classList.add('text-accent','font-semibold');
+  renderProducts();
+}
+
+function toggleSort() {
+  document.getElementById('sort-dropdown').classList.toggle('hidden');
+}
+
+function setView(v) {
+  state.view = v;
+  document.getElementById('grid-btn').classList.toggle('active', v === 'grid');
+  document.getElementById('list-btn').classList.toggle('active', v === 'list');
+  document.getElementById('grid-btn').classList.toggle('text-muted', v !== 'grid');
+  document.getElementById('list-btn').classList.toggle('text-muted', v !== 'list');
+  document.getElementById('grid-btn').classList.toggle('dark:text-muted-dark', v !== 'grid');
+  document.getElementById('list-btn').classList.toggle('dark:text-muted-dark', v !== 'list');
+  renderProducts();
+}
+
+// ─── PRICE RANGE ──────────────────────────────────────────────────────────
+function updatePriceRange() {
+  let min = parseInt(document.getElementById('price-min').value);
+  let max = parseInt(document.getElementById('price-max').value);
+  if (min > max) [min, max] = [max, min];
+  state.priceMin = min;
+  state.priceMax = max;
+  document.getElementById('price-from-label').textContent = fmtPrice(min);
+  document.getElementById('price-to-label').textContent   = fmtPrice(max);
+  state.page = 1;
+  renderProducts();
+  renderChips();
+}
+
+function setPriceRange(min, max) {
+  document.getElementById('price-min').value = min;
+  document.getElementById('price-max').value = max;
+  updatePriceRange();
+}
+
+// ─── CART & WISHLIST ───────────────────────────────────────────────────────
+function addToCart(id) {
+  cartCount++;
+  document.getElementById('cart-count').textContent = cartCount;
+  const btn = document.getElementById('cart-btn');
+  btn.classList.add('scale-125');
+  setTimeout(() => btn.classList.remove('scale-125'), 200);
+
+  // Сохраняем id добавленного товара в sessionStorage
+  const saved = JSON.parse(sessionStorage.getItem('marya_cart') || '[]');
+  if (!saved.includes(id)) saved.push(id);
+  sessionStorage.setItem('marya_cart', JSON.stringify(saved));
+  sessionStorage.setItem('marya_cart_count', cartCount);
+
+  showToast('Добавлено в корзину — перейти?', true, id);
+}
+
+function showToast(msg, withLink = false, id = null) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);z-index:9999;transition:all .3s ease;opacity:0;white-space:nowrap;';
+    document.body.appendChild(t);
+  }
+  t.innerHTML = withLink
+    ? `<span>${msg}</span> <a href="cart.html" style="font-weight:600;text-decoration:underline;margin-left:8px">В корзину →</a>`
+    : msg;
+  t.className = 'fixed px-5 py-2.5 bg-ink dark:bg-[#F5EDE4] text-cream dark:text-ink text-sm font-medium rounded-full shadow-xl';
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(8px)';
+  }, 3000);
+}
+
+function toggleWish(id, btn) {
+  if (wishlist.has(id)) {
+    wishlist.delete(id);
+    btn.classList.remove('active');
+    btn.querySelector('svg').setAttribute('fill', 'none');
+    showToast('Удалено из избранного');
+  } else {
+    wishlist.add(id);
+    btn.classList.add('active');
+    btn.querySelector('svg').setAttribute('fill', 'currentColor');
+    showToast('Добавлено в избранное');
+  }
+}
+
+// showToast определён выше в addToCart-блоке
+
+// ─── SEARCH ───────────────────────────────────────────────────────────────
+let searchDebounce;
+function handleSearch(val) {
+  clearTimeout(searchDebounce);
+  searchDebounce = setTimeout(() => {
+    state.search = val.trim();
+    state.page   = 1;
+    renderProducts();
+    renderChips();
+  }, 250);
+}
+
+function toggleSearch() {
+  const bar = document.getElementById('search-bar');
+  const isHidden = bar.classList.toggle('hidden');
+  if (!isHidden) {
+    setTimeout(() => document.getElementById('search-input').focus(), 50);
+  } else {
+    state.search = '';
+    renderProducts();
+    renderChips();
+  }
+}
+
+// ─── FILTER GROUPS (collapse) ─────────────────────────────────────────────
+function toggleGroup(btn) {
+  const content = btn.nextElementSibling;
+  const chevron = btn.querySelector('.chevron');
+  const isOpen  = !content.classList.contains('hidden');
+  content.classList.toggle('hidden', isOpen);
+  chevron.style.transform = isOpen ? 'rotate(-90deg)' : '';
+}
+
+// ─── DRAWER ───────────────────────────────────────────────────────────────
+function openDrawer() {
+  document.getElementById('filter-drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+  syncDrawerFilters();
+}
+function closeDrawer() {
+  document.getElementById('filter-drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+}
+function syncDrawerFilters() {
+  // The drawer shares the same HTML structure (populated dynamically)
+  // In this single-page setup, drawer content mirrors sidebar
+  const content = document.getElementById('drawer-filter-content');
+  const sidebar = document.querySelector('aside.hidden');
+  if (sidebar) {
+    content.innerHTML = sidebar.querySelector('.sidebar-sticky').innerHTML;
+    // Re-bind events
+    content.querySelectorAll('input').forEach(el => {
+      el.onchange = () => { applyFilters(); };
+    });
+    content.querySelectorAll('.filter-group-toggle').forEach(btn => {
+      btn.onclick = () => toggleGroup(btn);
+    });
+    // Sync price labels
+    content.querySelectorAll('#price-from-label')[0] && (content.querySelectorAll('#price-from-label')[0].textContent = document.getElementById('price-from-label').textContent);
+    content.querySelectorAll('#price-to-label')[0]   && (content.querySelectorAll('#price-to-label')[0].textContent   = document.getElementById('price-to-label').textContent);
+  }
+}
+
+// ─── DARK MODE ────────────────────────────────────────────────────────────
+function toggleDark() {
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('marya-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+}
+if (localStorage.getItem('marya-theme') === 'dark' || (!localStorage.getItem('marya-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  document.documentElement.classList.add('dark');
+}
+
+// ─── SCROLL PROGRESS ──────────────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const el   = document.documentElement;
+  const pct  = (el.scrollTop / (el.scrollHeight - el.clientHeight)) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}, { passive: true });
+
+// ─── CLOSE SORT ON OUTSIDE CLICK ─────────────────────────────────────────
+document.addEventListener('click', e => {
+  const dd = document.getElementById('sort-dropdown');
+  if (!dd.classList.contains('hidden') && !e.target.closest('.relative')) {
+    dd.classList.add('hidden');
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+(function applyUrlParams() {
+  const p = new URLSearchParams(window.location.search);
+  const cat     = p.get('cat');
+  const purpose = p.get('purpose');
+  const zone = p.get('zone');
+  if (zone) state.zone = zone;
+  if (cat) {
+    state.category = cat;
+    const radio = document.querySelector(`input[name="category"][value="${cat}"]`);
+    if (radio) radio.checked = true;
+  }
+  if (purpose) {
+    state.concern = [purpose];
+    const cb = document.querySelector(`input[name="concern"][value="${purpose}"]`);
+    if (cb) { cb.checked = true; }
+  }
+})();
+renderProducts();
+renderChips();
+
+// ─── Catalog Mega-Menu ────────────────────────
+const catalogData = {
+  face: {
+    categories: [
+      { name: 'Все средства', highlight: true, cat: null },
+      { name: 'Очищение',                       cat: 'cleanser' },
+      { name: 'Средства для снятия макияжа',    cat: 'makeup'   },
+      { name: 'Тонизирование',                  cat: 'toner'    },
+      { name: 'Пилинги и скрабы',               cat: 'scrub'    },
+      { name: 'Карбокситерапия',                cat: 'carboxy'  },
+      { name: 'Сыворотки',                      cat: 'serum'    },
+      { name: 'Средства для массажа',           cat: 'massage'  },
+      { name: 'Маски',                          cat: 'mask'     },
+      { name: 'Кремы и гели',                   cat: 'cream'    },
+      { name: 'Солнцезащитные средства',        cat: 'spf'      },
+      { name: 'Уход за кожей вокруг глаз',      cat: 'eye'      },
+      { name: 'Средства для ухода за губами',   cat: 'lip'      },
+    ],
+    purposes: [
+      { name: 'Анти-акне',              code: 'acne'        },
+      { name: 'Увлажнение',             code: 'moisture'    },
+      { name: 'Питание',                code: 'nutrition'   },
+      { name: 'Профилактика купероза',   code: null          },
+      { name: 'Лифтинг',               code: 'lifting'     },
+      { name: 'Антивозрастной уход',    code: 'aging'       },
+      { name: 'Осветление',             code: 'brightening' },
+      { name: 'Регенерация',            code: null          },
+      { name: 'Матирование',            code: null          },
+      { name: 'Зимний уход',            code: null          },
+      { name: 'Очищение',               code: 'cleansing'   },
+      { name: 'Уход за шеей и декольте',code: null          },
+      { name: 'Упругость',              code: 'firmness'    },
+      { name: 'Восстановление',         code: null          },
+    ]
+  },
+  body: {
+    categories: [
+      { name: 'Все средства',          highlight: true, cat: null       },
+      { name: 'Средства для очищения',              cat: 'cleanser' },
+      { name: 'Скрабы',                             cat: 'scrub'    },
+      { name: 'Интенсивный уход',                   cat: null       },
+      { name: 'Средства для массажа',               cat: 'massage'  },
+      { name: 'СПА-обертывание',                    cat: null       },
+      { name: 'Бандажное обертывание',              cat: null       },
+      { name: 'Кремы и гели',                       cat: 'cream'    },
+      { name: 'Интимная гигиена',                   cat: null       },
+    ],
+    purposes: [
+      { name: 'Антицеллюлитный уход', code: 'anticellulite' },
+      { name: 'Похудение',            code: null             },
+      { name: 'Коррекция стрий',      code: null             },
+      { name: 'Снятие отёчности',     code: null             },
+      { name: 'Моделирование',        code: 'modelling'      },
+      { name: 'Детокс',               code: null             },
+      { name: 'Тонизирование',        code: null             },
+    ]
+  },
+  hands: {
+    categories: [
+      { name: 'Все средства',                        highlight: true, cat: null       },
+      { name: 'Средства для очищения кожи рук и ног',               cat: 'cleanser' },
+      { name: 'Скрабы для рук и ног',                               cat: 'scrub'    },
+      { name: 'Средства для кутикулы',                              cat: null       },
+      { name: 'Парафинотерапия для рук и ног',                      cat: null       },
+      { name: 'Кремы для рук',                                      cat: 'cream'    },
+      { name: 'Кремы для ног',                                      cat: 'cream'    },
+      { name: 'Средства от натоптышей',                             cat: null       },
+      { name: 'Антисептики',                                        cat: null       },
+      { name: 'Дезодоранты для ног',                                cat: null       },
+    ],
+    purposes: [
+      { name: 'Здоровая кутикула',        code: null },
+      { name: 'Уменьшение гиперкератоза', code: null },
+      { name: 'Уменьшение гипергидроза',  code: null },
+      { name: 'Борьба с трещинами',       code: null },
+      { name: 'Удаление мозолей',         code: null },
+      { name: 'Охлаждение',               code: null },
+    ]
+  },
+  hair: {
+    categories: [
+      { name: 'Все средства',     highlight: true, cat: null          },
+      { name: 'Шампуни',                           cat: 'shampoo'     },
+      { name: 'Бальзамы',                          cat: null          },
+      { name: 'Кондиционеры',                      cat: 'conditioner' },
+      { name: 'Скрабы и пилинги',                  cat: 'scrub'       },
+      { name: 'Несмываемый уход',                  cat: null          },
+      { name: 'Укладка и стайлинг',                cat: null          },
+      { name: 'Маски',                             cat: 'mask'        },
+      { name: 'Бустеры',                           cat: null          },
+      { name: 'Сухие шампуни',                     cat: null          },
+    ],
+    purposes: [
+      { name: 'Для свежести',          code: null        },
+      { name: 'Для повреждённых',      code: null        },
+      { name: 'Для укладки',           code: null        },
+      { name: 'Для блеска',            code: null        },
+      { name: 'Для гладкости',         code: null        },
+      { name: 'Для объёма',            code: null        },
+      { name: 'Для роста',             code: null        },
+      { name: 'Для осветлённых волос', code: null        },
+      { name: 'Для окрашенных волос',  code: null        },
+      { name: 'Глубокое очищение',     code: 'cleansing' },
+      { name: 'Против перхоти',        code: null        },
+      { name: 'Разглаживание',         code: null        },
+      { name: 'Против выпадения',      code: null        },
+      { name: 'Для кудрявых',          code: null        },
+    ]
+  }
+};
+function switchZone(zone) {
+  if (!catalogData[zone]) return;
+  document.querySelectorAll('.zone-btn[data-zone]').forEach(b => b.classList.toggle('zone-active', b.dataset.zone === zone));
+  const d = catalogData[zone];
+  document.getElementById('mega-cat-list').innerHTML = d.categories.map(c => {
+    const params = [zone ? `zone=${zone}` : '', c.cat ? `cat=${c.cat}` : ''].filter(Boolean).join('&');
+    return `<a href="catalog.html${params ? '?' + params : ''}" class="cat-link${c.highlight ? ' cat-highlight' : ''}">${c.name}</a>`;
+  }).join('');
+  document.getElementById('mega-dest-list').innerHTML = d.purposes.map(p => {
+    const params = [zone ? `zone=${zone}` : '', p.code ? `purpose=${p.code}` : ''].filter(Boolean).join('&');
+    return `<a href="catalog.html${params ? '?' + params : ''}" class="dest-link">${p.name}</a>`;
+  }).join('');
+}
+switchZone('face');
+</script>
+</body>
+</html>

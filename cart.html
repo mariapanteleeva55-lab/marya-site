@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Корзина — Марья</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia','Cambria','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html{font-family:'Inter',system-ui,sans-serif}
+    *,*::before,*::after{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#C4A882;border-radius:3px}
+
+    /* Views */
+    .view{display:none}
+    .view.active{display:block}
+
+    /* Step indicator */
+    .step-dot{
+      width:28px;height:28px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:12px;font-weight:600;
+      transition:all .3s ease;
+    }
+    .step-dot.done{background:#D4956A;color:#fff}
+    .step-dot.active{background:#D4956A;color:#fff;box-shadow:0 0 0 4px rgba(212,149,106,.2)}
+    .step-dot.pending{background:#E8DDD0;color:#7A6A5A}
+    .dark .step-dot.pending{background:#2A2420;color:#A89880}
+    .step-line{flex:1;height:2px;background:#E8DDD0;transition:background .4s ease}
+    .dark .step-line{background:#2A2420}
+    .step-line.done{background:#D4956A}
+
+    /* Form inputs */
+    .form-input{
+      width:100%;padding:10px 14px;
+      border:1.5px solid #E8DDD0;border-radius:12px;
+      background:#FDF8F3;color:#2C2018;font-size:14px;outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .dark .form-input{background:#211A14;border-color:#2A2420;color:#F5EDE4}
+    .form-input:focus{border-color:#D4956A;box-shadow:0 0 0 3px rgba(212,149,106,.12)}
+    .form-input::placeholder{color:#7A6A5A}
+    .dark .form-input::placeholder{color:#A89880}
+    .form-label{display:block;font-size:12px;font-weight:500;color:#7A6A5A;margin-bottom:5px}
+    .dark .form-label{color:#A89880}
+    .form-error{font-size:11px;color:#e05252;margin-top:3px;display:none}
+    .has-error .form-input{border-color:#e05252}
+    .has-error .form-error{display:block}
+
+    /* Radio delivery / messenger */
+    .radio-card{
+      display:flex;align-items:center;gap:12px;
+      padding:12px 14px;border:1.5px solid #E8DDD0;border-radius:12px;
+      cursor:pointer;transition:border-color .2s,background .2s;
+    }
+    .dark .radio-card{border-color:#2A2420}
+    .radio-card:hover{border-color:#C4A882}
+    .radio-card.selected{border-color:#D4956A;background:rgba(212,149,106,.06)}
+    .dark .radio-card.selected{background:rgba(212,149,106,.08)}
+    .radio-dot{
+      width:16px;height:16px;border-radius:50%;border:2px solid #C4A882;
+      flex-shrink:0;display:flex;align-items:center;justify-content:center;
+      transition:border-color .2s;
+    }
+    .radio-card.selected .radio-dot{border-color:#D4956A}
+    .radio-dot-inner{width:8px;height:8px;border-radius:50%;background:#D4956A;opacity:0;transition:opacity .2s}
+    .radio-card.selected .radio-dot-inner{opacity:1}
+
+    /* Payment method */
+    .pay-btn{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 16px;border:1.5px solid #E8DDD0;border-radius:14px;
+      cursor:pointer;transition:all .2s;font-size:14px;font-weight:500;
+      color:#2C2018;background:#FDF8F3;width:100%;text-align:left;
+    }
+    .dark .pay-btn{border-color:#2A2420;background:#211A14;color:#F5EDE4}
+    .pay-btn:hover{border-color:#C4A882;background:rgba(232,221,208,.3)}
+    .dark .pay-btn:hover{background:rgba(42,36,32,.5)}
+    .pay-btn.selected{border-color:#D4956A;background:rgba(212,149,106,.08)}
+
+    /* Quantity control */
+    .qty-btn{
+      width:28px;height:28px;border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      border:1.5px solid #E8DDD0;font-size:16px;font-weight:400;
+      color:#7A6A5A;cursor:pointer;transition:all .15s;line-height:1;
+    }
+    .dark .qty-btn{border-color:#2A2420;color:#A89880}
+    .qty-btn:hover{border-color:#D4956A;color:#D4956A}
+
+    /* Progress delivery bar */
+    .delivery-bar-fill{transition:width .5s ease}
+
+    /* Fade transition */
+    .fade-in{animation:fadeIn .35s ease-out forwards}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Success animation */
+    .success-circle{
+      animation:scaleIn .5s cubic-bezier(.34,1.56,.64,1) forwards;
+    }
+    @keyframes scaleIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .success-check{
+      stroke-dasharray:50;stroke-dashoffset:50;
+      animation:drawCheck .4s .3s ease forwards;
+    }
+    @keyframes drawCheck{to{stroke-dashoffset:0}}
+
+    /* Sticky summary (mobile) */
+    #sticky-checkout{display:none}
+    @media(max-width:1023px){#sticky-checkout{display:block}}
+
+    /* Subscription toggle */
+    .sub-toggle{width:40px;height:22px;border-radius:11px;background:#E8DDD0;position:relative;cursor:pointer;transition:background .25s;flex-shrink:0}
+    .dark .sub-toggle{background:#2A2420}
+    .sub-toggle.on{background:#D4956A}
+    .sub-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform .25s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+    .sub-toggle.on .sub-thumb{transform:translateX(18px)}
+
+    /* Card form placeholder */
+    .card-field{
+      background:#F7F0E8;border:1.5px solid #E8DDD0;border-radius:10px;
+      padding:10px 14px;font-size:14px;color:#2C2018;
+    }
+    .dark .card-field{background:#1e1812;border-color:#2A2420;color:#F5EDE4}
+
+    /* Progress bar scroll */
+    #progress-bar{position:fixed;top:0;left:0;height:2px;z-index:1000;background:linear-gradient(90deg,#D4956A,#C4A882);transition:width .1s linear}
+
+    /* Мега-меню каталога */
+    .catalog-mega{opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease;background-color:#FFFFFF}
+    .dark .catalog-mega{background-color:#1D1510}
+    .catalog-wrap:hover .catalog-mega{opacity:1;transform:translateY(0);pointer-events:auto}
+    .catalog-bridge{position:absolute;top:100%;left:-20px;right:-20px;height:12px}
+    .zone-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.06em;color:#7A6A5A;cursor:pointer;background:none;border:none;text-align:left;text-decoration:none;transition:background .12s,color .12s}
+    .zone-btn:hover{background:rgba(232,221,208,.6);color:#2C2018}
+    .zone-btn.zone-active{background:rgba(232,221,208,.8);color:#2C2018}
+    .dark .zone-btn{color:#A89880}
+    .dark .zone-btn:hover,.dark .zone-btn.zone-active{background:rgba(42,36,32,.7);color:#F5EDE4}
+    .cat-link{display:block;padding:6px 0;font-size:14px;color:#7A6A5A;text-decoration:none;transition:color .12s}
+    .cat-link:hover{color:#2C2018}
+    .cat-link.cat-highlight{color:#D4956A;font-weight:500}
+    .dark .cat-link{color:#A89880}
+    .dark .cat-link:hover{color:#F5EDE4}
+    .dark .cat-link.cat-highlight{color:#E8A87A}
+    .dest-link{display:block;padding:5px 0;font-size:13px;color:#7A6A5A;text-decoration:none;transition:color .12s}
+    .dest-link:hover{color:#2C2018}
+    .dark .dest-link{color:#A89880}
+    .dark .dest-link:hover{color:#F5EDE4}
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
+
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
+  style="background:rgba(253,248,243,.93);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)">
+  <div class="dark-header-bg" style="display:none"></div>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+    <a href="index.html" class="font-serif text-2xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+      <div class="catalog-wrap relative">
+        <a href="catalog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors flex items-center gap-1">
+          Каталог
+          <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <div class="catalog-bridge"></div>
+        <div class="catalog-mega absolute left-0 top-[calc(100%+12px)] w-[820px] border border-sand/60 dark:border-sand-dark/30 rounded-2xl shadow-2xl shadow-ink/15 dark:shadow-black/50 overflow-hidden z-50">
+          <div class="absolute -top-[6px] left-10 w-3 h-3 bg-white dark:bg-[#1D1510] border-l border-t border-sand/60 dark:border-sand-dark/30 rotate-45"></div>
+          <div class="flex" style="min-height:340px">
+            <div class="w-48 flex-shrink-0 bg-[#F0E8DC] dark:bg-[#231A12] border-r border-sand/40 dark:border-sand-dark/20 py-5 px-3 flex flex-col gap-0.5">
+              <button class="zone-btn zone-active" data-zone="face" onmouseenter="switchZone('face')">ЛИЦО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="body" onmouseenter="switchZone('body')">ТЕЛО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hands" onmouseenter="switchZone('hands')">РУКИ И НОГИ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hair" onmouseenter="switchZone('hair')">ВОЛОСЫ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <div class="my-2 border-t border-sand/40 dark:border-sand-dark/20"></div>
+              <a href="catalog.html?zone=men" class="zone-btn">КОСМЕТИКА ДЛЯ МУЖЧИН</a>
+              <a href="catalog.html?zone=sets" class="zone-btn">НАБОРЫ</a>
+              <a href="catalog.html?zone=gift" class="zone-btn">ПОДАРОЧНЫЕ КАРТЫ</a>
+            </div>
+            <div class="w-[300px] flex-shrink-0 px-6 py-5 border-r border-sand/30 dark:border-sand-dark/20">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Категории</p>
+              <div id="mega-cat-list"></div>
+            </div>
+            <div class="flex-1 px-6 py-5">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Назначения</p>
+              <div id="mega-dest-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="index.html#about"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="index.html#quiz"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+      <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <a href="catalog.html" class="hidden sm:flex p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+      </a>
+      <button class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+        <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
+        <span id="header-cart-count" class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full flex items-center justify-center">3</span>
+      </button>
+      <button onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors"
+        style="background:rgba(232,221,208,.6);color:#7A6A5A">
+        <span class="block dark:hidden">☀️</span>
+        <span class="hidden dark:block">🌙</span>
+        <span class="hidden sm:block">Ночной</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="pt-[60px]">
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: CART
+══════════════════════════════════════════════════════ -->
+<section id="view-cart" class="view active">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs text-muted dark:text-muted-dark mb-6">
+      <a href="index.html" class="hover:text-accent transition-colors">Главная</a>
+      <span>/</span>
+      <a href="catalog.html" class="hover:text-accent transition-colors">Каталог</a>
+      <span>/</span>
+      <span class="text-ink dark:text-ink-dark font-medium">Корзина</span>
+    </nav>
+
+    <h1 class="font-serif text-2xl sm:text-3xl text-ink dark:text-ink-dark mb-2">
+      Корзина
+      <span class="text-muted dark:text-muted-dark font-sans text-base font-normal ml-2" id="cart-item-count">3 товара</span>
+    </h1>
+
+    <!-- Free delivery progress -->
+    <div id="delivery-banner" class="mt-4 mb-8 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="flex items-center justify-between text-sm mb-2">
+        <span id="delivery-banner-text" class="text-ink dark:text-ink-dark font-medium">До бесплатной доставки — <span id="delivery-remaining" class="text-accent font-semibold">540 ₽</span></span>
+        <span class="text-muted dark:text-muted-dark text-xs">Бесплатно от 2 000 ₽</span>
+      </div>
+      <div class="h-1.5 bg-sand dark:bg-sand-dark/40 rounded-full overflow-hidden">
+        <div id="delivery-bar" class="delivery-bar-fill h-full bg-gradient-to-r from-accent to-warm rounded-full" style="width:73%"></div>
+      </div>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[1fr_340px] gap-8">
+
+      <!-- ── Left: Items ── -->
+      <div>
+        <!-- Cart items -->
+        <div id="cart-items" class="space-y-4"></div>
+
+        <!-- Empty state -->
+        <div id="cart-empty" class="hidden py-16 text-center">
+          <div class="text-6xl mb-4">🛒</div>
+          <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Корзина пуста</h2>
+          <p class="text-sm text-muted dark:text-muted-dark mb-6">Ещё ничего нет — начните с квиза или каталога</p>
+          <div class="flex items-center justify-center gap-3 flex-wrap">
+            <a href="index.html#quiz" class="px-6 py-2.5 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-full transition-colors">Подобрать уход</a>
+            <a href="catalog.html" class="px-6 py-2.5 border border-sand dark:border-sand-dark/40 text-sm font-medium rounded-full hover:border-warm/50 transition-colors">Каталог</a>
+          </div>
+        </div>
+
+        <!-- Add from routine -->
+        <div id="add-from-routine" class="mt-6 p-4 rounded-2xl border border-dashed border-sand dark:border-sand-dark/40 flex items-center justify-between gap-4 hover:border-warm/50 transition-colors cursor-pointer group">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-sage/10 dark:bg-sage-dark/10 flex items-center justify-center text-sage dark:text-sage-dark text-lg">✦</div>
+            <div>
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Добавить из рутины</p>
+              <p class="text-xs text-muted dark:text-muted-dark">В вашей рутине ещё не хватает SPF и маски</p>
+            </div>
+          </div>
+          <svg class="w-4 h-4 text-muted dark:text-muted-dark group-hover:text-accent transition-colors flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+
+        <!-- Upsell -->
+        <div id="upsell-block" class="mt-6 p-4 rounded-2xl border border-sand dark:border-sand-dark/30 bg-sand/10 dark:bg-sand-dark/5">
+          <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">Часто берут вместе</p>
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/20 dark:to-orange-900/10 flex items-center justify-center text-2xl flex-shrink-0">☀️</div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark leading-tight truncate">SPF-флюид невидимый 50+</p>
+              <p class="text-xs text-muted dark:text-muted-dark">40 мл · Защита широкого спектра</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <p class="text-sm font-bold text-ink dark:text-ink-dark">1 690 ₽</p>
+              <button onclick="addUpsell()" class="mt-1 px-3 py-1 bg-accent hover:bg-accent/90 text-white text-xs font-semibold rounded-full transition-colors">+ В корзину</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Right: Summary (desktop) ── -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-[76px] space-y-4">
+          <div class="border border-sand dark:border-sand-dark/40 rounded-2xl p-5 bg-cream dark:bg-cream-dark">
+            <h2 class="font-semibold text-base text-ink dark:text-ink-dark mb-4">Ваш заказ</h2>
+
+            <!-- Promo code -->
+            <div class="mb-4">
+              <div class="flex gap-2">
+                <input id="promo-input" type="text" placeholder="Промокод" class="form-input flex-1" style="padding:9px 12px">
+                <button onclick="applyPromo()" class="px-4 py-2 border border-sand dark:border-sand-dark/40 rounded-xl text-sm font-medium text-ink dark:text-ink-dark hover:border-warm/50 transition-colors whitespace-nowrap">
+                  Применить
+                </button>
+              </div>
+              <p id="promo-msg" class="text-xs mt-1.5 hidden"></p>
+            </div>
+
+            <!-- Loyalty points -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-sand/30 dark:bg-sand-dark/15 mb-4">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="text-warm dark:text-warm-dark">◈</span>
+                <span id="bonus-balance-text" class="text-ink dark:text-ink-dark font-medium">0 баллов</span>
+                <span id="bonus-tier-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-sand dark:bg-sand-dark/40 text-muted dark:text-muted-dark font-medium">Старт</span>
+              </div>
+              <button id="points-btn" onclick="togglePoints()" class="text-xs text-accent dark:text-accent-dark font-semibold hover:opacity-80 transition-opacity">Применить</button>
+            </div>
+
+            <!-- Totals -->
+            <div class="space-y-2.5 text-sm mb-4">
+              <div class="flex justify-between text-muted dark:text-muted-dark">
+                <span>Товары (<span id="sum-count">3</span>)</span>
+                <span id="sum-subtotal">4 370 ₽</span>
+              </div>
+              <div id="row-discount" class="flex justify-between text-sage dark:text-sage-dark hidden">
+                <span>Скидка</span>
+                <span id="sum-discount">−437 ₽</span>
+              </div>
+              <div id="row-points" class="flex justify-between text-warm dark:text-warm-dark hidden">
+                <span>Баллы лояльности</span>
+                <span>−34 ₽</span>
+              </div>
+              <div class="flex justify-between text-muted dark:text-muted-dark">
+                <span>Доставка</span>
+                <span id="sum-delivery" class="text-sage dark:text-sage-dark font-medium">Бесплатно</span>
+              </div>
+              <div class="border-t border-sand dark:border-sand-dark/40 pt-2.5 flex justify-between font-semibold text-base text-ink dark:text-ink-dark">
+                <span>Итого</span>
+                <span id="sum-total">4 370 ₽</span>
+              </div>
+            </div>
+
+            <button onclick="goToCheckout()" class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full transition-all hover:-translate-y-0.5 shadow-md shadow-accent/20 text-sm">
+              К оформлению →
+            </button>
+            <a href="catalog.html" class="block text-center mt-3 text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">
+              ← Продолжить покупки
+            </a>
+          </div>
+
+          <!-- Trust badges -->
+          <div class="flex items-center justify-around p-3 rounded-xl border border-sand/50 dark:border-sand-dark/20 text-center">
+            <div class="text-xs text-muted dark:text-muted-dark">
+              <div class="text-base mb-0.5">🔒</div>
+              Безопасная<br>оплата
+            </div>
+            <div class="w-px h-8 bg-sand dark:bg-sand-dark/40"></div>
+            <div class="text-xs text-muted dark:text-muted-dark">
+              <div class="text-base mb-0.5">↩️</div>
+              Возврат<br>14 дней
+            </div>
+            <div class="w-px h-8 bg-sand dark:bg-sand-dark/40"></div>
+            <div class="text-xs text-muted dark:text-muted-dark">
+              <div class="text-base mb-0.5">🚚</div>
+              Доставка<br>1–3 дня
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Sticky bottom (mobile) -->
+  <div id="sticky-checkout" class="fixed bottom-0 left-0 right-0 z-40 p-4 bg-cream/95 dark:bg-[#1A1612]/95 border-t border-sand dark:border-sand-dark/30 backdrop-blur-md">
+    <div class="flex items-center justify-between mb-3 text-sm">
+      <span class="text-muted dark:text-muted-dark">Итого</span>
+      <span class="font-bold text-lg text-ink dark:text-ink-dark" id="mobile-total">4 370 ₽</span>
+    </div>
+    <button onclick="goToCheckout()" class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-lg shadow-accent/20 transition-all">
+      К оформлению →
+    </button>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: CHECKOUT
+══════════════════════════════════════════════════════ -->
+<section id="view-checkout" class="view">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8">
+
+    <!-- Back + breadcrumb -->
+    <button onclick="backToCart()" class="flex items-center gap-2 text-sm text-muted dark:text-muted-dark hover:text-accent transition-colors mb-6">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+      Вернуться в корзину
+    </button>
+
+    <!-- Step indicator -->
+    <div class="flex items-center gap-0 mb-8">
+      <div class="flex flex-col items-center gap-1.5">
+        <div class="step-dot done" id="dot-1">✓</div>
+        <span class="text-[11px] text-accent font-medium hidden sm:block">Доставка</span>
+      </div>
+      <div class="step-line done flex-1 mx-2" id="line-1"></div>
+      <div class="flex flex-col items-center gap-1.5">
+        <div class="step-dot active" id="dot-2">2</div>
+        <span class="text-[11px] text-accent font-medium hidden sm:block">Оплата</span>
+      </div>
+      <div class="step-line flex-1 mx-2" id="line-2"></div>
+      <div class="flex flex-col items-center gap-1.5">
+        <div class="step-dot pending" id="dot-3">3</div>
+        <span class="text-[11px] text-muted dark:text-muted-dark text-[11px] hidden sm:block">Подтверждение</span>
+      </div>
+    </div>
+
+    <div class="lg:grid lg:grid-cols-[1fr_300px] gap-8">
+
+      <!-- ── Form area ── -->
+      <div>
+        <!-- STEP 1 -->
+        <div id="step-1" class="fade-in">
+          <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-6">Контакт и доставка</h2>
+
+          <div class="grid sm:grid-cols-2 gap-4 mb-4">
+            <div class="field-wrap">
+              <label class="form-label">Имя *</label>
+              <input id="f-name" type="text" placeholder="Как вас зовут?" class="form-input" oninput="clearError(this)">
+              <p class="form-error">Введите имя</p>
+            </div>
+            <div class="field-wrap">
+              <label class="form-label">Телефон *</label>
+              <input id="f-phone" type="tel" placeholder="+7 (___) ___-__-__" class="form-input" oninput="formatPhone(this);clearError(this)">
+              <p class="form-error">Введите телефон</p>
+            </div>
+          </div>
+
+          <!-- Messenger -->
+          <div class="mb-6">
+            <label class="form-label mb-3 block">Уведомления о заказе</label>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div class="radio-card selected" data-group="messenger" data-val="telegram" onclick="selectRadio(this)">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <span class="text-sm text-ink dark:text-ink-dark">Telegram</span>
+              </div>
+              <div class="radio-card" data-group="messenger" data-val="whatsapp" onclick="selectRadio(this)">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <span class="text-sm text-ink dark:text-ink-dark">WhatsApp</span>
+              </div>
+              <div class="radio-card" data-group="messenger" data-val="vk" onclick="selectRadio(this)">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <span class="text-sm text-ink dark:text-ink-dark">ВКонтакте</span>
+              </div>
+              <div class="radio-card" data-group="messenger" data-val="push" onclick="selectRadio(this)">
+                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+                <span class="text-sm text-ink dark:text-ink-dark">Push</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Address -->
+          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Адрес доставки</h3>
+          <div class="grid sm:grid-cols-3 gap-4 mb-4">
+            <div class="sm:col-span-2 field-wrap">
+              <label class="form-label">Город *</label>
+              <input id="f-city" type="text" placeholder="Москва" class="form-input" oninput="clearError(this)">
+              <p class="form-error">Введите город</p>
+            </div>
+            <div class="field-wrap">
+              <label class="form-label">Индекс</label>
+              <input id="f-zip" type="text" placeholder="123456" class="form-input">
+            </div>
+          </div>
+          <div class="grid sm:grid-cols-3 gap-4 mb-6">
+            <div class="sm:col-span-2 field-wrap">
+              <label class="form-label">Улица *</label>
+              <input id="f-street" type="text" placeholder="Ленинградский проспект" class="form-input" oninput="clearError(this)">
+              <p class="form-error">Введите улицу</p>
+            </div>
+            <div>
+              <label class="form-label">Дом / кв</label>
+              <div class="grid grid-cols-2 gap-2">
+                <input id="f-house" type="text" placeholder="15А" class="form-input">
+                <input id="f-apt" type="text" placeholder="42" class="form-input">
+              </div>
+            </div>
+          </div>
+
+          <!-- Delivery method -->
+          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Способ доставки</h3>
+          <div class="space-y-2 mb-8">
+            <div class="radio-card selected" data-group="delivery" data-val="courier" data-price="0" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер до двери</p>
+                <p class="text-xs text-muted dark:text-muted-dark">1–2 дня · Москва и МО</p>
+              </div>
+              <span class="text-sm font-semibold text-sage dark:text-sage-dark">Бесплатно</span>
+            </div>
+            <div class="radio-card" data-group="delivery" data-val="pickup" data-price="100" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Пункт выдачи СДЭК</p>
+                <p class="text-xs text-muted dark:text-muted-dark">2–3 дня · По всей России</p>
+              </div>
+              <span class="text-sm font-semibold text-ink dark:text-ink-dark">100 ₽</span>
+            </div>
+            <div class="radio-card" data-group="delivery" data-val="post" data-price="80" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Почта России</p>
+                <p class="text-xs text-muted dark:text-muted-dark">3–7 дней</p>
+              </div>
+              <span class="text-sm font-semibold text-ink dark:text-ink-dark">80 ₽</span>
+            </div>
+          </div>
+
+          <button onclick="goStep(2)" class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5">
+            Далее — к оплате →
+          </button>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step-2" class="hidden">
+          <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-6">Способ оплаты</h2>
+
+          <!-- Payment methods -->
+          <div class="space-y-2.5 mb-6">
+            <button class="pay-btn selected" id="pay-card" onclick="selectPay('card',this)">
+              <span class="text-xl">💳</span>
+              <div class="flex-1">
+                <p class="font-medium">Банковская карта</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Visa · Mastercard · МИР</p>
+              </div>
+              <svg class="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4l3 3" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button class="pay-btn" id="pay-sbp" onclick="selectPay('sbp',this)">
+              <span class="text-xl">⚡</span>
+              <div class="flex-1">
+                <p class="font-medium">СБП — Система быстрых платежей</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Все российские банки · Мгновенно</p>
+              </div>
+            </button>
+            <button class="pay-btn" id="pay-sberpay" onclick="selectPay('sberpay',this)">
+              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%2321A038'/%3E%3Cpath d='M17 8H8.5A3.5 3.5 0 0 0 5 11.5v1A3.5 3.5 0 0 0 8.5 16H17' stroke='%23fff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E" alt="SberPay" class="w-6 h-6">
+              <div class="flex-1">
+                <p class="font-medium">SberPay</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Оплата через Сбербанк</p>
+              </div>
+            </button>
+            <button class="pay-btn" id="pay-cash" onclick="selectPay('cash',this)">
+              <span class="text-xl">💵</span>
+              <div class="flex-1">
+                <p class="font-medium">Наличными курьеру</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Только при доставке курьером</p>
+              </div>
+            </button>
+          </div>
+
+          <!-- Card form (shown when card selected) -->
+          <div id="card-form" class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 space-y-3">
+            <p class="text-xs text-muted dark:text-muted-dark flex items-center gap-1.5 mb-3">
+              <svg class="w-3.5 h-3.5 text-sage dark:text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round"/></svg>
+              Защищено Тинькофф Кассой · PCI DSS
+            </p>
+            <div>
+              <label class="form-label">Номер карты</label>
+              <div class="card-field text-muted dark:text-muted-dark text-sm select-none">•••• •••• •••• ••••</div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="form-label">Срок действия</label>
+                <div class="card-field text-muted dark:text-muted-dark text-sm select-none">ММ / ГГ</div>
+              </div>
+              <div>
+                <label class="form-label">CVV</label>
+                <div class="card-field text-muted dark:text-muted-dark text-sm select-none">•••</div>
+              </div>
+            </div>
+            <label class="flex items-center gap-2.5 cursor-pointer mt-1">
+              <input type="checkbox" class="w-3.5 h-3.5 rounded accent-[#D4956A]" checked>
+              <span class="text-xs text-muted dark:text-muted-dark">Сохранить карту для следующего раза</span>
+            </label>
+          </div>
+
+          <!-- SBP info -->
+          <div id="sbp-form" class="hidden p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 text-center">
+            <div class="w-24 h-24 mx-auto bg-white dark:bg-sand-dark/20 rounded-xl border border-sand dark:border-sand-dark/40 flex items-center justify-center mb-3">
+              <div class="grid grid-cols-5 gap-0.5 p-1">
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
+              </div>
+            </div>
+            <p class="text-sm font-medium text-ink dark:text-ink-dark mb-1">Отсканируйте QR-код</p>
+            <p class="text-xs text-muted dark:text-muted-dark">или откройте приложение банка и выберите «Оплата по СБП»</p>
+          </div>
+
+          <!-- Subscription toggle -->
+          <div class="flex items-start gap-3 p-4 rounded-2xl border border-sage/20 dark:border-sage-dark/20 bg-sage/5 dark:bg-sage-dark/5 mb-8">
+            <div class="sub-toggle mt-0.5" id="sub-toggle" onclick="toggleSubscription()">
+              <div class="sub-thumb"></div>
+            </div>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark">Оформить как подписку</p>
+              <p class="text-xs text-muted dark:text-muted-dark mt-0.5">−15% на каждую доставку · Пауза или отмена в 1 клик · Следующий заказ через 30 дней</p>
+              <p id="sub-savings" class="hidden text-xs text-sage dark:text-sage-dark font-semibold mt-1">Экономия <span id="sub-amount">655 ₽</span> в месяц</p>
+            </div>
+          </div>
+
+          <div class="flex gap-3">
+            <button onclick="goStep(1)" class="flex-none px-5 py-3.5 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-muted dark:text-muted-dark hover:border-warm/50 transition-colors">
+              ← Назад
+            </button>
+            <button onclick="goStep(3)" class="flex-1 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5">
+              Далее — проверить заказ →
+            </button>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step-3" class="hidden">
+          <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-6">Проверьте заказ</h2>
+
+          <!-- Review: delivery -->
+          <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 mb-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest">Доставка</p>
+              <button onclick="goStep(1)" class="text-xs text-accent hover:opacity-80 transition-opacity">Изменить</button>
+            </div>
+            <div class="text-sm text-ink dark:text-ink-dark" id="review-address">—</div>
+          </div>
+
+          <!-- Review: payment -->
+          <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 mb-4 space-y-3">
+            <div class="flex items-center justify-between">
+              <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest">Оплата</p>
+              <button onclick="goStep(2)" class="text-xs text-accent hover:opacity-80 transition-opacity">Изменить</button>
+            </div>
+            <div class="text-sm text-ink dark:text-ink-dark" id="review-payment">—</div>
+          </div>
+
+          <!-- Review: products -->
+          <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 mb-6">
+            <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">Товары</p>
+            <div id="review-items" class="space-y-3"></div>
+          </div>
+
+          <!-- Total + pay -->
+          <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 space-y-2.5 text-sm">
+            <div class="flex justify-between text-muted dark:text-muted-dark">
+              <span>Товары</span><span id="r-subtotal">—</span>
+            </div>
+            <div class="flex justify-between text-muted dark:text-muted-dark" id="r-row-delivery">
+              <span>Доставка</span><span id="r-delivery">—</span>
+            </div>
+            <div id="r-row-discount" class="flex justify-between text-sage dark:text-sage-dark hidden">
+              <span>Скидка</span><span id="r-discount">—</span>
+            </div>
+            <div class="border-t border-sand dark:border-sand-dark/40 pt-2.5 flex justify-between font-bold text-base text-ink dark:text-ink-dark">
+              <span>Итого</span><span id="r-total">—</span>
+            </div>
+          </div>
+
+          <button onclick="placeOrder()" id="pay-btn-final" class="w-full py-4 bg-accent hover:bg-accent/90 text-white font-bold rounded-full text-base shadow-lg shadow-accent/25 transition-all hover:-translate-y-0.5">
+            Оплатить <span id="final-pay-amount">4 370 ₽</span>
+          </button>
+
+          <!-- Trust -->
+          <div class="mt-4 flex items-center justify-center gap-4 text-xs text-muted dark:text-muted-dark">
+            <span class="flex items-center gap-1">🔒 Тинькофф Касса</span>
+            <span>·</span>
+            <span class="flex items-center gap-1">🛡 SSL</span>
+            <span>·</span>
+            <span class="flex items-center gap-1">↩️ Возврат 14 дней</span>
+          </div>
+
+          <div class="mt-3 flex justify-start">
+            <button onclick="goStep(2)" class="text-sm text-muted dark:text-muted-dark hover:text-accent transition-colors flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+              Назад к оплате
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Right: mini summary ── -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-[76px]">
+          <div class="border border-sand dark:border-sand-dark/40 rounded-2xl p-4 bg-cream dark:bg-cream-dark">
+            <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">Ваш заказ</p>
+            <div id="checkout-items-mini" class="space-y-3 mb-4"></div>
+            <div class="border-t border-sand dark:border-sand-dark/40 pt-3 space-y-1.5 text-sm">
+              <div class="flex justify-between text-muted dark:text-muted-dark">
+                <span>Товары</span><span id="co-subtotal">—</span>
+              </div>
+              <div class="flex justify-between text-muted dark:text-muted-dark" id="co-row-delivery">
+                <span>Доставка</span><span id="co-delivery">—</span>
+              </div>
+              <div id="co-row-discount" class="flex justify-between text-sage dark:text-sage-dark hidden">
+                <span>Скидка</span><span id="co-discount">—</span>
+              </div>
+              <div class="flex justify-between font-bold text-ink dark:text-ink-dark pt-1">
+                <span>Итого</span><span id="co-total">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════
+     VIEW: SUCCESS
+══════════════════════════════════════════════════════ -->
+<section id="view-success" class="view">
+  <div class="max-w-lg mx-auto px-4 sm:px-6 py-16 text-center">
+
+    <!-- Animated checkmark -->
+    <div class="success-circle w-20 h-20 bg-sage/15 dark:bg-sage-dark/15 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-sage/30 dark:border-sage-dark/30">
+      <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none">
+        <path class="success-check" d="M10 20 L17 27 L30 14" stroke="#8BA888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <h1 class="font-serif text-2xl sm:text-3xl text-ink dark:text-ink-dark mb-2">Заказ принят!</h1>
+    <p class="text-3xl font-serif text-accent mb-6" id="success-order-num">#4821</p>
+
+    <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 text-left space-y-3 mb-6">
+      <div class="flex items-start gap-3">
+        <span class="text-lg mt-0.5">📱</span>
+        <p class="text-sm text-ink dark:text-ink-dark">Статус заказа придёт в <span class="font-semibold" id="success-messenger">Telegram</span></p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-lg mt-0.5">📦</span>
+        <p class="text-sm text-ink dark:text-ink-dark">Ожидаемая доставка: <span class="font-semibold" id="success-delivery-date">8–9 марта</span></p>
+      </div>
+      <div class="flex items-start gap-3">
+        <span class="text-lg mt-0.5">🔥</span>
+        <p class="text-sm text-ink dark:text-ink-dark">Трекер рутины активирован — не теряйте серию!</p>
+      </div>
+      <div id="success-bonus-row" class="flex items-start gap-3 hidden">
+        <span class="text-lg mt-0.5">◈</span>
+        <p class="text-sm text-ink dark:text-ink-dark">Начислено <span id="success-bonus-amount" class="font-semibold text-accent">0 баллов</span> — доступны в личном кабинете</p>
+      </div>
+    </div>
+
+    <div class="flex flex-col sm:flex-row gap-3 mb-8">
+      <button class="flex-1 py-3 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-ink dark:text-ink-dark hover:border-warm/50 transition-colors">
+        Отследить заказ
+      </button>
+      <a href="index.html" class="flex-1 py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm transition-colors text-center">
+        Вернуться в магазин
+      </a>
+    </div>
+
+    <div class="border-t border-sand dark:border-sand-dark/40 pt-6">
+      <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-4">Пока ждёте — начните рутину:</p>
+      <div class="grid grid-cols-2 gap-3">
+        <a href="#" class="p-4 rounded-xl border border-sand dark:border-sand-dark/40 hover:border-warm/50 transition-colors group">
+          <div class="text-2xl mb-2">▶</div>
+          <p class="text-xs font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Открыть трекер</p>
+        </a>
+        <a href="index.html#ingredients" class="p-4 rounded-xl border border-sand dark:border-sand-dark/40 hover:border-warm/50 transition-colors group">
+          <div class="text-2xl mb-2">🔬</div>
+          <p class="text-xs font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Как использовать</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-sand/40 dark:border-sand-dark/20 bg-sand/10 dark:bg-sand-dark/5 py-8 mt-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted dark:text-muted-dark">
+    <a href="index.html" class="font-serif text-xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <p>© 2026 Марья · D2C уход за кожей</p>
+    <div class="flex gap-4">
+      <a href="#" class="hover:text-accent transition-colors">Доставка</a>
+      <a href="#" class="hover:text-accent transition-colors">Возврат</a>
+      <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
+    </div>
+  </div>
+</footer>
+
+
+<!-- ══════════════════════ JS ══════════════════════ -->
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const CART_PRODUCTS = [
+  { id:1, name:'Сыворотка с гиалуроновой кислотой', emoji:'💧', volume:'30 мл',
+    price:1490, color:'from-blue-50 to-blue-100', qty:1 },
+  { id:2, name:'Дневной крем с ниацинамидом SPF 30', emoji:'☀️', volume:'50 мл',
+    price:1890, color:'from-amber-50 to-orange-100', qty:1 },
+  { id:5, name:'Тоник с AHA-кислотами 10%', emoji:'⚗️', volume:'200 мл',
+    price:1290, oldPrice:1590, color:'from-pink-50 to-rose-100', qty:1 },
+];
+
+function loadCart() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('marya_cart'));
+    if (saved && saved.length > 0) return saved;
+  } catch {}
+  return CART_PRODUCTS.map(p => ({...p}));
+}
+function saveCart() {
+  localStorage.setItem('marya_cart', JSON.stringify(cart));
+}
+
+let cart = loadCart();
+
+const FREE_DELIVERY = 2000;
+const PROMOS = { 'MARYA10':'10%', 'WELCOME':'free_delivery' };
+
+let state = {
+  promo: null,
+  promoType: null,
+  usePoints: false,
+  subscription: false,
+  deliveryCost: 0,
+  payMethod: 'card',
+  step: 1,
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────
+function fmt(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+
+function subtotal(){
+  return cart.reduce((s, p) => s + p.price * p.qty, 0);
+}
+function discount(){
+  if (state.promo === 'MARYA10') return Math.round(subtotal() * 0.1);
+  return 0;
+}
+function deliveryCost(){
+  if (state.promoType === 'free_delivery') return 0;
+  const sub = subtotal() - discount();
+  if (sub >= FREE_DELIVERY) return 0;
+  return state.deliveryCost;
+}
+// ── BONUS HELPERS ─────────────────────────────────────────────────
+function getBonus(){
+  try { return JSON.parse(localStorage.getItem('marya_bonus')) || { balance:0, totalSpent:0, history:[] }; }
+  catch { return { balance:0, totalSpent:0, history:[] }; }
+}
+function saveBonus(b){ localStorage.setItem('marya_bonus', JSON.stringify(b)); }
+function bonusTier(totalSpent){
+  if (totalSpent >= 15000) return { name:'Золото',  rate:0.15 };
+  if (totalSpent >= 5000)  return { name:'Серебро', rate:0.10 };
+  return                          { name:'Старт',   rate:0.05 };
+}
+function calcBonusEarn(orderTotal){
+  const { rate } = bonusTier(getBonus().totalSpent || 0);
+  return Math.floor(orderTotal * rate);
+}
+
+function pointsDiscount(){
+  if (!state.usePoints) return 0;
+  const balance = getBonus().balance;
+  const maxDiscount = subtotal() - discount() - subDiscount() + deliveryCost();
+  return Math.min(balance, maxDiscount);
+}
+function subDiscount(){ return state.subscription ? Math.round((subtotal()-discount())*0.15) : 0; }
+function total(){
+  return subtotal() - discount() - pointsDiscount() - subDiscount() + deliveryCost();
+}
+
+// ── RENDER CART ───────────────────────────────────────────────────
+function renderCart(){
+  const container = document.getElementById('cart-items');
+  const empty     = document.getElementById('cart-empty');
+  const routine   = document.getElementById('add-from-routine');
+  const upsell    = document.getElementById('upsell-block');
+
+  if (cart.length === 0){
+    container.innerHTML = '';
+    empty.classList.remove('hidden');
+    routine.classList.add('hidden');
+    upsell.classList.add('hidden');
+  } else {
+    empty.classList.add('hidden');
+    routine.classList.remove('hidden');
+    upsell.classList.remove('hidden');
+    container.innerHTML = cart.map(p => renderCartItem(p)).join('');
+  }
+  updateSummary();
+  updateDeliveryBanner();
+  updateCount();
+}
+
+function renderCartItem(p){
+  return `
+  <div class="flex gap-4 p-4 bg-cream dark:bg-cream-dark border border-sand/50 dark:border-sand-dark/20 rounded-2xl" data-id="${p.id}">
+    <div class="w-[72px] h-[72px] flex-shrink-0 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-3xl">
+      ${p.emoji}
+    </div>
+    <div class="flex-1 min-w-0">
+      <div class="flex items-start justify-between gap-2">
+        <div>
+          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark leading-tight">${p.name}</h3>
+          <p class="text-xs text-muted dark:text-muted-dark mt-0.5">${p.volume}</p>
+        </div>
+        <button onclick="removeItem(${p.id})" class="flex-shrink-0 p-1 text-muted dark:text-muted-dark hover:text-red-400 transition-colors" aria-label="Удалить">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="flex items-center justify-between mt-3">
+        <div class="flex items-center gap-2">
+          <button class="qty-btn" onclick="changeQty(${p.id},-1)">−</button>
+          <span class="w-6 text-center text-sm font-semibold text-ink dark:text-ink-dark">${p.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${p.id},+1)">+</button>
+        </div>
+        <div class="text-right">
+          <span class="font-bold text-sm ${p.oldPrice ? 'text-accent' : 'text-ink dark:text-ink-dark'}">${fmt(p.price * p.qty)}</span>
+          ${p.oldPrice ? `<span class="block text-[10px] text-muted dark:text-muted-dark line-through">${fmt(p.oldPrice * p.qty)}</span>` : ''}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function removeItem(id){
+  cart = cart.filter(p => p.id !== id);
+  saveCart();
+  renderCart();
+  showToast('Товар удалён из корзины');
+}
+
+function changeQty(id, delta){
+  const item = cart.find(p => p.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, Math.min(10, item.qty + delta));
+  saveCart();
+  renderCart();
+}
+
+function addUpsell(){
+  if (!cart.find(p => p.id === 10)){
+    cart.push({ id:10, name:'SPF-флюид невидимый 50+', emoji:'🌤️', volume:'40 мл',
+      price:1690, color:'from-orange-50 to-amber-100', qty:1 });
+    saveCart();
+    renderCart();
+    document.getElementById('upsell-block').innerHTML = `
+      <div class="flex items-center gap-3 text-sm text-sage dark:text-sage-dark font-medium">
+        <span class="text-xl">✓</span> SPF-флюид добавлен в корзину
+      </div>`;
+    showToast('SPF-флюид добавлен');
+  }
+}
+
+// ── SUMMARY ───────────────────────────────────────────────────────
+function updateSummary(){
+  const sub  = subtotal();
+  const disc = discount();
+  const pts  = pointsDiscount();
+  const sub_ = subDiscount();
+  const del  = deliveryCost();
+  const tot  = total();
+
+  document.getElementById('sum-subtotal').textContent = fmt(sub);
+  document.getElementById('sum-total').textContent    = fmt(tot);
+  document.getElementById('mobile-total').textContent = fmt(tot);
+
+  const rowDisc = document.getElementById('row-discount');
+  if (disc > 0 || sub_ > 0){
+    rowDisc.classList.remove('hidden');
+    document.getElementById('sum-discount').textContent = '−' + fmt(disc + sub_);
+  } else { rowDisc.classList.add('hidden'); }
+
+  document.getElementById('row-points').classList.toggle('hidden', !state.usePoints);
+  document.getElementById('sum-delivery').textContent = del === 0 ? 'Бесплатно' : fmt(del);
+  document.getElementById('sum-delivery').className   = del === 0 ? 'text-sage dark:text-sage-dark font-medium' : 'text-ink dark:text-ink-dark';
+  document.getElementById('sum-count').textContent    = cart.reduce((s,p)=>s+p.qty,0);
+
+  // Обновляем блок баллов
+  const bonus = getBonus();
+  const tier  = bonusTier(bonus.totalSpent || 0);
+  const btext = document.getElementById('bonus-balance-text');
+  const bbadge = document.getElementById('bonus-tier-badge');
+  if (btext)  btext.textContent  = bonus.balance + ' баллов';
+  if (bbadge) {
+    bbadge.textContent = tier.name;
+    bbadge.className = 'text-[10px] px-1.5 py-0.5 rounded-full font-medium ' +
+      (tier.name === 'Золото'  ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+       tier.name === 'Серебро' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400' :
+                                 'bg-sand dark:bg-sand-dark/40 text-muted dark:text-muted-dark');
+  }
+  // Скрываем кнопку баллов если баланс 0
+  const pointsBlock = document.getElementById('points-btn')?.closest('.flex.items-center.justify-between');
+  if (pointsBlock) pointsBlock.style.display = bonus.balance > 0 ? '' : 'none';
+  if (state.usePoints && pts > 0) {
+    document.getElementById('sum-points') && (document.getElementById('sum-points').textContent = '−' + fmt(pts));
+  }
+}
+
+function updateDeliveryBanner(){
+  const sub = subtotal();
+  const rem = FREE_DELIVERY - sub;
+  const del = document.getElementById('delivery-banner');
+  const bar = document.getElementById('delivery-bar');
+  if (rem <= 0 || state.promoType === 'free_delivery'){
+    document.getElementById('delivery-banner-text').innerHTML =
+      '<span class="text-sage dark:text-sage-dark font-semibold">✓ Бесплатная доставка применена!</span>';
+    bar.style.width = '100%';
+    bar.className = 'delivery-bar-fill h-full bg-gradient-to-r from-sage to-sage/60 rounded-full';
+  } else {
+    document.getElementById('delivery-remaining').textContent = fmt(rem);
+    bar.style.width = Math.min(100, (sub / FREE_DELIVERY) * 100) + '%';
+  }
+}
+
+function updateCount(){
+  const n = cart.reduce((s,p)=>s+p.qty,0);
+  document.getElementById('cart-item-count').textContent = n + ' ' + pluralItems(n);
+  document.getElementById('header-cart-count').textContent = n;
+}
+function pluralItems(n){
+  if(n%10===1&&n%100!==11) return 'товар';
+  if([2,3,4].includes(n%10)&&![12,13,14].includes(n%100)) return 'товара';
+  return 'товаров';
+}
+
+// ── PROMO ─────────────────────────────────────────────────────────
+function applyPromo(){
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  const msg  = document.getElementById('promo-msg');
+  msg.classList.remove('hidden');
+  if (code === 'MARYA10'){
+    state.promo = 'MARYA10'; state.promoType = '10%';
+    msg.textContent = '✓ Промокод применён: −10%';
+    msg.className   = 'text-xs mt-1.5 text-sage dark:text-sage-dark';
+  } else if (code === 'WELCOME'){
+    state.promo = 'WELCOME'; state.promoType = 'free_delivery';
+    msg.textContent = '✓ Промокод применён: бесплатная доставка';
+    msg.className   = 'text-xs mt-1.5 text-sage dark:text-sage-dark';
+  } else {
+    msg.textContent = 'Промокод не найден';
+    msg.className   = 'text-xs mt-1.5 text-red-400';
+  }
+  renderCart();
+}
+
+function togglePoints(){
+  state.usePoints = !state.usePoints;
+  const btn = document.getElementById('points-btn');
+  btn.textContent = state.usePoints ? 'Отменить' : 'Применить';
+  document.getElementById('row-points').classList.toggle('hidden', !state.usePoints);
+  updateSummary();
+}
+
+// ── VIEWS ─────────────────────────────────────────────────────────
+function goToCheckout(){
+  if (cart.length === 0) return;
+  showView('checkout');
+  goStep(1);
+  renderCheckoutMini();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function backToCart(){
+  showView('cart');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function showView(name){
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+// ── STEPS ─────────────────────────────────────────────────────────
+function goStep(n){
+  if (n === 2 && !validateStep1()) return;
+  state.step = n;
+
+  // Show/hide step panels
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('step-'+i);
+    if (i === n){ el.classList.remove('hidden'); el.classList.add('fade-in'); }
+    else { el.classList.add('hidden'); el.classList.remove('fade-in'); }
+  });
+
+  // Update dots & lines
+  [1,2,3].forEach(i => {
+    const dot  = document.getElementById('dot-'+i);
+    dot.className = 'step-dot ' + (i < n ? 'done' : i === n ? 'active' : 'pending');
+    dot.textContent = i < n ? '✓' : i;
+  });
+  [1,2].forEach(i => {
+    const line = document.getElementById('line-'+i);
+    line.className = 'step-line flex-1 mx-2 ' + (i < n ? 'done' : '');
+  });
+
+  if (n === 3) buildReviewStep();
+  renderCheckoutMini();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function validateStep1(){
+  let ok = true;
+  [['f-name','Введите имя'],['f-phone','Введите телефон'],
+   ['f-city','Введите город'],['f-street','Введите улицу']].forEach(([id, msg]) => {
+    const el = document.getElementById(id);
+    const wrap = el.closest('.field-wrap');
+    if (!el.value.trim()){
+      wrap.classList.add('has-error');
+      wrap.querySelector('.form-error').textContent = msg;
+      ok = false;
+    }
+  });
+  return ok;
+}
+
+function clearError(el){
+  el.closest('.field-wrap')?.classList.remove('has-error');
+}
+
+// ── RADIO SELECT ──────────────────────────────────────────────────
+function selectRadio(el){
+  const group = el.dataset.group;
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectDelivery(el){
+  selectRadio(el);
+  state.deliveryCost = parseInt(el.dataset.price) || 0;
+  updateSummary();
+  updateDeliveryBanner();
+}
+
+// ── PAYMENT ───────────────────────────────────────────────────────
+function selectPay(method, el){
+  state.payMethod = method;
+  document.querySelectorAll('.pay-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('card-form').classList.toggle('hidden', method !== 'card');
+  document.getElementById('sbp-form').classList.toggle('hidden', method !== 'sbp');
+}
+
+// ── SUBSCRIPTION ──────────────────────────────────────────────────
+function toggleSubscription(){
+  state.subscription = !state.subscription;
+  document.getElementById('sub-toggle').classList.toggle('on', state.subscription);
+  document.getElementById('sub-savings').classList.toggle('hidden', !state.subscription);
+  document.getElementById('sub-amount').textContent = fmt(subDiscount());
+  updateSummary();
+}
+
+// ── REVIEW ────────────────────────────────────────────────────────
+function buildReviewStep(){
+  const name    = document.getElementById('f-name').value;
+  const city    = document.getElementById('f-city').value;
+  const street  = document.getElementById('f-street').value;
+  const house   = document.getElementById('f-house').value;
+  const apt     = document.getElementById('f-apt').value;
+  const delType = document.querySelector('[data-group="delivery"].selected')?.querySelector('p.font-medium')?.textContent || '';
+
+  document.getElementById('review-address').innerHTML =
+    `<span class="font-medium">${name}</span><br>
+     ${city}, ${street}${house?' '+house:''}${apt?', кв. '+apt:''}<br>
+     <span class="text-muted dark:text-muted-dark">${delType}</span>`;
+
+  const PAY_NAMES = {card:'Банковская карта',sbp:'СБП',sberpay:'SberPay',cash:'Наличными курьеру'};
+  document.getElementById('review-payment').textContent = PAY_NAMES[state.payMethod] || '—';
+
+  document.getElementById('review-items').innerHTML = cart.map(p => `
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-lg flex-shrink-0">${p.emoji}</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm text-ink dark:text-ink-dark font-medium leading-tight truncate">${p.name}</p>
+        <p class="text-xs text-muted dark:text-muted-dark">${p.volume} · ${p.qty} шт.</p>
+      </div>
+      <span class="text-sm font-semibold text-ink dark:text-ink-dark">${fmt(p.price*p.qty)}</span>
+    </div>`).join('');
+
+  const sub = subtotal(), disc = discount()+subDiscount(), del = deliveryCost(), tot = total();
+  document.getElementById('r-subtotal').textContent  = fmt(sub);
+  document.getElementById('r-delivery').textContent  = del === 0 ? 'Бесплатно' : fmt(del);
+  document.getElementById('r-total').textContent     = fmt(tot);
+  document.getElementById('final-pay-amount').textContent = fmt(tot);
+
+  const rowDisc = document.getElementById('r-row-discount');
+  if (disc > 0){ rowDisc.classList.remove('hidden'); document.getElementById('r-discount').textContent = '−'+fmt(disc); }
+  else rowDisc.classList.add('hidden');
+}
+
+function renderCheckoutMini(){
+  const mini = document.getElementById('checkout-items-mini');
+  if (!mini) return;
+  mini.innerHTML = cart.map(p => `
+    <div class="flex items-center gap-2.5">
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-base flex-shrink-0">${p.emoji}</div>
+      <div class="flex-1 min-w-0"><p class="text-xs font-medium text-ink dark:text-ink-dark truncate">${p.name}</p><p class="text-[10px] text-muted dark:text-muted-dark">${p.qty} шт.</p></div>
+      <span class="text-xs font-semibold text-ink dark:text-ink-dark">${fmt(p.price*p.qty)}</span>
+    </div>`).join('');
+
+  const del  = deliveryCost();
+  const disc = discount()+subDiscount();
+  document.getElementById('co-subtotal').textContent = fmt(subtotal());
+  document.getElementById('co-delivery').textContent = del===0?'Бесплатно':fmt(del);
+  document.getElementById('co-total').textContent    = fmt(total());
+  const rowD = document.getElementById('co-row-discount');
+  if (disc>0){ rowD.classList.remove('hidden'); document.getElementById('co-discount').textContent='−'+fmt(disc); }
+  else rowD.classList.add('hidden');
+}
+
+// ── PLACE ORDER ───────────────────────────────────────────────────
+function placeOrder(){
+  const btn = document.getElementById('pay-btn-final');
+  btn.textContent = 'Обработка...';
+  btn.disabled    = true;
+  btn.classList.add('opacity-70');
+
+  setTimeout(() => {
+    const orderId  = '#' + (Math.floor(Math.random() * 9000) + 1000);
+    const today    = new Date();
+    const d1       = new Date(today); d1.setDate(d1.getDate() + 2);
+    const d2       = new Date(today); d2.setDate(d2.getDate() + 3);
+    const months   = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+    const dateStr  = d1.getDate()+' – '+d2.getDate()+' '+months[d2.getMonth()];
+
+    document.getElementById('success-order-num').textContent   = orderId;
+    document.getElementById('success-delivery-date').textContent = dateStr;
+
+    const messengerNames = {telegram:'Telegram',whatsapp:'WhatsApp',vk:'ВКонтакте',push:'Push-уведомление'};
+    const mesVal = document.querySelector('[data-group="messenger"].selected')?.dataset.val || 'telegram';
+    document.getElementById('success-messenger').textContent = messengerNames[mesVal] || 'Telegram';
+
+    // ── Сохраняем заказ ───────────────────────────────────────────
+    const orderTotal  = total();
+    const bonusUsed   = state.usePoints ? pointsDiscount() : 0;
+    const bonusEarned = calcBonusEarn(orderTotal);
+
+    // Сохраняем в историю заказов
+    const orders = (() => { try { return JSON.parse(localStorage.getItem('marya_orders')) || []; } catch { return []; } })();
+    const deliveryEl = document.querySelector('[data-group="delivery"].selected');
+    const addrParts = [
+      document.getElementById('f-city')?.value,
+      document.getElementById('f-addr')?.value,
+      document.getElementById('f-apt')?.value,
+    ].filter(Boolean).join(', ');
+    orders.unshift({
+      id:           orderId,
+      date:         new Date().toISOString(),
+      status:       'processing',
+      items:        cart.map(p => ({ id:p.id, name:p.name, emoji:p.emoji, volume:p.volume, price:p.price, qty:p.qty })),
+      total:        orderTotal,
+      delivery:     deliveryEl?.dataset.val || 'courier',
+      address:      addrParts,
+      bonusEarned,
+      bonusUsed,
+    });
+    if (orders.length > 50) orders.length = 50;
+    localStorage.setItem('marya_orders', JSON.stringify(orders));
+
+    // Обновляем бонусный баланс
+    const bonus = getBonus();
+    bonus.totalSpent = (bonus.totalSpent || 0) + orderTotal;
+    if (bonusUsed > 0) {
+      bonus.balance = Math.max(0, bonus.balance - bonusUsed);
+      bonus.history.unshift({ date: new Date().toISOString(), amount: -bonusUsed, reason: 'Списано по заказу ' + orderId, orderId });
+    }
+    bonus.balance += bonusEarned;
+    bonus.history.unshift({ date: new Date().toISOString(), amount: bonusEarned, reason: 'Заказ ' + orderId, orderId });
+    saveBonus(bonus);
+
+    // Показываем начисленные баллы на экране успеха
+    if (bonusEarned > 0) {
+      document.getElementById('success-bonus-amount').textContent = '+' + bonusEarned + ' баллов';
+      document.getElementById('success-bonus-row').classList.remove('hidden');
+    }
+
+    cart = [];
+    saveCart();
+    showView('success');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }, 1400);
+}
+
+// ── PHONE FORMAT ──────────────────────────────────────────────────
+function formatPhone(el){
+  let v = el.value.replace(/\D/g,'');
+  if (v.startsWith('8')) v = '7' + v.slice(1);
+  if (v.startsWith('7')){
+    let r = '+7';
+    if (v.length > 1) r += ' (' + v.slice(1,4);
+    if (v.length > 4) r += ') ' + v.slice(4,7);
+    if (v.length > 7) r += '-' + v.slice(7,9);
+    if (v.length > 9) r += '-' + v.slice(9,11);
+    el.value = r;
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg){
+  let t = document.getElementById('toast');
+  if (!t){
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.className = 'fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-ink dark:bg-[#F5EDE4] text-cream dark:text-ink text-sm font-medium rounded-full shadow-xl z-[60] transition-all duration-300';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{
+    t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)';
+  }, 2200);
+}
+
+// ── DARK MODE ─────────────────────────────────────────────────────
+function toggleDark(){
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('marya-theme', document.documentElement.classList.contains('dark')?'dark':'light');
+  const h = document.querySelector('header');
+  if (document.documentElement.classList.contains('dark')){
+    h.style.background = 'rgba(26,22,18,.93)';
+    h.style.borderBottom = '1px solid rgba(42,36,32,.5)';
+  } else {
+    h.style.background = 'rgba(253,248,243,.93)';
+    h.style.borderBottom = '1px solid rgba(232,221,208,.5)';
+  }
+}
+if (localStorage.getItem('marya-theme')==='dark' || (!localStorage.getItem('marya-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+  document.documentElement.classList.add('dark');
+  const h = document.querySelector('header');
+  if (h){ h.style.background='rgba(26,22,18,.93)'; h.style.borderBottom='1px solid rgba(42,36,32,.5)'; }
+}
+
+// ── SCROLL PROGRESS ───────────────────────────────────────────────
+window.addEventListener('scroll',()=>{
+  const el=document.documentElement;
+  document.getElementById('progress-bar').style.width=(el.scrollTop/(el.scrollHeight-el.clientHeight)*100)+'%';
+},{passive:true});
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderCart();
+
+// ─── Catalog Mega-Menu ────────────────────────
+const catalogData = {
+  face: {
+    categories: [
+      { name: 'Все средства', highlight: true, cat: null },
+      { name: 'Очищение',                       cat: 'cleanser' },
+      { name: 'Средства для снятия макияжа',    cat: 'makeup'   },
+      { name: 'Тонизирование',                  cat: 'toner'    },
+      { name: 'Пилинги и скрабы',               cat: 'scrub'    },
+      { name: 'Карбокситерапия',                cat: 'carboxy'  },
+      { name: 'Сыворотки',                      cat: 'serum'    },
+      { name: 'Средства для массажа',           cat: 'massage'  },
+      { name: 'Маски',                          cat: 'mask'     },
+      { name: 'Кремы и гели',                   cat: 'cream'    },
+      { name: 'Солнцезащитные средства',        cat: 'spf'      },
+      { name: 'Уход за кожей вокруг глаз',      cat: 'eye'      },
+      { name: 'Средства для ухода за губами',   cat: 'lip'      },
+    ],
+    purposes: [
+      { name: 'Анти-акне',              code: 'acne'        },
+      { name: 'Увлажнение',             code: 'moisture'    },
+      { name: 'Питание',                code: 'nutrition'   },
+      { name: 'Профилактика купероза',   code: null          },
+      { name: 'Лифтинг',               code: 'lifting'     },
+      { name: 'Антивозрастной уход',    code: 'aging'       },
+      { name: 'Осветление',             code: 'brightening' },
+      { name: 'Регенерация',            code: null          },
+      { name: 'Матирование',            code: null          },
+      { name: 'Зимний уход',            code: null          },
+      { name: 'Очищение',               code: 'cleansing'   },
+      { name: 'Уход за шеей и декольте',code: null          },
+      { name: 'Упругость',              code: 'firmness'    },
+      { name: 'Восстановление',         code: null          },
+    ]
+  },
+  body: {
+    categories: [
+      { name: 'Все средства',          highlight: true, cat: null       },
+      { name: 'Средства для очищения',              cat: 'cleanser' },
+      { name: 'Скрабы',                             cat: 'scrub'    },
+      { name: 'Интенсивный уход',                   cat: null       },
+      { name: 'Средства для массажа',               cat: 'massage'  },
+      { name: 'СПА-обертывание',                    cat: null       },
+      { name: 'Бандажное обертывание',              cat: null       },
+      { name: 'Кремы и гели',                       cat: 'cream'    },
+      { name: 'Интимная гигиена',                   cat: null       },
+    ],
+    purposes: [
+      { name: 'Антицеллюлитный уход', code: 'anticellulite' },
+      { name: 'Похудение',            code: null             },
+      { name: 'Коррекция стрий',      code: null             },
+      { name: 'Снятие отёчности',     code: null             },
+      { name: 'Моделирование',        code: 'modelling'      },
+      { name: 'Детокс',               code: null             },
+      { name: 'Тонизирование',        code: null             },
+    ]
+  },
+  hands: {
+    categories: [
+      { name: 'Все средства',                        highlight: true, cat: null       },
+      { name: 'Средства для очищения кожи рук и ног',               cat: 'cleanser' },
+      { name: 'Скрабы для рук и ног',                               cat: 'scrub'    },
+      { name: 'Средства для кутикулы',                              cat: null       },
+      { name: 'Парафинотерапия для рук и ног',                      cat: null       },
+      { name: 'Кремы для рук',                                      cat: 'cream'    },
+      { name: 'Кремы для ног',                                      cat: 'cream'    },
+      { name: 'Средства от натоптышей',                             cat: null       },
+      { name: 'Антисептики',                                        cat: null       },
+      { name: 'Дезодоранты для ног',                                cat: null       },
+    ],
+    purposes: [
+      { name: 'Здоровая кутикула',        code: null },
+      { name: 'Уменьшение гиперкератоза', code: null },
+      { name: 'Уменьшение гипергидроза',  code: null },
+      { name: 'Борьба с трещинами',       code: null },
+      { name: 'Удаление мозолей',         code: null },
+      { name: 'Охлаждение',               code: null },
+    ]
+  },
+  hair: {
+    categories: [
+      { name: 'Все средства',     highlight: true, cat: null          },
+      { name: 'Шампуни',                           cat: 'shampoo'     },
+      { name: 'Бальзамы',                          cat: null          },
+      { name: 'Кондиционеры',                      cat: 'conditioner' },
+      { name: 'Скрабы и пилинги',                  cat: 'scrub'       },
+      { name: 'Несмываемый уход',                  cat: null          },
+      { name: 'Укладка и стайлинг',                cat: null          },
+      { name: 'Маски',                             cat: 'mask'        },
+      { name: 'Бустеры',                           cat: null          },
+      { name: 'Сухие шампуни',                     cat: null          },
+    ],
+    purposes: [
+      { name: 'Для свежести',          code: null        },
+      { name: 'Для повреждённых',      code: null        },
+      { name: 'Для укладки',           code: null        },
+      { name: 'Для блеска',            code: null        },
+      { name: 'Для гладкости',         code: null        },
+      { name: 'Для объёма',            code: null        },
+      { name: 'Для роста',             code: null        },
+      { name: 'Для осветлённых волос', code: null        },
+      { name: 'Для окрашенных волос',  code: null        },
+      { name: 'Глубокое очищение',     code: 'cleansing' },
+      { name: 'Против перхоти',        code: null        },
+      { name: 'Разглаживание',         code: null        },
+      { name: 'Против выпадения',      code: null        },
+      { name: 'Для кудрявых',          code: null        },
+    ]
+  }
+};
+function switchZone(zone) {
+  if (!catalogData[zone]) return;
+  document.querySelectorAll('.zone-btn[data-zone]').forEach(b => b.classList.toggle('zone-active', b.dataset.zone === zone));
+  const d = catalogData[zone];
+  document.getElementById('mega-cat-list').innerHTML = d.categories.map(c => {
+    const params = [zone ? `zone=${zone}` : '', c.cat ? `cat=${c.cat}` : ''].filter(Boolean).join('&');
+    return `<a href="catalog.html${params ? '?' + params : ''}" class="cat-link${c.highlight ? ' cat-highlight' : ''}">${c.name}</a>`;
+  }).join('');
+  document.getElementById('mega-dest-list').innerHTML = d.purposes.map(p => {
+    const params = [zone ? `zone=${zone}` : '', p.code ? `purpose=${p.code}` : ''].filter(Boolean).join('&');
+    return `<a href="catalog.html${params ? '?' + params : ''}" class="dest-link">${p.name}</a>`;
+  }).join('');
+}
+switchZone('face');
+</script>
+</body>
+</html>

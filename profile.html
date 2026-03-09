@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Личный кабинет — Марья</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia','Cambria','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html{font-family:'Inter',system-ui,sans-serif}
+    *,*::before,*::after{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#C4A882;border-radius:3px}
+
+    /* Form */
+    .form-input{width:100%;padding:10px 14px;border:1.5px solid #E8DDD0;border-radius:12px;background:#FDF8F3;color:#2C2018;font-size:14px;outline:none;transition:border-color .2s,box-shadow .2s}
+    .dark .form-input{background:#211A14;border-color:#2A2420;color:#F5EDE4}
+    .form-input:focus{border-color:#D4956A;box-shadow:0 0 0 3px rgba(212,149,106,.12)}
+    .form-input::placeholder{color:#7A6A5A}
+    .dark .form-input::placeholder{color:#A89880}
+    .form-label{display:block;font-size:12px;font-weight:500;color:#7A6A5A;margin-bottom:5px}
+    .dark .form-label{color:#A89880}
+    .form-error{font-size:11px;color:#e05252;margin-top:3px;display:none}
+    .has-error .form-input{border-color:#e05252}
+    .has-error .form-error{display:block}
+
+    /* Progress bar */
+    #progress-bar{position:fixed;top:0;left:0;height:2px;z-index:1000;background:linear-gradient(90deg,#D4956A,#C4A882);transition:width .1s linear}
+
+    /* Tab panels */
+    .tab-panel{display:none}
+    .tab-panel.active{display:block;animation:fadeIn .3s ease-out}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Tab buttons */
+    .tab-btn{display:flex;align-items:center;gap:6px;padding:8px 14px;border-radius:20px;font-size:13px;font-weight:500;color:#7A6A5A;cursor:pointer;border:none;background:none;white-space:nowrap;transition:all .2s}
+    .tab-btn:hover{color:#2C2018;background:rgba(232,221,208,.5)}
+    .dark .tab-btn{color:#A89880}
+    .dark .tab-btn:hover{color:#F5EDE4;background:rgba(42,36,32,.5)}
+    .tab-btn.active{color:#D4956A;background:rgba(212,149,106,.1)}
+    .dark .tab-btn.active{color:#E8A87A;background:rgba(212,149,106,.12)}
+
+    /* Order card expand */
+    .order-items{max-height:0;overflow:hidden;transition:max-height .35s ease}
+    .order-items.open{max-height:600px}
+
+    /* Quiz overlay */
+    #quiz-overlay{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+    #quiz-overlay.hidden{display:none}
+    .quiz-backdrop{position:absolute;inset:0;background:rgba(44,32,24,.45);backdrop-filter:blur(4px)}
+    .quiz-panel{position:relative;width:100%;max-width:520px;background:#FDF8F3;border-radius:28px;padding:32px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(44,32,24,.25)}
+    .dark .quiz-panel{background:#1D1510}
+    .quiz-step{display:none}
+    .quiz-step.active{display:block;animation:fadeIn .25s ease-out}
+
+    /* Step dots (quiz) */
+    .qdot{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;transition:all .3s}
+    .qdot.done{background:#D4956A;color:#fff}
+    .qdot.active{background:#D4956A;color:#fff;box-shadow:0 0 0 4px rgba(212,149,106,.2)}
+    .qdot.pending{background:#E8DDD0;color:#7A6A5A}
+    .dark .qdot.pending{background:#2A2420;color:#A89880}
+    .qline{flex:1;height:2px;background:#E8DDD0;transition:background .4s}
+    .dark .qline{background:#2A2420}
+    .qline.done{background:#D4956A}
+
+    /* Quiz answer buttons */
+    .qopt{display:flex;align-items:flex-start;gap:12px;padding:12px 16px;border:1.5px solid #E8DDD0;border-radius:14px;cursor:pointer;transition:all .2s;text-align:left;width:100%;background:none}
+    .dark .qopt{border-color:#2A2420;color:#F5EDE4}
+    .qopt:hover{border-color:#C4A882;background:rgba(232,221,208,.3)}
+    .dark .qopt:hover{background:rgba(42,36,32,.4)}
+    .qopt.selected{border-color:#D4956A;background:rgba(212,149,106,.08)}
+    .dark .qopt.selected{background:rgba(212,149,106,.1)}
+    .qcheck{width:18px;height:18px;border-radius:50%;border:2px solid #C4A882;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+    .qopt.selected .qcheck{border-color:#D4956A;background:#D4956A}
+    .qcheck-inner{width:8px;height:8px;border-radius:50%;background:#fff;opacity:0;transition:opacity .2s}
+    .qopt.selected .qcheck-inner{opacity:1}
+
+    /* Mega-menu */
+    .catalog-mega{opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease;background-color:#FFFFFF}
+    .dark .catalog-mega{background-color:#1D1510}
+    .catalog-wrap:hover .catalog-mega{opacity:1;transform:translateY(0);pointer-events:auto}
+    .catalog-bridge{position:absolute;top:100%;left:-20px;right:-20px;height:12px}
+    .zone-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.06em;color:#7A6A5A;cursor:pointer;background:none;border:none;text-align:left;transition:background .12s,color .12s}
+    .zone-btn:hover,.zone-btn.zone-active{background:rgba(232,221,208,.8);color:#2C2018}
+    .dark .zone-btn{color:#A89880}
+    .dark .zone-btn:hover,.dark .zone-btn.zone-active{background:rgba(42,36,32,.7);color:#F5EDE4}
+    .cat-link{display:block;padding:6px 0;font-size:14px;color:#7A6A5A;text-decoration:none;transition:color .12s}
+    .cat-link:hover{color:#2C2018}
+    .cat-link.cat-highlight{color:#D4956A;font-weight:500}
+    .dark .cat-link{color:#A89880}
+    .dark .cat-link:hover{color:#F5EDE4}
+    .dest-link{display:block;padding:5px 0;font-size:13px;color:#7A6A5A;text-decoration:none;transition:color .12s}
+    .dest-link:hover{color:#2C2018}
+    .dark .dest-link{color:#A89880}
+    .dark .dest-link:hover{color:#F5EDE4}
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
+
+<div id="progress-bar" style="width:0%"></div>
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
+  style="background:rgba(253,248,243,.93);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+    <a href="index.html" class="font-serif text-2xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+      <div class="catalog-wrap relative">
+        <a href="catalog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors flex items-center gap-1">
+          Каталог
+          <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+        <div class="catalog-bridge"></div>
+        <div class="catalog-mega absolute left-0 top-[calc(100%+12px)] w-[820px] border border-sand/60 dark:border-sand-dark/30 rounded-2xl shadow-2xl shadow-ink/15 dark:shadow-black/50 overflow-hidden z-50">
+          <div class="absolute -top-[6px] left-10 w-3 h-3 bg-white dark:bg-[#1D1510] border-l border-t border-sand/60 dark:border-sand-dark/30 rotate-45"></div>
+          <div class="flex" style="min-height:320px">
+            <div class="w-48 flex-shrink-0 bg-[#F0E8DC] dark:bg-[#231A12] border-r border-sand/40 dark:border-sand-dark/20 py-5 px-3 flex flex-col gap-0.5">
+              <button class="zone-btn zone-active" data-zone="face" onmouseenter="switchZone('face')">ЛИЦО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="body" onmouseenter="switchZone('body')">ТЕЛО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hands" onmouseenter="switchZone('hands')">РУКИ И НОГИ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+              <button class="zone-btn" data-zone="hair" onmouseenter="switchZone('hair')">ВОЛОСЫ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+            </div>
+            <div class="w-[300px] flex-shrink-0 px-6 py-5 border-r border-sand/30 dark:border-sand-dark/20">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Категории</p>
+              <div id="mega-cat-list"></div>
+            </div>
+            <div class="flex-1 px-6 py-5">
+              <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Назначения</p>
+              <div id="mega-dest-list"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="index.html#about" class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="index.html#quiz" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="index.html#blog" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+    </nav>
+    <div class="flex items-center gap-2">
+      <button onclick="window.location.href='profile.html'" class="p-2 rounded-full bg-sand/60 dark:bg-sand-dark/40 text-accent" aria-label="Профиль">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke-width="2"/></svg>
+      </button>
+      <button onclick="window.location.href='cart.html'" class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+        <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
+        <span id="cart-count" class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full items-center justify-center hidden">0</span>
+      </button>
+      <button onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium">
+        <span class="block dark:hidden">☀️</span>
+        <span class="hidden dark:block">🌙</span>
+        <span class="hidden sm:block">Ночной</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="pt-[60px]">
+
+<!-- ══════ PROFILE HERO ══════ -->
+<div class="bg-sand/20 dark:bg-sand-dark/10 border-b border-sand dark:border-sand-dark/30">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+    <!-- Avatar + info -->
+    <div class="flex items-center gap-5 mb-7">
+      <div id="avatar" class="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-serif font-bold text-accent flex-shrink-0"
+           style="background:rgba(212,149,106,.15)">
+        М
+      </div>
+      <div>
+        <h1 id="hero-name" class="font-serif text-xl sm:text-2xl text-ink dark:text-ink-dark">Личный кабинет</h1>
+        <div class="flex items-center gap-3 mt-1 flex-wrap">
+          <span class="flex items-center gap-1.5 text-sm text-muted dark:text-muted-dark">
+            <span class="text-warm dark:text-warm-dark">◈</span>
+            <span id="hero-bonus" class="font-semibold text-ink dark:text-ink-dark">0</span> баллов
+          </span>
+          <span id="hero-tier-badge" class="text-[11px] px-2 py-0.5 rounded-full bg-sand dark:bg-sand-dark/50 text-muted dark:text-muted-dark font-medium">Старт · 5%</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tab nav -->
+    <div class="flex gap-1 overflow-x-auto pb-1 -mb-px scrollbar-hide">
+      <button class="tab-btn active" onclick="switchTab('personal')" data-tab="personal">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke-width="2"/></svg>
+        Профиль
+      </button>
+      <button class="tab-btn" onclick="switchTab('quiz')" data-tab="quiz">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round"/></svg>
+        Тип кожи
+      </button>
+      <button class="tab-btn" onclick="switchTab('wishlist')" data-tab="wishlist">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/></svg>
+        Избранное
+        <span id="wishlist-count-badge" class="hidden text-[10px] bg-accent text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('orders')" data-tab="orders">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2" stroke-width="2" stroke-linecap="round"/></svg>
+        Заказы
+        <span id="orders-count-badge" class="hidden text-[10px] bg-muted/60 text-white font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('bonus')" data-tab="bonus">
+        <span class="text-base leading-none">◈</span>
+        Бонусы
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TAB CONTENT ══════ -->
+<div class="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+
+  <!-- ─── TAB: ПРОФИЛЬ ─── -->
+  <div id="tab-personal" class="tab-panel active">
+    <div class="max-w-lg">
+      <h2 class="font-serif text-lg text-ink dark:text-ink-dark mb-6">Личные данные</h2>
+      <form onsubmit="saveProfile(event)" class="space-y-4">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="form-label">Имя</label>
+            <input id="p-name" type="text" class="form-input" placeholder="Мария" autocomplete="given-name">
+          </div>
+          <div>
+            <label class="form-label">Фамилия</label>
+            <input id="p-lastname" type="text" class="form-input" placeholder="Иванова" autocomplete="family-name">
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Email</label>
+          <input id="p-email" type="email" class="form-input" placeholder="maria@example.com" autocomplete="email">
+        </div>
+        <div>
+          <label class="form-label">Телефон</label>
+          <input id="p-phone" type="tel" class="form-input" placeholder="+7 (___) ___-__-__" oninput="formatPhone(this)" autocomplete="tel">
+        </div>
+        <div>
+          <label class="form-label">Дата рождения</label>
+          <input id="p-birth" type="date" class="form-input" autocomplete="bday">
+        </div>
+        <div>
+          <label class="form-label">Тип кожи</label>
+          <select id="p-skintype" class="form-input">
+            <option value="">— Не указан —</option>
+            <option value="normal">Нормальная</option>
+            <option value="dry">Сухая</option>
+            <option value="oily">Жирная</option>
+            <option value="combination">Комбинированная</option>
+            <option value="sensitive">Чувствительная</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Адрес доставки</label>
+          <input id="p-address" type="text" class="form-input" placeholder="Город, улица, дом, квартира" autocomplete="street-address">
+        </div>
+        <button type="submit" class="w-full py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full transition-colors shadow-md shadow-accent/20">
+          Сохранить
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ─── TAB: ТИП КОЖИ ─── -->
+  <div id="tab-quiz" class="tab-panel">
+    <div id="quiz-result-block" class="hidden">
+      <!-- Filled by JS -->
+    </div>
+    <div id="quiz-empty-block">
+      <div class="text-center py-12">
+        <div class="text-6xl mb-4">🧬</div>
+        <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Узнайте свой тип кожи</h2>
+        <p class="text-sm text-muted dark:text-muted-dark mb-8 max-w-sm mx-auto">Ответьте на 5 вопросов — мы подберём персональные рекомендации по уходу</p>
+        <button onclick="openQuiz()" class="inline-flex items-center gap-2 px-8 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full transition-colors shadow-lg shadow-accent/20">
+          Пройти квиз
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── TAB: ИЗБРАННОЕ ─── -->
+  <div id="tab-wishlist" class="tab-panel">
+    <div id="wishlist-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <!-- Filled by JS -->
+    </div>
+    <div id="wishlist-empty" class="hidden text-center py-16">
+      <div class="text-6xl mb-4">🤍</div>
+      <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Список пуст</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-6">Добавляйте понравившиеся товары через иконку ♡</p>
+      <a href="catalog.html" class="inline-flex items-center gap-2 px-7 py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full transition-colors">Перейти в каталог</a>
+    </div>
+  </div>
+
+  <!-- ─── TAB: ЗАКАЗЫ ─── -->
+  <div id="tab-orders" class="tab-panel">
+    <div id="orders-list" class="space-y-4">
+      <!-- Filled by JS -->
+    </div>
+    <div id="orders-empty" class="hidden text-center py-16">
+      <div class="text-6xl mb-4">📦</div>
+      <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Заказов пока нет</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-6">Ваши покупки будут отображаться здесь</p>
+      <a href="catalog.html" class="inline-flex items-center gap-2 px-7 py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full transition-colors">Перейти в каталог</a>
+    </div>
+  </div>
+
+  <!-- ─── TAB: БОНУСЫ ─── -->
+  <div id="tab-bonus" class="tab-panel">
+    <!-- Balance card -->
+    <div class="p-6 rounded-3xl border border-sand dark:border-sand-dark/30 bg-gradient-to-br from-sand/30 to-cream dark:from-sand-dark/20 dark:to-cream-dark mb-6">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark font-medium uppercase tracking-widest mb-1">Бонусный баланс</p>
+          <div class="flex items-baseline gap-2">
+            <span class="text-warm dark:text-warm-dark text-2xl">◈</span>
+            <span id="bonus-balance-big" class="font-serif text-4xl text-ink dark:text-ink-dark">0</span>
+            <span class="text-muted dark:text-muted-dark text-sm">баллов</span>
+          </div>
+          <p class="text-xs text-muted dark:text-muted-dark mt-1">1 балл = 1 ₽ при оплате заказа</p>
+        </div>
+        <div id="tier-icon" class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style="background:rgba(212,149,106,.1)">⭐</div>
+      </div>
+
+      <!-- Tier progress -->
+      <div class="mt-4">
+        <div class="flex justify-between text-xs text-muted dark:text-muted-dark mb-2">
+          <span id="tier-current-label" class="font-semibold text-accent">Старт · 5%</span>
+          <span id="tier-next-label">До «Серебро»: <span class="font-semibold">5 000 ₽</span></span>
+        </div>
+        <div class="h-2 bg-sand dark:bg-sand-dark/40 rounded-full overflow-hidden">
+          <div id="tier-progress-bar" class="h-full bg-gradient-to-r from-accent to-warm rounded-full transition-all duration-700" style="width:0%"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-muted dark:text-muted-dark mt-1.5">
+          <span>Старт</span><span>5 000 ₽</span><span>Серебро</span><span>15 000 ₽</span><span>Золото</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tier cards -->
+    <div class="grid grid-cols-3 gap-3 mb-6">
+      <div id="tier-card-start" class="p-4 rounded-2xl border-2 border-sand dark:border-sand-dark/30 text-center">
+        <div class="text-2xl mb-2">⭐</div>
+        <p class="text-xs font-semibold text-ink dark:text-ink-dark">Старт</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">0–499 баллов</p>
+        <p class="text-xs font-bold text-accent mt-1.5">5% кэшбэк</p>
+      </div>
+      <div id="tier-card-silver" class="p-4 rounded-2xl border-2 border-sand dark:border-sand-dark/30 text-center">
+        <div class="text-2xl mb-2">🥈</div>
+        <p class="text-xs font-semibold text-ink dark:text-ink-dark">Серебро</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">от 5 000 ₽ покупок</p>
+        <p class="text-xs font-bold text-accent mt-1.5">10% кэшбэк</p>
+      </div>
+      <div id="tier-card-gold" class="p-4 rounded-2xl border-2 border-sand dark:border-sand-dark/30 text-center">
+        <div class="text-2xl mb-2">🥇</div>
+        <p class="text-xs font-semibold text-ink dark:text-ink-dark">Золото</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">от 15 000 ₽ покупок</p>
+        <p class="text-xs font-bold text-accent mt-1.5">15% кэшбэк</p>
+      </div>
+    </div>
+
+    <!-- Bonus history -->
+    <h3 class="font-semibold text-sm text-ink dark:text-ink-dark mb-3">История начислений</h3>
+    <div id="bonus-history-list" class="space-y-2">
+      <!-- Filled by JS -->
+    </div>
+    <div id="bonus-history-empty" class="hidden text-center py-8 text-sm text-muted dark:text-muted-dark">
+      Совершите первую покупку, чтобы начать копить баллы
+    </div>
+  </div>
+
+</div><!-- /tab content -->
+</main>
+
+<!-- ══════════════════════ QUIZ OVERLAY ══════════════════════ -->
+<div id="quiz-overlay" class="hidden">
+  <div class="quiz-backdrop" onclick="closeQuiz()"></div>
+  <div class="quiz-panel">
+    <!-- Progress dots -->
+    <div class="flex items-center gap-1 mb-6" id="quiz-progress">
+      <div class="qdot active" id="qdot-1">1</div>
+      <div class="qline" id="qline-1"></div>
+      <div class="qdot pending" id="qdot-2">2</div>
+      <div class="qline" id="qline-2"></div>
+      <div class="qdot pending" id="qdot-3">3</div>
+      <div class="qline" id="qline-3"></div>
+      <div class="qdot pending" id="qdot-4">4</div>
+      <div class="qline" id="qline-4"></div>
+      <div class="qdot pending" id="qdot-5">5</div>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="quiz-step active" id="qstep-1">
+      <h3 class="font-serif text-lg text-ink dark:text-ink-dark mb-1">Как выглядит кожа через 2 часа после умывания?</h3>
+      <p class="text-xs text-muted dark:text-muted-dark mb-4">Без нанесения каких-либо средств</p>
+      <div class="space-y-2.5" id="q1-opts">
+        <button class="qopt" onclick="selectOpt('q1','dry',this)" data-val="dry">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Стянутая, шелушится — хочется нанести крем</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q1','normal',this)" data-val="normal">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Комфортная, без ощущения дискомфорта</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q1','combination',this)" data-val="combination">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Блестит в Т-зоне, щёки нормальные или сухие</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q1','oily',this)" data-val="oily">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Блестит по всему лицу, расширенные поры</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="quiz-step" id="qstep-2">
+      <h3 class="font-serif text-lg text-ink dark:text-ink-dark mb-1">Как часто появляются высыпания?</h3>
+      <p class="text-xs text-muted dark:text-muted-dark mb-4">Прыщи, закрытые комедоны, покраснения</p>
+      <div class="space-y-2.5">
+        <button class="qopt" onclick="selectOpt('q2','never',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Никогда или очень редко</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q2','sometimes',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Иногда, особенно в стрессовые периоды</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q2','often',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Достаточно часто, это моя основная проблема</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q2','always',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Постоянно — акне или хронические высыпания</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="quiz-step" id="qstep-3">
+      <h3 class="font-serif text-lg text-ink dark:text-ink-dark mb-1">Что вас беспокоит больше всего?</h3>
+      <p class="text-xs text-muted dark:text-muted-dark mb-4">Можно выбрать несколько</p>
+      <div class="space-y-2.5" id="q3-opts">
+        <button class="qopt" onclick="toggleConcern('acne',this)" data-concern="acne">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Акне и высыпания</span>
+        </button>
+        <button class="qopt" onclick="toggleConcern('dryness',this)" data-concern="dryness">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Сухость и шелушение</span>
+        </button>
+        <button class="qopt" onclick="toggleConcern('aging',this)" data-concern="aging">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Морщины и потеря упругости</span>
+        </button>
+        <button class="qopt" onclick="toggleConcern('dullness',this)" data-concern="dullness">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Тусклый цвет лица и пигментация</span>
+        </button>
+        <button class="qopt" onclick="toggleConcern('sensitivity',this)" data-concern="sensitivity">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Чувствительность и покраснения</span>
+        </button>
+        <button class="qopt" onclick="toggleConcern('puffiness',this)" data-concern="puffiness">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Отёки и тёмные круги под глазами</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="quiz-step" id="qstep-4">
+      <h3 class="font-serif text-lg text-ink dark:text-ink-dark mb-1">Ваш возраст?</h3>
+      <p class="text-xs text-muted dark:text-muted-dark mb-4">Помогает подобрать нужные активные компоненты</p>
+      <div class="space-y-2.5">
+        <button class="qopt" onclick="selectOpt('q4','under25',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">До 25 лет</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q4','25-35',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">25–35 лет</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q4','35-45',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">35–45 лет</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q4','over45',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">45+ лет</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="quiz-step" id="qstep-5">
+      <h3 class="font-serif text-lg text-ink dark:text-ink-dark mb-1">Как кожа реагирует на новые продукты?</h3>
+      <p class="text-xs text-muted dark:text-muted-dark mb-4">Реакция при первом применении незнакомого средства</p>
+      <div class="space-y-2.5">
+        <button class="qopt" onclick="selectOpt('q5','reactive',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Часто краснеет, зудит или шелушится</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q5','sometimes',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Иногда бывает лёгкая реакция</span>
+        </button>
+        <button class="qopt" onclick="selectOpt('q5','rarely',this)">
+          <span class="qcheck"><span class="qcheck-inner"></span></span>
+          <span class="text-sm text-ink dark:text-ink-dark">Практически никогда не реагирует</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Nav buttons -->
+    <div class="flex items-center justify-between mt-6 pt-4 border-t border-sand dark:border-sand-dark/30">
+      <button id="quiz-back-btn" onclick="quizBack()" class="px-5 py-2.5 rounded-full border border-sand dark:border-sand-dark/40 text-sm font-medium text-muted dark:text-muted-dark hover:border-warm/50 transition-colors invisible">
+        ← Назад
+      </button>
+      <button id="quiz-next-btn" onclick="quizNext()" class="px-7 py-2.5 rounded-full bg-accent hover:bg-accent/90 text-white text-sm font-semibold transition-colors">
+        Далее →
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer class="border-t border-sand/40 dark:border-sand-dark/20 bg-sand/10 dark:bg-sand-dark/5 py-8 mt-8">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted dark:text-muted-dark">
+    <a href="index.html" class="font-serif text-xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <p>© 2026 Марья · D2C уход за кожей</p>
+    <div class="flex gap-4">
+      <a href="#" class="hover:text-accent transition-colors">Доставка</a>
+      <a href="#" class="hover:text-accent transition-colors">Возврат</a>
+      <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════ TOAST ══════════════════════ -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-5 py-2.5 bg-ink dark:bg-[#F5EDE4] text-cream dark:text-ink text-sm font-medium rounded-full shadow-xl z-[300] transition-all duration-300" style="opacity:0;transform:translateX(-50%) translateY(8px)"></div>
+
+<!-- ══════════════════════ JS ══════════════════════ -->
+<script>
+
+// ── HELPERS ────────────────────────────────────────────────────────
+function fmt(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(8px)';
+  }, 2400);
+}
+
+function formatPhone(el){
+  let v = el.value.replace(/\D/g,'');
+  if (v.startsWith('8')) v = '7' + v.slice(1);
+  if (v.startsWith('7')){
+    let r = '+7';
+    if (v.length > 1) r += ' (' + v.slice(1,4);
+    if (v.length > 4) r += ') ' + v.slice(4,7);
+    if (v.length > 7) r += '-' + v.slice(7,9);
+    if (v.length > 9) r += '-' + v.slice(9,11);
+    el.value = r;
+  }
+}
+
+function fmtDate(iso){
+  const d = new Date(iso);
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+// ── DATA HELPERS ───────────────────────────────────────────────────
+function getUser(){ try{ return JSON.parse(localStorage.getItem('marya_user')) || {}; } catch{ return {}; } }
+function saveUser(u){ localStorage.setItem('marya_user', JSON.stringify(u)); }
+
+function getBonus(){ try{ return JSON.parse(localStorage.getItem('marya_bonus')) || {balance:0,totalSpent:0,history:[]}; } catch{ return {balance:0,totalSpent:0,history:[]}; } }
+function bonusTier(totalSpent){
+  if (totalSpent >= 15000) return {name:'Золото',  rate:0.15, icon:'🥇', next:null,      nextVal:0,     range:[15000,Infinity]};
+  if (totalSpent >= 5000)  return {name:'Серебро', rate:0.10, icon:'🥈', next:'Золото',  nextVal:15000, range:[5000,15000]};
+  return                          {name:'Старт',   rate:0.05, icon:'⭐', next:'Серебро', nextVal:5000,  range:[0,5000]};
+}
+
+function getWishlist(){ try{ return JSON.parse(localStorage.getItem('marya_wishlist')) || []; } catch{ return []; } }
+function saveWishlist(l){ localStorage.setItem('marya_wishlist', JSON.stringify(l)); }
+
+function getOrders(){ try{ return JSON.parse(localStorage.getItem('marya_orders')) || []; } catch{ return []; } }
+function getCart(){ try{ return JSON.parse(localStorage.getItem('marya_cart')) || []; } catch{ return []; } }
+function saveCartLS(c){ localStorage.setItem('marya_cart', JSON.stringify(c)); }
+
+function getQuiz(){ try{ return JSON.parse(localStorage.getItem('marya_quiz')) || null; } catch{ return null; } }
+
+// ── TABS ───────────────────────────────────────────────────────────
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('.tab-panel').forEach(p => { p.classList.remove('active'); p.style.display='none'; });
+  const panel = document.getElementById('tab-' + name);
+  if (panel){ panel.style.display = 'block'; panel.classList.add('active'); }
+  if (name === 'bonus')    renderBonus();
+  if (name === 'orders')   renderOrders();
+  if (name === 'wishlist') renderWishlist();
+  if (name === 'quiz')     renderQuizTab();
+}
+
+// ── HERO ───────────────────────────────────────────────────────────
+function renderHero(){
+  const u = getUser();
+  const fullName = [u.name, u.lastname].filter(Boolean).join(' ');
+  if (fullName){
+    document.getElementById('hero-name').textContent = fullName;
+    const initials = [u.name, u.lastname].filter(Boolean).map(s => s[0].toUpperCase()).join('');
+    document.getElementById('avatar').textContent = initials || 'М';
+  }
+  const bonus = getBonus();
+  const tier  = bonusTier(bonus.totalSpent || 0);
+  document.getElementById('hero-bonus').textContent = bonus.balance;
+  const badge = document.getElementById('hero-tier-badge');
+  badge.textContent = tier.name + ' · ' + Math.round(tier.rate*100) + '%';
+  badge.className = 'text-[11px] px-2 py-0.5 rounded-full font-medium ' +
+    (tier.name === 'Золото'  ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
+     tier.name === 'Серебро' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400' :
+                               'bg-sand dark:bg-sand-dark/50 text-muted dark:text-muted-dark');
+
+  // Wishlist badge
+  const wl = getWishlist();
+  const wbadge = document.getElementById('wishlist-count-badge');
+  if (wl.length > 0){ wbadge.textContent = wl.length; wbadge.classList.remove('hidden'); wbadge.classList.add('flex'); }
+  else { wbadge.classList.add('hidden'); }
+
+  // Orders badge
+  const orders = getOrders();
+  const obadge = document.getElementById('orders-count-badge');
+  if (orders.length > 0){ obadge.textContent = orders.length; obadge.classList.remove('hidden'); obadge.classList.add('flex'); }
+  else { obadge.classList.add('hidden'); }
+
+  // Cart badge
+  const cartItems = getCart();
+  const total = cartItems.reduce((s,i) => s + i.qty, 0);
+  const cb = document.getElementById('cart-count');
+  if (total > 0){ cb.textContent = total; cb.classList.remove('hidden'); cb.classList.add('flex'); }
+  else { cb.classList.add('hidden'); }
+}
+
+// ── ПРОФИЛЬ ───────────────────────────────────────────────────────
+function renderProfileForm(){
+  const u = getUser();
+  if (u.name)      document.getElementById('p-name').value     = u.name;
+  if (u.lastname)  document.getElementById('p-lastname').value  = u.lastname;
+  if (u.email)     document.getElementById('p-email').value    = u.email;
+  if (u.phone)     document.getElementById('p-phone').value    = u.phone;
+  if (u.birthdate) document.getElementById('p-birth').value    = u.birthdate;
+  if (u.skinType)  document.getElementById('p-skintype').value = u.skinType;
+  if (u.address)   document.getElementById('p-address').value  = u.address;
+}
+
+function saveProfile(e){
+  e.preventDefault();
+  const u = {
+    name:      document.getElementById('p-name').value.trim(),
+    lastname:  document.getElementById('p-lastname').value.trim(),
+    email:     document.getElementById('p-email').value.trim(),
+    phone:     document.getElementById('p-phone').value.trim(),
+    birthdate: document.getElementById('p-birth').value,
+    skinType:  document.getElementById('p-skintype').value,
+    address:   document.getElementById('p-address').value.trim(),
+    updatedAt: new Date().toISOString(),
+  };
+  if (!u.name && !u.email){ showToast('Укажите хотя бы имя или email'); return; }
+  saveUser(u);
+  renderHero();
+  showToast('Данные сохранены');
+}
+
+// ── ИЗБРАННОЕ ─────────────────────────────────────────────────────
+function renderWishlist(){
+  const list = getWishlist();
+  const grid  = document.getElementById('wishlist-grid');
+  const empty = document.getElementById('wishlist-empty');
+  if (!list.length){ grid.innerHTML = ''; grid.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+  grid.classList.remove('hidden'); empty.classList.add('hidden');
+  grid.innerHTML = list.map(p => `
+    <div class="flex flex-col rounded-2xl border border-sand dark:border-sand-dark/30 overflow-hidden bg-cream dark:bg-cream-dark hover:shadow-md transition-shadow">
+      <a href="product.html?id=${p.id}" class="block">
+        <div class="w-full aspect-square flex items-center justify-center text-5xl bg-gradient-to-br ${p.color||'from-sand/30 to-warm/20'}">
+          ${p.emoji}
+        </div>
+      </a>
+      <div class="p-3 flex-1 flex flex-col">
+        <a href="product.html?id=${p.id}" class="text-xs font-semibold text-ink dark:text-ink-dark hover:text-accent transition-colors leading-tight mb-1">${p.name}</a>
+        <p class="text-[11px] text-muted dark:text-muted-dark mb-2">${p.volume}</p>
+        <p class="text-sm font-bold text-accent mb-3">${fmt(p.price)}</p>
+        <div class="flex gap-2 mt-auto">
+          <button onclick="addWishlistToCart(${p.id})" class="flex-1 py-1.5 text-xs font-semibold bg-accent hover:bg-accent/90 text-white rounded-full transition-colors">В корзину</button>
+          <button onclick="removeFromWishlist(${p.id})" class="p-1.5 rounded-full border border-sand dark:border-sand-dark/40 hover:border-red-300 text-muted dark:text-muted-dark hover:text-red-400 transition-colors" aria-label="Удалить">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function removeFromWishlist(id){
+  let list = getWishlist();
+  list = list.filter(p => p.id !== id);
+  saveWishlist(list);
+  renderWishlist();
+  renderHero();
+  showToast('Удалено из избранного');
+}
+
+function addWishlistToCart(id){
+  const item = getWishlist().find(p => p.id === id);
+  if (!item) return;
+  const cart = getCart();
+  const existing = cart.find(i => i.id === id);
+  if (existing){ existing.qty = Math.min(10, existing.qty + 1); }
+  else {
+    const CAT_COLORS = {serum:'from-blue-50 to-blue-100',toner:'from-pink-50 to-rose-100',cream:'from-amber-50 to-orange-100',cleanser:'from-teal-50 to-cyan-100',mask:'from-purple-50 to-violet-100',spf:'from-orange-50 to-amber-100',hair:'from-green-50 to-emerald-100'};
+    cart.push({ id:item.id, name:item.name, emoji:item.emoji, volume:item.volume, price:item.price, oldPrice:item.oldPrice||null, color:CAT_COLORS[item.category]||'from-sand/30 to-warm/30', qty:1 });
+  }
+  saveCartLS(cart);
+  renderHero();
+  showToast('Добавлено в корзину');
+}
+
+// ── ЗАКАЗЫ ────────────────────────────────────────────────────────
+function orderStatusBadge(status){
+  const map = {
+    processing: ['bg-warm/20 text-warm dark:bg-warm-dark/20 dark:text-warm-dark', 'В обработке'],
+    shipped:    ['bg-blue-50 text-blue-600 dark:bg-blue-900/20 dark:text-blue-400', 'В пути'],
+    delivered:  ['bg-sage/20 text-sage dark:bg-sage-dark/20 dark:text-sage-dark', 'Доставлен'],
+    cancelled:  ['bg-red-50 text-red-500 dark:bg-red-900/20 dark:text-red-400', 'Отменён'],
+  };
+  const [cls, label] = map[status] || map.processing;
+  return `<span class="text-[11px] font-semibold px-2.5 py-1 rounded-full ${cls}">${label}</span>`;
+}
+
+function renderOrders(){
+  const orders = getOrders();
+  const list   = document.getElementById('orders-list');
+  const empty  = document.getElementById('orders-empty');
+  if (!orders.length){ list.innerHTML = ''; empty.classList.remove('hidden'); return; }
+  empty.classList.add('hidden');
+  list.innerHTML = orders.map((o,i) => `
+    <div class="rounded-2xl border border-sand dark:border-sand-dark/30 overflow-hidden bg-cream dark:bg-cream-dark">
+      <button onclick="toggleOrder('order-${i}')" class="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-sand/20 dark:hover:bg-sand-dark/10 transition-colors">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="flex-shrink-0 w-9 h-9 rounded-xl bg-sand/50 dark:bg-sand-dark/30 flex items-center justify-center text-lg">
+            ${o.items?.[0]?.emoji || '📦'}
+          </div>
+          <div class="min-w-0">
+            <p class="text-sm font-semibold text-ink dark:text-ink-dark">${o.id}</p>
+            <p class="text-xs text-muted dark:text-muted-dark">${fmtDate(o.date)} · ${o.items?.length || 0} ${o.items?.length === 1 ? 'товар' : 'товара'}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          ${orderStatusBadge(o.status)}
+          <span class="font-bold text-sm text-ink dark:text-ink-dark">${fmt(o.total)}</span>
+          <svg class="w-4 h-4 text-muted dark:text-muted-dark transition-transform" id="order-arrow-${i}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+      </button>
+      <div class="order-items" id="order-${i}">
+        <div class="px-4 pb-4 space-y-2 border-t border-sand dark:border-sand-dark/20 pt-3">
+          ${(o.items||[]).map(it => `
+            <div class="flex items-center gap-3">
+              <span class="text-xl w-7 text-center">${it.emoji}</span>
+              <div class="flex-1 min-w-0">
+                <p class="text-xs font-medium text-ink dark:text-ink-dark truncate">${it.name}</p>
+                <p class="text-[11px] text-muted dark:text-muted-dark">${it.volume} · ${it.qty} шт.</p>
+              </div>
+              <span class="text-xs font-semibold text-ink dark:text-ink-dark flex-shrink-0">${fmt(it.price * it.qty)}</span>
+            </div>`).join('')}
+          <div class="pt-2 border-t border-sand dark:border-sand-dark/20 flex items-center justify-between text-xs text-muted dark:text-muted-dark">
+            <span>Итого</span>
+            <span class="font-semibold text-ink dark:text-ink-dark">${fmt(o.total)}</span>
+          </div>
+          ${o.bonusEarned > 0 ? `<p class="text-xs text-sage dark:text-sage-dark">◈ +${o.bonusEarned} баллов начислено</p>` : ''}
+          ${o.bonusUsed   > 0 ? `<p class="text-xs text-muted dark:text-muted-dark">◈ −${o.bonusUsed} баллов использовано</p>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleOrder(id){
+  const el = document.getElementById(id);
+  const idx = id.split('-')[1];
+  const arrow = document.getElementById('order-arrow-' + idx);
+  const isOpen = el.classList.contains('open');
+  el.classList.toggle('open', !isOpen);
+  if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+// ── БОНУСЫ ────────────────────────────────────────────────────────
+function fmtRub(n){ return n.toLocaleString('ru-RU') + ' ₽'; }
+
+function renderBonus(){
+  const bonus      = getBonus();
+  const spent      = bonus.totalSpent || 0;
+  const tier       = bonusTier(spent);
+
+  document.getElementById('bonus-balance-big').textContent = bonus.balance;
+  document.getElementById('tier-icon').textContent = tier.icon;
+  document.getElementById('tier-current-label').textContent = tier.name + ' · ' + Math.round(tier.rate*100) + '%';
+
+  // Progress bar based on totalSpent
+  let pct = 0;
+  if (tier.name === 'Золото'){
+    pct = 100;
+    document.getElementById('tier-next-label').textContent = 'Максимальный уровень достигнут';
+  } else {
+    const [lo, hi] = tier.range;
+    pct = Math.min(100, ((spent - lo) / (hi - lo)) * 100);
+    document.getElementById('tier-next-label').innerHTML =
+      `До «${tier.next}»: <span class="font-semibold">${fmtRub(tier.nextVal - spent)}</span>`;
+  }
+  document.getElementById('tier-progress-bar').style.width = pct + '%';
+
+  // Highlight active tier card
+  ['start','silver','gold'].forEach(t => {
+    const el = document.getElementById('tier-card-' + t);
+    if (!el) return;
+    const tname = {start:'Старт',silver:'Серебро',gold:'Золото'}[t];
+    const isActive = tier.name === tname;
+    el.className = 'p-4 rounded-2xl border-2 text-center transition-all ' +
+      (isActive ? 'border-accent bg-accent/5 dark:bg-accent/8 shadow-sm' : 'border-sand dark:border-sand-dark/30 opacity-60');
+  });
+
+  // History
+  const histList  = document.getElementById('bonus-history-list');
+  const histEmpty = document.getElementById('bonus-history-empty');
+  const history   = bonus.history || [];
+  if (!history.length){ histList.innerHTML = ''; histEmpty.classList.remove('hidden'); return; }
+  histEmpty.classList.add('hidden');
+  histList.innerHTML = history.slice(0, 20).map(h => `
+    <div class="flex items-center justify-between py-2.5 border-b border-sand/50 dark:border-sand-dark/20 last:border-0">
+      <div class="flex items-center gap-2.5">
+        <span class="w-7 h-7 rounded-full flex items-center justify-center text-sm flex-shrink-0 ${h.amount > 0 ? 'bg-sage/10 dark:bg-sage-dark/10' : 'bg-sand dark:bg-sand-dark/30'}">
+          ${h.amount > 0 ? '◈' : '−'}
+        </span>
+        <div>
+          <p class="text-xs font-medium text-ink dark:text-ink-dark">${h.reason}</p>
+          <p class="text-[11px] text-muted dark:text-muted-dark">${fmtDate(h.date)}</p>
+        </div>
+      </div>
+      <span class="text-sm font-bold flex-shrink-0 ${h.amount > 0 ? 'text-sage dark:text-sage-dark' : 'text-muted dark:text-muted-dark'}">
+        ${h.amount > 0 ? '+' : ''}${h.amount}
+      </span>
+    </div>`).join('');
+}
+
+// ── QUIZ ──────────────────────────────────────────────────────────
+const QUIZ_ANSWERS = {};
+const CONCERNS = new Set();
+let quizStep = 1;
+
+const SKIN_NAMES = {
+  normal:      'Нормальная',
+  dry:         'Сухая',
+  oily:        'Жирная',
+  combination: 'Комбинированная',
+  sensitive:   'Чувствительная',
+};
+
+const RECOMMENDATIONS = {
+  dry:         [4, 5, 6],
+  oily:        [1, 8, 3],
+  combination: [2, 4, 8],
+  normal:      [4, 5, 9],
+  sensitive:   [4, 6, 7],
+};
+
+const PRODUCTS_MINI = {
+  1:  { name:'Пенка для умывания с пребиотиками',      emoji:'🫧', volume:'150 мл', price:890,  category:'cleanser', color:'from-teal-50 to-cyan-100' },
+  2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', volume:'250 мл', price:990,  category:'toner',    color:'from-pink-50 to-rose-100'  },
+  3:  { name:'Мицеллярная вода',                        emoji:'🌊', volume:'250 мл', price:790,  category:'cleanser', color:'from-teal-50 to-cyan-100'  },
+  4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', volume:'50 мл',  price:2490, category:'serum',    color:'from-blue-50 to-blue-100'  },
+  5:  { name:'Крем дневной омолаживающий',              emoji:'☀️', volume:'50 мл',  price:1990, category:'cream',    color:'from-amber-50 to-orange-100'},
+  6:  { name:'Крем ночной омолаживающий',               emoji:'🌙', volume:'50 мл',  price:1990, category:'cream',    color:'from-amber-50 to-orange-100'},
+  7:  { name:'Крем для век от отёков и тёмных кругов',  emoji:'👁️', volume:'30 мл',  price:1490, category:'cream',    color:'from-amber-50 to-orange-100'},
+  8:  { name:'Маска очищающая с каолином',              emoji:'🪨', volume:'100 мл', price:990,  category:'mask',     color:'from-purple-50 to-violet-100'},
+  9:  { name:'Маска мгновенной красоты',                emoji:'✨', volume:'100 мл', price:1190, category:'mask',     color:'from-purple-50 to-violet-100'},
+};
+
+function openQuiz(){
+  quizStep = 1;
+  Object.keys(QUIZ_ANSWERS).forEach(k => delete QUIZ_ANSWERS[k]);
+  CONCERNS.clear();
+  // Reset UI
+  document.querySelectorAll('.qopt').forEach(b => b.classList.remove('selected'));
+  updateQuizProgress();
+  document.getElementById('quiz-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeQuiz(){
+  document.getElementById('quiz-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function selectOpt(q, val, btn){
+  QUIZ_ANSWERS[q] = val;
+  const container = btn.closest('.quiz-step');
+  container.querySelectorAll('.qopt').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function toggleConcern(concern, btn){
+  if (CONCERNS.has(concern)){ CONCERNS.delete(concern); btn.classList.remove('selected'); }
+  else { CONCERNS.add(concern); btn.classList.add('selected'); }
+}
+
+function updateQuizProgress(){
+  for (let i = 1; i <= 5; i++){
+    const dot  = document.getElementById('qdot-' + i);
+    const line = document.getElementById('qline-' + i);
+    dot.className = 'qdot ' + (i < quizStep ? 'done' : i === quizStep ? 'active' : 'pending');
+    if (line) line.className = 'qline ' + (i < quizStep ? 'done' : '');
+    document.getElementById('qstep-' + i)?.classList.toggle('active', i === quizStep);
+  }
+  document.getElementById('quiz-back-btn').style.visibility = quizStep > 1 ? 'visible' : 'hidden';
+  const nextBtn = document.getElementById('quiz-next-btn');
+  nextBtn.textContent = quizStep === 5 ? 'Получить результат' : 'Далее →';
+}
+
+function quizNext(){
+  // Validate
+  if (quizStep === 1 && !QUIZ_ANSWERS.q1){ showToast('Выберите один из вариантов'); return; }
+  if (quizStep === 2 && !QUIZ_ANSWERS.q2){ showToast('Выберите один из вариантов'); return; }
+  if (quizStep === 4 && !QUIZ_ANSWERS.q4){ showToast('Выберите один из вариантов'); return; }
+  if (quizStep === 5 && !QUIZ_ANSWERS.q5){ showToast('Выберите один из вариантов'); return; }
+  if (quizStep < 5){ quizStep++; updateQuizProgress(); return; }
+  // Final
+  finishQuiz();
+}
+
+function quizBack(){
+  if (quizStep > 1){ quizStep--; updateQuizProgress(); }
+}
+
+function finishQuiz(){
+  // Determine skin type
+  let skinType = QUIZ_ANSWERS.q1 || 'normal';
+  if (QUIZ_ANSWERS.q5 === 'reactive' || CONCERNS.has('sensitivity')) skinType = 'sensitive';
+
+  const quiz = {
+    completedAt:  new Date().toISOString(),
+    skinType,
+    skinTypeName: SKIN_NAMES[skinType] || 'Нормальная',
+    concerns:     [...CONCERNS],
+    answers:      {...QUIZ_ANSWERS},
+    recommendedProducts: RECOMMENDATIONS[skinType] || RECOMMENDATIONS.normal,
+  };
+  localStorage.setItem('marya_quiz', JSON.stringify(quiz));
+
+  // Sync skinType to user profile
+  const u = getUser();
+  u.skinType = skinType;
+  saveUser(u);
+  document.getElementById('p-skintype').value = skinType;
+
+  closeQuiz();
+  renderQuizTab();
+  showToast('Ваш тип кожи определён — ' + quiz.skinTypeName);
+}
+
+const CONCERN_LABELS = {
+  acne:        'Акне и высыпания',
+  dryness:     'Сухость и шелушение',
+  aging:       'Морщины и упругость',
+  dullness:    'Тусклый цвет лица',
+  sensitivity: 'Чувствительность',
+  puffiness:   'Отёки и тёмные круги',
+};
+
+const SKIN_TYPE_DESC = {
+  normal:      'Кожа комфортная, без лишнего блеска и стянутости. Подходит классический увлажняющий уход.',
+  dry:         'Кожа нуждается в интенсивном питании и защите барьера. Акцент на богатые кремы и сыворотки.',
+  oily:        'Кожа склонна к жирному блеску и расширенным порам. Важно лёгкое увлажнение и очищение.',
+  combination: 'Т-зона жирная, щёки нормальные или сухие. Нужен балансирующий уход.',
+  sensitive:   'Кожа быстро реагирует на внешние раздражители. Приоритет — успокаивающие и гипоаллергенные средства.',
+};
+
+function renderQuizTab(){
+  const quiz = getQuiz();
+  const resultBlock = document.getElementById('quiz-result-block');
+  const emptyBlock  = document.getElementById('quiz-empty-block');
+
+  if (!quiz){ resultBlock.classList.add('hidden'); emptyBlock.classList.remove('hidden'); return; }
+
+  emptyBlock.classList.add('hidden');
+  resultBlock.classList.remove('hidden');
+
+  const recs = (quiz.recommendedProducts || []).map(id => {
+    const p = PRODUCTS_MINI[id];
+    if (!p) return '';
+    return `<a href="product.html?id=${id}" class="flex items-center gap-3 p-3 rounded-xl border border-sand dark:border-sand-dark/30 hover:border-warm/50 transition-colors group">
+      <div class="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-2xl">${p.emoji}</div>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors leading-tight">${p.name}</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">${p.volume}</p>
+      </div>
+      <span class="text-sm font-bold text-accent flex-shrink-0">${fmt(p.price)}</span>
+    </a>`;
+  }).join('');
+
+  const concernBadges = (quiz.concerns||[]).map(c =>
+    `<span class="text-xs px-2.5 py-1 rounded-full bg-sand/60 dark:bg-sand-dark/40 text-muted dark:text-muted-dark">${CONCERN_LABELS[c]||c}</span>`
+  ).join('');
+
+  const skinTypeEmoji = {normal:'🌿',dry:'🌸',oily:'💧',combination:'☯️',sensitive:'🤍'}[quiz.skinType] || '✨';
+
+  resultBlock.innerHTML = `
+    <div class="mb-6 p-6 rounded-3xl border border-sand dark:border-sand-dark/30 bg-gradient-to-br from-sand/20 to-cream dark:from-sand-dark/15 dark:to-cream-dark">
+      <div class="flex items-center gap-4 mb-4">
+        <div class="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center text-3xl flex-shrink-0">${skinTypeEmoji}</div>
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark font-medium uppercase tracking-widest mb-0.5">Ваш тип кожи</p>
+          <h2 class="font-serif text-2xl text-ink dark:text-ink-dark">${quiz.skinTypeName}</h2>
+          <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">Квиз пройден ${fmtDate(quiz.completedAt)}</p>
+        </div>
+      </div>
+      <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">${SKIN_TYPE_DESC[quiz.skinType]||''}</p>
+      ${concernBadges ? `<div class="flex flex-wrap gap-2 mt-4">${concernBadges}</div>` : ''}
+    </div>
+
+    ${recs ? `
+    <h3 class="font-semibold text-sm text-ink dark:text-ink-dark mb-3">Рекомендованный уход</h3>
+    <div class="space-y-2 mb-6">${recs}</div>` : ''}
+
+    <button onclick="openQuiz()" class="text-sm text-muted dark:text-muted-dark hover:text-accent transition-colors underline underline-offset-2">
+      Пройти квиз заново
+    </button>`;
+}
+
+// ── DARK MODE ─────────────────────────────────────────────────────
+function toggleDark(){
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('marya-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+  const h = document.querySelector('header');
+  if (document.documentElement.classList.contains('dark')){
+    h.style.background = 'rgba(26,22,18,.93)';
+    h.style.borderBottom = '1px solid rgba(42,36,32,.5)';
+  } else {
+    h.style.background = 'rgba(253,248,243,.93)';
+    h.style.borderBottom = '1px solid rgba(232,221,208,.5)';
+  }
+}
+if (localStorage.getItem('marya-theme') === 'dark' || (!localStorage.getItem('marya-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)){
+  document.documentElement.classList.add('dark');
+  const h = document.querySelector('header');
+  if (h){ h.style.background='rgba(26,22,18,.93)'; h.style.borderBottom='1px solid rgba(42,36,32,.5)'; }
+}
+
+// ── SCROLL PROGRESS ───────────────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const el = document.documentElement;
+  document.getElementById('progress-bar').style.width = (el.scrollTop / (el.scrollHeight - el.clientHeight) * 100) + '%';
+}, { passive: true });
+
+// ── URL TAB PARAM ─────────────────────────────────────────────────
+function initFromUrl(){
+  const tab = new URLSearchParams(window.location.search).get('tab');
+  if (tab){ switchTab(tab); }
+}
+
+// ── MEGA MENU ─────────────────────────────────────────────────────
+const catalogData = {
+  face:  { categories: [{name:'Все средства',highlight:true},{name:'Очищение'},{name:'Тонизирование'},{name:'Сыворотки'},{name:'Маски'},{name:'Кремы и гели'},{name:'Солнцезащитные средства'}], purposes:['Увлажнение','Питание','Лифтинг','Антивозрастной уход','Осветление','Анти-акне','Упругость'] },
+  body:  { categories: [{name:'Все средства',highlight:true},{name:'Скрабы'},{name:'Кремы и гели'},{name:'Массаж'}], purposes:['Антицеллюлитный уход','Тонизирование','Детокс'] },
+  hands: { categories: [{name:'Все средства',highlight:true},{name:'Кремы для рук'},{name:'Кремы для ног'},{name:'Скрабы'}], purposes:['Борьба с трещинами','Уменьшение гиперкератоза'] },
+  hair:  { categories: [{name:'Все средства',highlight:true},{name:'Шампуни'},{name:'Кондиционеры'},{name:'Маски'}], purposes:['Для роста','Для блеска','Против выпадения'] },
+};
+function switchZone(zone){
+  if (!catalogData[zone]) return;
+  document.querySelectorAll('.zone-btn[data-zone]').forEach(b => b.classList.toggle('zone-active', b.dataset.zone === zone));
+  const d = catalogData[zone];
+  document.getElementById('mega-cat-list').innerHTML = d.categories.map(c => `<a href="catalog.html" class="cat-link${c.highlight?' cat-highlight':''}">${c.name}</a>`).join('');
+  document.getElementById('mega-dest-list').innerHTML = d.purposes.map(p => `<a href="catalog.html" class="dest-link">${p}</a>`).join('');
+}
+switchZone('face');
+
+// ── INIT ──────────────────────────────────────────────────────────
+renderHero();
+renderProfileForm();
+initFromUrl();
+
+</script>
+</body>
+</html>

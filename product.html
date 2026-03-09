@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Марья — Уходовая косметика</title>
+  <meta name="description" id="page-desc" content="Натуральная косметика бренда Марья" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'fade-up':    'fadeUp 0.6s ease-out forwards',
+            'float':      'float 6s ease-in-out infinite',
+            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+          },
+          keyframes: {
+            fadeUp:    { from: { opacity: '0', transform: 'translateY(24px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+            float:     { '0%,100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+            pulseSoft: { '0%,100%': { transform: 'scale(1)' }, '50%': { transform: 'scale(1.03)' } },
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, sans-serif; }
+    *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 3px; }
+    .toggle-thumb { transition: transform 0.3s ease; }
+    .dark .toggle-thumb { transform: translateX(20px); }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.65s ease, transform 0.65s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+    .thumb-item { cursor: pointer; border: 2px solid transparent; transition: border-color 0.2s, opacity 0.2s; }
+    .thumb-item.active, .thumb-item:hover { border-color: #D4956A; opacity: 1; }
+    .thumb-item { opacity: 0.6; }
+    .tab-btn { border-bottom: 2px solid transparent; transition: color 0.2s, border-color 0.2s; }
+    .tab-btn.active { color: #D4956A; border-color: #D4956A; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .star-filled { color: #D4956A; }
+    .star-empty  { color: #E8DDD0; }
+    .dark .star-empty { color: #2A2420; }
+    .ing-tag { cursor: pointer; }
+    .ing-tag:hover { background: rgba(212,149,106,0.15); }
+    .catalog-mega { opacity: 0; transform: translateY(-6px); pointer-events: none; transition: opacity 0.18s ease, transform 0.18s ease; background-color: #FFFFFF; }
+    .dark .catalog-mega { background-color: #1D1510; }
+    .catalog-wrap:hover .catalog-mega { opacity: 1; transform: translateY(0); pointer-events: auto; }
+    .catalog-bridge { position: absolute; top: 100%; left: -20px; right: -20px; height: 12px; }
+    .zone-btn { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 8px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; letter-spacing: 0.06em; color: #7A6A5A; cursor: pointer; background: none; border: none; text-align: left; text-decoration: none; transition: background 0.12s, color 0.12s; }
+    .zone-btn:hover { background: rgba(232,221,208,0.6); color: #2C2018; }
+    .zone-btn.zone-active { background: rgba(232,221,208,0.8); color: #2C2018; }
+    .dark .zone-btn { color: #A89880; }
+    .dark .zone-btn:hover, .dark .zone-btn.zone-active { background: rgba(42,36,32,0.7); color: #F5EDE4; }
+    .cat-link { display: block; padding: 6px 0; font-size: 14px; color: #7A6A5A; text-decoration: none; transition: color 0.12s; }
+    .cat-link:hover { color: #2C2018; }
+    .cat-link.cat-highlight { color: #D4956A; font-weight: 500; }
+    .dark .cat-link { color: #A89880; }
+    .dark .cat-link:hover { color: #F5EDE4; }
+    .dark .cat-link.cat-highlight { color: #E8A87A; }
+    .dest-link { display: block; padding: 5px 0; font-size: 13px; color: #7A6A5A; text-decoration: none; transition: color 0.12s; }
+    .dest-link:hover { color: #2C2018; }
+    .dark .dest-link { color: #A89880; }
+    .dark .dest-link:hover { color: #F5EDE4; }
+    .footer-gradient { background: linear-gradient(180deg, #FDF8F3 0%, #F0E4D4 100%); }
+    .dark .footer-gradient { background: linear-gradient(180deg, #1A1612 0%, #120E0A 100%); }
+    .qty-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.15s; }
+    .qty-btn:hover { background: rgba(232,221,208,0.6); }
+    .dark .qty-btn:hover { background: rgba(42,36,32,0.5); }
+    .buy-sticky { box-shadow: 0 -4px 24px rgba(44,32,24,0.08); }
+    .dark .buy-sticky { box-shadow: 0 -4px 24px rgba(0,0,0,0.3); }
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased">
+
+  <!-- HEADER -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+      <a href="index.html" class="font-serif text-2xl font-normal tracking-wide text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+        <div class="catalog-wrap relative">
+          <a href="catalog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors flex items-center gap-1">
+            Каталог
+            <svg class="w-3 h-3 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+          </a>
+          <div class="catalog-bridge"></div>
+          <div class="catalog-mega absolute left-0 top-[calc(100%+12px)] w-[820px] border border-sand/60 dark:border-sand-dark/30 rounded-2xl shadow-2xl shadow-ink/15 dark:shadow-black/50 overflow-hidden z-50">
+            <div class="absolute -top-[6px] left-10 w-3 h-3 bg-white dark:bg-[#1D1510] border-l border-t border-sand/60 dark:border-sand-dark/30 rotate-45"></div>
+            <div class="flex" style="min-height:340px">
+              <div class="w-48 flex-shrink-0 bg-[#F0E8DC] dark:bg-[#231A12] border-r border-sand/40 dark:border-sand-dark/20 py-5 px-3 flex flex-col gap-0.5">
+                <button class="zone-btn zone-active" data-zone="face" onmouseenter="switchZone('face')">ЛИЦО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+                <button class="zone-btn" data-zone="body" onmouseenter="switchZone('body')">ТЕЛО <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+                <button class="zone-btn" data-zone="hands" onmouseenter="switchZone('hands')">РУКИ И НОГИ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+                <button class="zone-btn" data-zone="hair" onmouseenter="switchZone('hair')">ВОЛОСЫ <svg class="w-3 h-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round"/></svg></button>
+                <div class="my-2 border-t border-sand/40 dark:border-sand-dark/20"></div>
+                <a href="catalog.html?zone=men" class="zone-btn">КОСМЕТИКА ДЛЯ МУЖЧИН</a>
+                <a href="catalog.html?zone=sets" class="zone-btn">НАБОРЫ</a>
+                <a href="catalog.html?zone=gift" class="zone-btn">ПОДАРОЧНЫЕ КАРТЫ</a>
+              </div>
+              <div class="w-[300px] flex-shrink-0 px-6 py-5 border-r border-sand/30 dark:border-sand-dark/20">
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Категории</p>
+                <div id="mega-cat-list"></div>
+              </div>
+              <div class="flex-1 px-6 py-5">
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-accent mb-3">Назначения</p>
+                <div id="mega-dest-list"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a href="index.html#about"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+        <a href="index.html#quiz"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+        <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+        <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Поиск">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <button onclick="window.location.href='profile.html'" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Профиль">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7" r="4" stroke-width="2"/></svg>
+        </button>
+        <button onclick="window.location.href='cart.html'" class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
+          <span id="cart-count" class="absolute top-1 right-1 w-4 h-4 bg-accent text-white text-[9px] font-bold rounded-full flex items-center justify-center">0</span>
+        </button>
+        <button onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium" aria-label="Ночной режим">
+          <span class="block dark:hidden">☀️</span>
+          <span class="hidden dark:block">🌙</span>
+          <span class="hidden sm:block">Ночной</span>
+        </button>
+        <button onclick="toggleMenu()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Меню">
+          <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 translate-y-full transition-transform duration-300">
+      <div class="flex flex-col gap-4 text-base font-medium">
+        <a href="catalog.html"          onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+        <a href="index.html#about"      onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+        <a href="index.html#quiz"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+        <a href="index.html#blog"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+        <a href="index.html#skin-types" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-[60px]">
+
+    <!-- BREADCRUMB -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+      <nav class="flex items-center gap-2 text-xs text-muted dark:text-muted-dark">
+        <a href="index.html" class="hover:text-accent transition-colors">Главная</a>
+        <span>/</span>
+        <a href="catalog.html" class="hover:text-accent transition-colors">Каталог</a>
+        <span>/</span>
+        <a id="breadcrumb-category-link" href="catalog.html" class="hover:text-accent transition-colors">Категория</a>
+        <span>/</span>
+        <span id="breadcrumb-product" class="text-ink dark:text-ink-dark">Продукт</span>
+      </nav>
+    </div>
+
+    <!-- PRODUCT MAIN: gallery + buy -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
+      <div class="grid lg:grid-cols-2 gap-10 xl:gap-16">
+
+        <!-- Gallery -->
+        <div class="space-y-4">
+          <div class="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-sand/40 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center">
+            <div id="product-badge" class="hidden absolute top-4 left-4 px-3 py-1 bg-accent text-white text-xs font-semibold rounded-full shadow-md shadow-accent/30">Хит</div>
+            <button id="wishlist-btn" onclick="toggleWishlist()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-cream/80 dark:bg-cream-dark/80 backdrop-blur-sm flex items-center justify-center hover:bg-cream dark:hover:bg-cream-dark transition-colors shadow-sm" aria-label="В избранное">
+              <svg id="heart-icon" class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </button>
+            <div id="main-photo" class="w-full h-full flex items-center justify-center">
+              <div class="text-center space-y-3">
+                <div id="product-emoji" class="text-9xl animate-float">💧</div>
+                <div id="product-volume-img" class="text-sm text-muted dark:text-muted-dark font-medium">30 мл</div>
+              </div>
+            </div>
+          </div>
+          <!-- Thumbnails -->
+          <div class="flex gap-3">
+            <div class="thumb-item active flex-1 aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-sand/50 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center" onclick="setThumb(0)">
+              <svg viewBox="0 0 80 120" class="w-10 h-14" fill="none"><rect x="15" y="20" width="50" height="88" rx="12" fill="#F0E4D4" stroke="#C4A882" stroke-width="1"/><text x="40" y="68" text-anchor="middle" font-family="Georgia" font-size="8" fill="#7A6A5A">Марья</text></svg>
+            </div>
+            <div class="thumb-item flex-1 aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-sage/20 to-sand/30 dark:from-sage-dark/10 dark:to-sand-dark/20 flex items-center justify-center" onclick="setThumb(1)">
+              <svg viewBox="0 0 80 80" class="w-12 h-12" fill="none"><circle cx="40" cy="40" r="28" fill="#E8DDD0" stroke="#8BA888" stroke-width="1"/><circle cx="40" cy="40" r="12" fill="#8BA888" opacity="0.3"/><text x="40" y="44" text-anchor="middle" font-family="Inter" font-size="7" fill="#7A6A5A">состав</text></svg>
+            </div>
+            <div class="thumb-item flex-1 aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-warm/20 to-accent/10 dark:from-warm-dark/10 dark:to-accent-dark/10 flex items-center justify-center" onclick="setThumb(2)">
+              <svg viewBox="0 0 80 80" class="w-12 h-12" fill="none"><rect x="10" y="20" width="60" height="40" rx="8" fill="#F0E4D4" stroke="#C4A882" stroke-width="1"/><text x="40" y="44" text-anchor="middle" font-family="Inter" font-size="7" fill="#7A6A5A">текстура</text></svg>
+            </div>
+            <div class="thumb-item flex-1 aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-cream to-sand/40 dark:from-cream-dark dark:to-sand-dark/20 flex items-center justify-center" onclick="setThumb(3)">
+              <svg viewBox="0 0 80 80" class="w-12 h-12" fill="none"><path d="M20 60 Q40 20 60 60" stroke="#D4956A" stroke-width="2" fill="none"/><text x="40" y="44" text-anchor="middle" font-family="Inter" font-size="7" fill="#7A6A5A">результат</text></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Buy block -->
+        <div class="space-y-6">
+          <div class="flex items-center gap-2">
+            <span id="product-category-tag" class="text-xs font-semibold uppercase tracking-widest text-accent">Категория</span>
+            <span class="text-muted dark:text-muted-dark opacity-30">·</span>
+            <span id="product-subtitle" class="text-xs text-muted dark:text-muted-dark">Описание</span>
+          </div>
+
+          <h1 id="product-name" class="font-serif text-3xl sm:text-4xl font-normal text-ink dark:text-ink-dark leading-tight">Продукт</h1>
+
+          <div class="flex items-center gap-3">
+            <div id="rating-stars" class="flex items-center gap-0.5" aria-label="Рейтинг"></div>
+            <span id="rating-score" class="text-sm font-semibold text-ink dark:text-ink-dark">4.8</span>
+            <a href="#reviews" id="rating-count" class="text-sm text-muted dark:text-muted-dark hover:text-accent transition-colors">отзывов</a>
+          </div>
+
+          <p id="product-desc" class="text-base text-muted dark:text-muted-dark leading-relaxed"></p>
+
+          <div class="p-4 rounded-2xl bg-sage/10 dark:bg-sage-dark/10 border border-sage/20 dark:border-sage-dark/20">
+            <div class="flex items-start gap-3">
+              <div class="w-9 h-9 rounded-full bg-sage/20 dark:bg-sage-dark/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <svg class="w-4 h-4 text-sage dark:text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-0.5">Подходит для вашей кожи</p>
+                <p class="text-xs text-muted dark:text-muted-dark">По результатам вашего квиза: комбинированная кожа, склонная к обезвоженности.</p>
+                <a href="index.html#quiz" class="inline-block mt-2 text-xs text-accent hover:underline font-medium">Пройти квиз заново →</a>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wider text-muted dark:text-muted-dark mb-1">Объём</p>
+            <p id="product-volume" class="text-sm text-ink dark:text-ink-dark font-medium">30 мл</p>
+          </div>
+
+          <div class="flex items-center gap-6">
+            <div>
+              <div class="flex items-baseline gap-2">
+                <span id="product-price" class="text-3xl font-semibold text-ink dark:text-ink-dark">0 ₽</span>
+                <span id="product-old-price" class="hidden text-base text-muted dark:text-muted-dark line-through">0 ₽</span>
+              </div>
+              <p id="product-discount" class="hidden text-xs text-accent font-medium mt-0.5">Скидка</p>
+            </div>
+            <div class="flex items-center gap-1 border border-sand dark:border-sand-dark/50 rounded-full px-2">
+              <button class="qty-btn text-muted dark:text-muted-dark text-lg font-medium" onclick="changeQty(-1)" aria-label="Уменьшить">−</button>
+              <span id="qty-display" class="w-8 text-center text-sm font-semibold text-ink dark:text-ink-dark">1</span>
+              <button class="qty-btn text-muted dark:text-muted-dark text-lg font-medium" onclick="changeQty(1)" aria-label="Увеличить">+</button>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-3">
+            <button onclick="addToCart()" class="animate-pulse-soft flex-1 inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full shadow-lg shadow-accent/20 transition-all hover:shadow-accent/30 hover:-translate-y-0.5 text-base">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/></svg>
+              В корзину
+            </button>
+            <button class="px-8 py-4 border border-sand dark:border-sand-dark/50 hover:border-warm/50 text-ink dark:text-ink-dark font-medium rounded-full transition-all hover:bg-sand/30 dark:hover:bg-sand-dark/20 text-base">
+              Купить сейчас
+            </button>
+          </div>
+
+          <div class="grid grid-cols-3 gap-3 pt-2">
+            <div class="text-center"><div class="text-2xl mb-1">🚚</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Бесплатная доставка от 3 000 ₽</p></div>
+            <div class="text-center"><div class="text-2xl mb-1">🔄</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Возврат 30 дней</p></div>
+            <div class="text-center"><div class="text-2xl mb-1">🛡️</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Гарантия натуральности</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABS -->
+    <section class="border-t border-sand/40 dark:border-sand-dark/20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex gap-8 overflow-x-auto scrollbar-none border-b border-sand/40 dark:border-sand-dark/20">
+          <button class="tab-btn active py-4 text-sm font-semibold whitespace-nowrap" onclick="switchTab('description')">Описание</button>
+          <button class="tab-btn py-4 text-sm font-medium text-muted dark:text-muted-dark whitespace-nowrap" onclick="switchTab('ingredients')">Состав</button>
+          <button class="tab-btn py-4 text-sm font-medium text-muted dark:text-muted-dark whitespace-nowrap" onclick="switchTab('usage')">Как применять</button>
+          <button class="tab-btn py-4 text-sm font-medium text-muted dark:text-muted-dark whitespace-nowrap" onclick="switchTab('pairing')">Дополнить уход</button>
+        </div>
+        <div id="tab-description" class="tab-panel active py-10"></div>
+        <div id="tab-ingredients" class="tab-panel py-10"></div>
+        <div id="tab-usage" class="tab-panel py-10"></div>
+        <div id="tab-pairing" class="tab-panel py-10"></div>
+      </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section id="reviews" class="border-t border-sand/40 dark:border-sand-dark/20 py-16">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-10 reveal">
+          <div>
+            <h2 class="font-serif text-3xl text-ink dark:text-ink-dark">Отзывы</h2>
+            <p id="reviews-count-text" class="text-sm text-muted dark:text-muted-dark mt-1">покупателей поделились мнением</p>
+          </div>
+          <div class="flex items-end gap-5">
+            <div class="text-center">
+              <p id="reviews-score" class="text-5xl font-serif text-ink dark:text-ink-dark">4.8</p>
+              <div id="reviews-stars" class="flex justify-center gap-0.5 mt-1"></div>
+            </div>
+            <div id="rating-bars" class="space-y-1.5 text-xs text-muted dark:text-muted-dark min-w-[160px]"></div>
+          </div>
+        </div>
+
+        <!-- Sample review cards -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10">
+          <div class="p-5 rounded-2xl bg-sand/30 dark:bg-sand-dark/20 reveal">
+            <div class="flex items-center gap-0.5 mb-3"><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span></div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed mb-4">"Пользуюсь уже 3 месяца. Кожа стала мягче, ушло ощущение стянутости. Флакон маленький, но расход минимальный — хватает надолго. Запах нейтральный, что очень нравится."</p>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-warm/30 dark:bg-warm-dark/30 flex items-center justify-center text-sm font-semibold text-warm dark:text-warm-dark">А</div>
+              <div><p class="text-xs font-semibold text-ink dark:text-ink-dark">Анна К.</p><p class="text-xs text-muted dark:text-muted-dark">Комбинированная кожа · 2 недели назад</p></div>
+            </div>
+          </div>
+          <div class="p-5 rounded-2xl bg-sand/30 dark:bg-sand-dark/20 reveal">
+            <div class="flex items-center gap-0.5 mb-3"><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span></div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed mb-4">"Брала скептически — думала, все средства одинаковые. Оказалась не права. Кожа реально преобразилась. Теперь заказываю третий флакон."</p>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-sage/30 dark:bg-sage-dark/30 flex items-center justify-center text-sm font-semibold text-sage dark:text-sage-dark">М</div>
+              <div><p class="text-xs font-semibold text-ink dark:text-ink-dark">Маша Л.</p><p class="text-xs text-muted dark:text-muted-dark">Сухая кожа · 1 месяц назад</p></div>
+            </div>
+          </div>
+          <div class="p-5 rounded-2xl bg-sand/30 dark:bg-sand-dark/20 reveal">
+            <div class="flex items-center gap-0.5 mb-3"><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-filled text-sm">★</span><span class="star-empty text-sm">★</span></div>
+            <p class="text-sm text-ink dark:text-ink-dark leading-relaxed mb-4">"Хорошее средство, результат заметен. Один минус — хотелось бы насос вместо пипетки. Но по составу и результату всё отлично, рекомендую."</p>
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-full bg-accent/20 dark:bg-accent-dark/20 flex items-center justify-center text-sm font-semibold text-accent">О</div>
+              <div><p class="text-xs font-semibold text-ink dark:text-ink-dark">Оля В.</p><p class="text-xs text-muted dark:text-muted-dark">Нормальная кожа · 3 недели назад</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- User-submitted reviews -->
+        <div id="user-reviews-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-5 mb-10"></div>
+
+        <div class="text-center reveal mb-14">
+          <button id="reviews-btn" class="px-8 py-3 border border-sand dark:border-sand-dark/50 hover:border-warm/50 text-ink dark:text-ink-dark font-medium rounded-full transition-all hover:bg-sand/30 dark:hover:bg-sand-dark/20 text-sm">
+            Показать все отзывы
+          </button>
+        </div>
+
+        <!-- Review form -->
+        <div class="reveal">
+          <div class="max-w-2xl">
+            <h3 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Оставить отзыв</h3>
+            <p class="text-sm text-muted dark:text-muted-dark mb-6">Отзывы публикуются после проверки модератором — обычно в течение 24 часов.</p>
+            <form id="review-form" onsubmit="submitReview(event)" class="space-y-5">
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted dark:text-muted-dark mb-2">Ваше имя</label>
+                <input type="text" id="review-name" placeholder="Например: Анна" required class="w-full px-4 py-3 rounded-2xl border border-sand dark:border-sand-dark/50 bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark placeholder-muted/40 dark:placeholder-muted-dark/40 text-sm focus:outline-none focus:border-accent transition-colors" />
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted dark:text-muted-dark mb-2">Тип кожи</label>
+                <select id="review-skin" class="w-full px-4 py-3 rounded-2xl border border-sand dark:border-sand-dark/50 bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent transition-colors appearance-none cursor-pointer">
+                  <option value="">Не указывать</option>
+                  <option>Нормальная</option><option>Сухая</option><option>Жирная</option><option>Комбинированная</option><option>Чувствительная</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted dark:text-muted-dark mb-2">Оценка</label>
+                <div class="flex gap-2" id="star-picker">
+                  <button type="button" class="star-pick text-3xl text-sand dark:text-sand-dark hover:text-accent transition-colors" data-val="1">★</button>
+                  <button type="button" class="star-pick text-3xl text-sand dark:text-sand-dark hover:text-accent transition-colors" data-val="2">★</button>
+                  <button type="button" class="star-pick text-3xl text-sand dark:text-sand-dark hover:text-accent transition-colors" data-val="3">★</button>
+                  <button type="button" class="star-pick text-3xl text-sand dark:text-sand-dark hover:text-accent transition-colors" data-val="4">★</button>
+                  <button type="button" class="star-pick text-3xl text-sand dark:text-sand-dark hover:text-accent transition-colors" data-val="5">★</button>
+                </div>
+                <input type="hidden" id="review-rating" value="0" />
+                <p id="rating-error" class="hidden text-xs text-red-500 mt-1">Пожалуйста, выберите оценку</p>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold uppercase tracking-wider text-muted dark:text-muted-dark mb-2">Отзыв</label>
+                <textarea id="review-text" rows="4" placeholder="Расскажите о вашем опыте: как долго пользуетесь, что заметили, кому порекомендуете..." required minlength="20" class="w-full px-4 py-3 rounded-2xl border border-sand dark:border-sand-dark/50 bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark placeholder-muted/40 dark:placeholder-muted-dark/40 text-sm focus:outline-none focus:border-accent transition-colors resize-none"></textarea>
+                <p class="text-xs text-muted dark:text-muted-dark mt-1">Минимум 20 символов</p>
+              </div>
+              <button type="submit" class="px-8 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 text-sm">Отправить на проверку</button>
+            </form>
+            <div id="review-success" class="hidden mt-6 p-5 rounded-2xl bg-sage/10 dark:bg-sage-dark/10 border border-sage/20 dark:border-sage-dark/20">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-full bg-sage/20 dark:bg-sage-dark/20 flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-sage dark:text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" stroke-width="2" stroke-linecap="round"/></svg>
+                </div>
+                <div><p class="text-sm font-semibold text-ink dark:text-ink-dark">Спасибо за отзыв!</p><p class="text-xs text-muted dark:text-muted-dark mt-0.5">Мы проверим его и опубликуем в течение 24 часов.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile sticky buy -->
+    <div class="lg:hidden fixed bottom-0 left-0 right-0 z-40 buy-sticky bg-cream/95 dark:bg-cream-dark/95 backdrop-blur-md border-t border-sand/40 dark:border-sand-dark/20 px-4 py-3 flex items-center gap-3">
+      <div>
+        <p id="sticky-name" class="text-xs text-muted dark:text-muted-dark truncate max-w-[160px]"></p>
+        <p id="sticky-price" class="text-base font-semibold text-ink dark:text-ink-dark"></p>
+      </div>
+      <button onclick="addToCart()" class="flex-1 py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm transition-colors shadow-md shadow-accent/20">В корзину</button>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer-gradient border-t border-sand/40 dark:border-sand-dark/20 mt-8 pb-24 lg:pb-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        <div class="lg:col-span-2">
+          <a href="index.html" class="font-serif text-2xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+          <p class="text-sm text-muted dark:text-muted-dark mt-3 max-w-xs leading-relaxed">Простой уход, который действительно работает. Без латинских терминов, без страха ошибиться.</p>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Каталог</p>
+          <div class="space-y-2 text-sm text-muted dark:text-muted-dark">
+            <a href="catalog.html" class="block hover:text-accent transition-colors">Все средства</a>
+            <a href="catalog.html?cat=serum" class="block hover:text-accent transition-colors">Сыворотки</a>
+            <a href="catalog.html?cat=cream" class="block hover:text-accent transition-colors">Кремы</a>
+            <a href="catalog.html?cat=cleanser" class="block hover:text-accent transition-colors">Очищение</a>
+          </div>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Помощь</p>
+          <div class="space-y-2 text-sm text-muted dark:text-muted-dark">
+            <a href="#" class="block hover:text-accent transition-colors">Доставка и оплата</a>
+            <a href="#" class="block hover:text-accent transition-colors">Возврат</a>
+            <a href="index.html#quiz" class="block hover:text-accent transition-colors">Подобрать уход</a>
+            <a href="#" class="block hover:text-accent transition-colors">Контакты</a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-sand/40 dark:border-sand-dark/20 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+        <p class="text-xs text-muted dark:text-muted-dark">© 2026 Марья. Все права защищены.</p>
+        <div class="flex gap-4 text-xs text-muted dark:text-muted-dark">
+          <a href="#" class="hover:text-accent transition-colors">Политика конфиденциальности</a>
+          <a href="#" class="hover:text-accent transition-colors">Оферта</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="toast" class="fixed bottom-24 lg:bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 bg-ink dark:bg-ink-dark text-cream dark:text-cream rounded-full text-sm font-medium shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none whitespace-nowrap">
+    Добавлено в корзину
+  </div>
+
+  <script>
+    // ── Dark Mode ──────────────────────────────────────────────────────────
+    function toggleDark() {
+      document.documentElement.classList.toggle('dark');
+      localStorage.setItem('marya-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+    }
+    if (localStorage.getItem('marya-theme') === 'dark' || (!localStorage.getItem('marya-theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobile-menu').classList.toggle('translate-y-full');
+    }
+
+    // ── PRODUCTS DATA ──────────────────────────────────────────────────────
+    const PRODUCTS = [
+      { id: 1,  name: 'Пенка для умывания с пребиотиками', price: 890,  oldPrice: null, rating: 4.8, reviews: 143, category: 'cleanser', badge: 'Хит',    isNew: false, volume: '150 мл', emoji: '🫧', desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.' },
+      { id: 2,  name: 'Тоник увлажняющий с аминокислотами', price: 990,  oldPrice: null, rating: 4.7, reviews: 98,  category: 'toner',    badge: null,     isNew: false, volume: '250 мл', emoji: '💦', desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу. Восстанавливает водный баланс, поддерживает кожный барьер и улучшает тон кожи. Аминокислоты обеспечивают комфорт и увлажнение, а гирудин способствует свежему и ровному цвету лица. Лёгкая текстура быстро впитывается, не оставляя липкости.' },
+      { id: 3,  name: 'Мицеллярная вода',                  price: 790,  oldPrice: null, rating: 4.7, reviews: 212, category: 'cleanser', badge: null,     isNew: false, volume: '250 мл', emoji: '🌊', desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не нарушая защитный барьер кожи. Увлажняющая формула с пантенолом, алоэ вера и экстрактом пиявки поддерживает комфорт, свежесть и ухоженный вид кожи. Не оставляет липкости, подходит для ежедневного применения.' },
+      { id: 4,  name: 'Антивозрастная сыворотка с пептидами', price: 2490, oldPrice: null, rating: 4.9, reviews: 187, category: 'serum',   badge: 'Хит',    isNew: false, volume: '50 мл',  emoji: '🧬', desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин. Гирудин улучшает микроциркуляцию, способствует насыщению клеток кислородом и питательными веществами. Кожа становится заметно более свежей, плотной и увлажнённой уже через 2–4 недели регулярного применения. Лёгкая текстура быстро впитывается, идеально подходит в качестве базы под макияж.' },
+      { id: 5,  name: 'Крем дневной омолаживающий',         price: 1990, oldPrice: null, rating: 4.8, reviews: 134, category: 'cream',    badge: null,     isNew: false, volume: '50 мл',  emoji: '☀️', desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию, возвращая коже свежесть и заметный тонус. DMAE помогает подтянуть овал лица и визуально разгладить морщины, делая кожу более упругой и плотной. Сквалан и масло ши глубоко питают и смягчают, антиоксиданты защищают от преждевременного старения. Результат — гладкая, подтянутая и сияющая кожа.' },
+      { id: 6,  name: 'Крем ночной омолаживающий',          price: 1990, oldPrice: null, rating: 4.8, reviews: 119, category: 'cream',    badge: null,     isNew: false, volume: '50 мл',  emoji: '🌙', desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию, помогая коже выглядеть более свежей и подтянутой к утру. DMAE и ниацинамид повышают упругость, визуально разглаживают кожу и улучшают тон. Церамиды, пантенол и гиалуроновая кислота интенсивно увлажняют и восстанавливают защитный барьер, чтобы утром лицо выглядело более гладким и сияющим.' },
+      { id: 7,  name: 'Крем для век от отёков и тёмных кругов', price: 1490, oldPrice: null, rating: 4.7, reviews: 76,  category: 'cream', badge: 'Новинка', isNew: true,  volume: '30 мл',  emoji: '👁️', desc: 'Крем для век с экстрактом пиявки активирует микроциркуляцию и помогает заметно уменьшить отёки и тёмные круги, возвращая взгляду свежесть. Дипептид-2 поддерживает дренажный эффект и делает кожу более гладкой и подтянутой. Гиалуроновая кислота и глицерин интенсивно увлажняют, а масло вечерней примулы и витамин Е смягчают и защищают нежную кожу вокруг глаз.' },
+      { id: 8,  name: 'Маска очищающая с каолином',         price: 990,  oldPrice: null, rating: 4.6, reviews: 88,  category: 'mask',     badge: null,     isNew: false, volume: '100 мл', emoji: '🪨', desc: 'Очищающая маска с каолином мягко удаляет загрязнения, помогает сократить жирный блеск и делает поры визуально менее заметными. Экстракт пиявки поддерживает микроциркуляцию, возвращая коже более свежий тон и гладкость. Экстракт зелёного чая и гель алоэ вера успокаивают и дарят ощущение чистоты без стянутости. Бетаин и пантенол помогают сохранить комфорт и увлажнённость после очищения.' },
+      { id: 9,  name: 'Маска мгновенной красоты',           price: 1190, oldPrice: null, rating: 4.8, reviews: 104, category: 'mask',     badge: null,     isNew: false, volume: '100 мл', emoji: '✨', desc: 'Маска мгновенной красоты — экспресс-уход, который за одно применение придаёт коже ухоженный вид, мягкость и визуальную гладкость. Комплекс аминокислот интенсивно увлажняет и помогает удерживать влагу, уменьшая ощущение сухости. Питательная композиция масел авокадо, ши и виноградной косточки делает кожу более эластичной и упругой. Изысканный аромат превращает процедуру в настоящий ритуал красоты.' },
+      { id: 10, name: 'Скраб для лица и тела с фундуком',   price: 890,  oldPrice: null, rating: 4.6, reviews: 67,  category: 'cleanser', badge: null,     isNew: false, volume: '200 мл', emoji: '🌰', desc: 'Скраб для лица и тела с порошком скорлупы фундука мягко отшелушивает и очищает кожу, помогая выровнять микрорельеф и сделать её более гладкой. Глицерин поддерживает увлажнённость и снижает ощущение сухости после процедуры. Масла смягчают кожу, улучшают скольжение во время массажа. Кремовая основа легко распределяется и оставляет ощущение ухоженности.' },
+      { id: 11, name: 'Нежный солевой скраб',               price: 790,  oldPrice: null, rating: 4.5, reviews: 54,  category: 'cleanser', badge: null,     isNew: false, volume: '200 мл', emoji: '🧂', desc: 'Нежный солевой скраб с кремовой текстурой бережно отшелушивает кожу, помогая сделать её более гладкой и мягкой на ощупь. Кристаллы соли обеспечивают выраженную, но контролируемую полировку, а кокосовое масло смягчает кожу и поддерживает ощущение комфорта после процедуры. Экстракт пиявки и экстракт зелёного чая тонизируют и делают кожу упругой.' },
+      { id: 12, name: 'Энзимный скраб для тела',            price: 990,  oldPrice: null, rating: 4.7, reviews: 61,  category: 'cleanser', badge: null,     isNew: false, volume: '200 мл', emoji: '🍍', desc: 'Энзимный скраб для тела — интенсивный, но комфортный уход, который сочетает механическое и ферментативное отшелушивание, помогая коже выглядеть более гладкой и ухоженной уже после одного применения. Энзимный комплекс и экстракт ананаса деликатно размягчает связи между ороговевшими клетками. Очищающая база легко смывается водой, оставляя ощущение чистоты без липкости.' },
+      { id: 13, name: 'Антицеллюлитный скраб',              price: 990,  oldPrice: null, rating: 4.6, reviews: 79,  category: 'cleanser', badge: null,     isNew: false, volume: '200 мл', emoji: '🌶️', desc: 'Антицеллюлитный солевой скраб направленно работает с проявлениями «апельсиновой корки»: интенсивно шлифует кожу и визуально выравнивает рельеф. Экстракт красного перца обеспечивает выраженный разогревающий эффект. Экстракт пиявки активирует микроциркуляцию, усиливая ощущение плотности и тонуса в проблемных зонах. Результат — более гладкая, подтянутая кожа.' },
+      { id: 14, name: 'Крем SPF 15',                        price: 1490, oldPrice: null, rating: 4.7, reviews: 93,  category: 'spf',      badge: null,     isNew: false, volume: '50 мл',  emoji: '🌞', desc: 'Лёгкий крем SPF 15 с экстрактом пиявки для ежедневной защиты: быстро впитывается, не оставляя липкости и ощущения тяжести на коже. Комфортная текстура на основе сквалана поддерживает гладкость и мягкость в течение дня. Идеально подходит как база под макияж — помогает ровнее распределять тон и сохраняет аккуратный финиш.' },
+      { id: 15, name: 'Сыворотка антиоксидантная',          price: 1990, oldPrice: null, rating: 4.8, reviews: 112, category: 'serum',    badge: 'Новинка', isNew: true,  volume: '30 мл',  emoji: '🍊', desc: 'Антиоксидантная сыворотка с экстрактом пиявки заряжает кожу энергией и помогает защищать её от ежедневных стресс-факторов, замедляя преждевременное старение. Фульвовая кислота, витамин C и ниацинамид усиливают антиоксидантную поддержку. Гиалуронат натрия, пантенол и этилпантенол интенсивно увлажняют и успокаивают, снимая ощущение сухости. Особенно рекомендовано для жителей городов.' },
+      { id: 16, name: 'Кондиционер для волос',              price: 990,  oldPrice: null, rating: 4.7, reviews: 84,  category: 'hair',     badge: null,     isNew: false, volume: '400 мл', emoji: '💆', desc: 'Кондиционер для волос «Марья» помогает быстро привести длину в порядок, смягчает, дисциплинирует и облегчает распутывание. Кондиционирующая база выравнивает полотно волос, снижает пушистость и статическое электричество, делает пряди более гладкими и управляемыми. Гидролизованный кератин и протеины шёлка поддерживают эластичность и визуально улучшают плотность и ухоженный вид.' },
+      { id: 17, name: 'Шампунь для волос',                  price: 890,  oldPrice: null, rating: 4.6, reviews: 71,  category: 'hair',     badge: null,     isNew: false, volume: '400 мл', emoji: '🚿', desc: 'Шампунь для волос «Марья» обеспечивает качественное очищение кожи головы и волос, формируя густую пену. Комбинация мягких ПАВ и кондиционирующих компонентов помогает сохранить гладкость по длине, облегчает расчёсывание и уменьшает спутывание. Гидролизованные протеины пшеницы улучшают плотность волос. Экстракт пиявки поддерживает тонус и свежесть кожи головы.' },
+    ];
+
+    // ── CATEGORY DETAILS ──────────────────────────────────────────────────
+    const CAT = {
+      serum: {
+        label: 'Сыворотка', labelPlural: 'Сыворотки', subtitle: 'Концентрированный уход',
+        results: [
+          { icon: '💧', title: 'Интенсивное увлажнение', desc: 'Кожа насыщается влагой и сохраняет её до 72 часов' },
+          { icon: '✨', title: 'Сияние с первого дня', desc: 'Кожа выглядит отдохнувшей и наполненной' },
+          { icon: '🌿', title: 'Мягкость и упругость', desc: 'Уходит ощущение стянутости, кожа становится мягче' },
+          { icon: '🛡️', title: 'Защита барьера', desc: 'Укрепляет гидролипидный барьер при регулярном применении' },
+        ],
+        skinTypes: ['Сухая кожа', 'Комбинированная', 'Нормальная', 'Чувствительная', 'Обезвоженная любого типа'],
+        keyIngredients: [
+          { icon: '💧', name: 'Гиалуроновая кислота', inci: 'Sodium Hyaluronate', desc: 'Притягивает и удерживает влагу в разных слоях кожи. Безопасна для беременных.', tags: ['Увлажнение', 'Разглаживание'] },
+          { icon: '🧬', name: 'Пептиды', inci: 'Palmitoyl Pentapeptide-4', desc: 'Сигнальные молекулы, которые стимулируют выработку коллагена и эластина. Клинически подтверждённый anti-age эффект.', tags: ['Лифтинг', 'Коллаген'] },
+          { icon: '🍵', name: 'Пантенол (витамин B5)', inci: 'Panthenol', desc: 'Удерживает влагу в эпидермисе, восстанавливает повреждённый барьер. Один из самых безопасных компонентов.', tags: ['Барьер', 'Восстановление'] },
+          { icon: '🔬', name: 'Ниацинамид', inci: 'Niacinamide', desc: 'Выравнивает тон, сужает поры и регулирует салоотделение. В дозировке 5% работает на пигментацию.', tags: ['Тон', 'Поры'] },
+        ],
+        inci: 'Aqua (вода), Glycerin (глицерин), Niacinamide (ниацинамид), Sodium Hyaluronate (гиалуронат натрия), Hydrolyzed Hyaluronic Acid (гидролизованная гиалуроновая кислота), Palmitoyl Pentapeptide-4 (пальмитоил пентапептид-4), Panthenol (пантенол), Allantoin (аллантоин), Betaine (бетаин), Centella Asiatica Extract (экстракт центеллы азиатской), Beta-Glucan (бета-глюкан), Carbomer (карбомер), Sodium Hydroxide (гидроксид натрия), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: парабенов · силиконов · минерального масла · отдушек · спирта',
+        usageSteps: [
+          { title: 'Нанесите на очищенную кожу', desc: 'После умывания и тоника, пока кожа ещё слегка влажная — это усиливает эффект активных компонентов.' },
+          { title: '2–3 капли на всё лицо', desc: 'Нанесите на лоб, щёки и подбородок лёгкими похлопывающими движениями. Не трите.' },
+          { title: 'Подождите 30 секунд', desc: 'Дайте сыворотке полностью впитаться перед нанесением крема.' },
+          { title: 'Нанесите крем поверх', desc: 'Крем запечатывает активные вещества. Утром — с SPF-защитой. Вечером — питательный крем.' },
+        ],
+        morning: 'Тоник → Сыворотка → Крем → SPF',
+        evening: 'Очищение → Тоник → Сыворотка → Ночной крем',
+        lifehack: 'В сухом климате или при включённом отоплении сначала спрысните лицо термальной водой, затем нанесите сыворотку — эффект усилится в 2 раза.',
+        pairCats: ['cream', 'cleanser', 'toner'],
+      },
+      cream: {
+        label: 'Крем', labelPlural: 'Кремы', subtitle: 'Питание и восстановление',
+        results: [
+          { icon: '🌙', title: 'Глубокое питание', desc: 'Масла и керамиды восстанавливают и питают кожу на протяжении всей ночи' },
+          { icon: '✨', title: 'Подтяжка контура', desc: 'DMAE укрепляет овал лица и улучшает тургор кожи' },
+          { icon: '🛡️', title: 'Защита барьера', desc: 'Церамиды укрепляют гидролипидную мантию кожи' },
+          { icon: '💧', title: 'Длительное увлажнение', desc: 'Гиалуронат сохраняет влагу до 8–12 часов' },
+        ],
+        skinTypes: ['Сухая кожа', 'Нормальная', 'Зрелая кожа'],
+        keyIngredients: [
+          { icon: '🧬', name: 'DMAE', inci: 'Dimethylaminoethanol Bitartrate', desc: 'Тонизирует мышцы лица, улучшает чёткость овала. Клинически подтверждён как лифтинг-компонент.', tags: ['Лифтинг', 'Упругость'] },
+          { icon: '🌿', name: 'Сквалан', inci: 'Squalane', desc: 'Биоидентичный коже компонент. Не закупоривает поры, глубоко питает и защищает. Подходит для всех типов.', tags: ['Питание', 'Биомимик'] },
+          { icon: '🏺', name: 'Церамиды', inci: 'Ceramide NP, Ceramide AP', desc: 'Восстанавливают межклеточный цемент. Укрепляют барьер, снижают потерю влаги (TEWL).', tags: ['Барьер', 'Восстановление'] },
+          { icon: '🌺', name: 'Масло ши', inci: 'Butyrospermum Parkii Butter', desc: 'Богато жирными кислотами и витаминами A, E, F. Питает, смягчает, усиливает регенерацию.', tags: ['Питание', 'Смягчение'] },
+        ],
+        inci: 'Aqua (вода), Glycerin (глицерин), Butyrospermum Parkii Butter (масло ши), Squalane (сквалан), Niacinamide (ниацинамид), Dimethylaminoethanol Bitartrate (DMAE), Ceramide NP (церамид NP), Ceramide AP (церамид AP), Sodium Hyaluronate (гиалуронат натрия), Panthenol (пантенол), Allantoin (аллантоин), Cetearyl Alcohol (цетеарилового спирт), Glyceryl Stearate (глицерила стеарат), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: парабенов · минерального масла · отдушек',
+        usageSteps: [
+          { title: 'Нанесите на чистую кожу', desc: 'После сыворотки — нанесите крем как последний шаг увлажнения.' },
+          { title: 'Небольшое количество', desc: 'Горошина-полторы на всё лицо. Разогрейте между пальцами.' },
+          { title: 'Распределите по массажным линиям', desc: 'От центра к периферии: от носа к вискам, от подбородка к ушам, вверх по шее.' },
+          { title: 'Дайте впитаться 1–2 минуты', desc: 'Утром нанесите SPF поверх. Вечером — крем работает всю ночь.' },
+        ],
+        morning: 'Очищение → Тоник → Сыворотка → Крем → SPF',
+        evening: 'Очищение → Тоник → Сыворотка → Крем',
+        lifehack: 'Нанесите небольшое количество крема на чуть влажную кожу — активные вещества проникнут глубже, а расход сократится.',
+        pairCats: ['serum', 'cleanser', 'spf'],
+      },
+      cleanser: {
+        label: 'Очищение', labelPlural: 'Очищение', subtitle: 'Мягкое бережное очищение',
+        results: [
+          { icon: '🌊', title: 'Чистая кожа', desc: 'Удаляет загрязнения, излишки себума и остатки макияжа без ощущения стянутости' },
+          { icon: '🌿', title: 'Баланс микробиома', desc: 'Мягкие компоненты сохраняют естественную флору кожи' },
+          { icon: '✨', title: 'Ровный тон', desc: 'Регулярное отшелушивание обновляет поверхность, кожа становится ровнее' },
+          { icon: '💧', title: 'Комфорт после', desc: 'Не пересушивает — кожа остаётся мягкой без дополнительного увлажнения сразу' },
+        ],
+        skinTypes: ['Нормальная', 'Жирная', 'Комбинированная', 'Чувствительная'],
+        keyIngredients: [
+          { icon: '🌱', name: 'Пребиотики', inci: 'Inulin, Lactobacillus Ferment', desc: 'Питают полезные бактерии на коже, поддерживают баланс микробиома и снижают чувствительность.', tags: ['Микробиом', 'Баланс'] },
+          { icon: '🌿', name: 'Алоэ вера', inci: 'Aloe Barbadensis Leaf Extract', desc: 'Успокаивает раздражение, увлажняет и смягчает. Незаменим для чувствительной кожи.', tags: ['Успокоение', 'Увлажнение'] },
+          { icon: '🍵', name: 'Пантенол (витамин B5)', inci: 'Panthenol', desc: 'Восстанавливает барьер после очищения, предотвращает ощущение стянутости.', tags: ['Барьер', 'Комфорт'] },
+          { icon: '🍃', name: 'Экстракт зелёного чая', inci: 'Camellia Sinensis Leaf Extract', desc: 'Мощный антиоксидант. Защищает клетки от свободных радикалов, сужает поры.', tags: ['Антиоксидант', 'Поры'] },
+        ],
+        inci: 'Aqua (вода), Glycerin (глицерин), Sodium Cocoyl Isethionate (кокоиловый изетионат натрия), Cocamidopropyl Betaine (кокамидопропил бетаин), Panthenol (пантенол), Allantoin (аллантоин), Aloe Barbadensis Leaf Extract (экстракт алоэ), Camellia Sinensis Leaf Extract (экстракт зелёного чая), Inulin (инулин), Citric Acid (лимонная кислота), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: сульфатов (SLS/SLES) · парабенов · минерального масла',
+        usageSteps: [
+          { title: 'Смочите лицо тёплой водой', desc: 'Горячая вода сушит кожу — используйте комфортно тёплую температуру.' },
+          { title: 'Нанесите средство', desc: 'Небольшое количество нанесите на ладони и вспеньте, затем мягко распределите по лицу.' },
+          { title: 'Массируйте 30–60 секунд', desc: 'Лёгкими круговыми движениями помогите средству очистить поры. Не трите.' },
+          { title: 'Тщательно смойте', desc: 'Смойте тёплой водой, затем ополосните прохладной — это тонизирует и укрепляет капилляры.' },
+        ],
+        morning: 'Очищение → Тоник → Сыворотка → Крем → SPF',
+        evening: 'Очищение (двойное: масло + пенка) → Тоник → Сыворотка → Крем',
+        lifehack: 'Очищайте кожу дважды вечером (oil cleansing + пенка) — так вы гарантированно удалите SPF, макияж и загрязнения. Утром достаточно одного умывания.',
+        pairCats: ['toner', 'serum', 'mask'],
+      },
+      toner: {
+        label: 'Тоник', labelPlural: 'Тоники', subtitle: 'Баланс и подготовка кожи',
+        results: [
+          { icon: '💦', title: 'Первый уровень увлажнения', desc: 'Аминокислоты мгновенно насыщают кожу влагой сразу после очищения' },
+          { icon: '⚖️', title: 'Баланс pH', desc: 'Восстанавливает кислотный баланс после умывания, подготавливает к следующим шагам' },
+          { icon: '✨', title: 'Сияние кожи', desc: 'Кожа выглядит живее и свежее уже с первого применения' },
+          { icon: '🚀', title: 'Усиливает эффект сыворотки', desc: 'Напитанная кожа лучше поглощает активные компоненты' },
+        ],
+        skinTypes: ['Все типы кожи', 'Обезвоженная', 'Нормальная', 'Комбинированная'],
+        keyIngredients: [
+          { icon: '💧', name: 'Аминокислоты', inci: 'Sodium PCA, Glycine, Alanine', desc: 'Натуральные увлажняющие факторы (NMF) кожи. Поддерживают оптимальный уровень воды в эпидермисе.', tags: ['Увлажнение', 'NMF'] },
+          { icon: '🩸', name: 'Гирудин', inci: 'Hirudin', desc: 'Улучшает микроциркуляцию, ускоряет обновление клеток, разглаживает рельеф.', tags: ['Микроциркуляция', 'Обновление'] },
+          { icon: '🌿', name: 'Бетаин', inci: 'Betaine', desc: 'Натуральный осмолит из свёклы. Увлажняет, защищает клетки от стресса.', tags: ['Увлажнение', 'Защита'] },
+          { icon: '🔬', name: 'Ниацинамид', inci: 'Niacinamide', desc: 'Выравнивает тон, уменьшает видимость пор. Отлично сочетается с аминокислотами.', tags: ['Тон', 'Поры'] },
+        ],
+        inci: 'Aqua (вода), Glycerin (глицерин), Niacinamide (ниацинамид), Sodium PCA (ПКА натрия), Betaine (бетаин), Panthenol (пантенол), Allantoin (аллантоин), Centella Asiatica Extract (экстракт центеллы), Hirudin (гирудин), Citric Acid (лимонная кислота), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: спирта · отдушек · красителей · парабенов',
+        usageSteps: [
+          { title: 'Нанесите сразу после очищения', desc: 'Пока кожа ещё чуть влажная — тоник ложится лучше и поглощается быстрее.' },
+          { title: 'Выберите способ нанесения', desc: 'Ватным диском — для дополнительного очищения. Руками — для максимального увлажнения. Похлопайте ладонями.' },
+          { title: 'Нанесите на шею и декольте', desc: 'Не забывайте об этих зонах — они стареют так же быстро, как лицо.' },
+          { title: 'Подождите 30 секунд', desc: 'Дайте тонику впитаться, затем нанесите сыворотку пока кожа ещё влажная.' },
+        ],
+        morning: 'Очищение → Тоник → Сыворотка → Крем → SPF',
+        evening: 'Очищение → Тоник → Сыворотка → Ночной крем',
+        lifehack: 'Попробуйте «стекинг» — нанесите тоник в 2–3 слоя, давая каждому немного впитаться. Особенно эффективно в сухой сезон.',
+        pairCats: ['serum', 'cream', 'cleanser'],
+      },
+      spf: {
+        label: 'SPF-защита', labelPlural: 'SPF-защита', subtitle: 'Ежедневная защита от УФ',
+        results: [
+          { icon: '☀️', title: 'Защита от фотостарения', desc: 'Ежедневное использование SPF — самый эффективный anti-age уход из существующих' },
+          { icon: '🌤️', title: 'Лёгкая текстура', desc: 'Флюид не ощущается на коже, не оставляет белого следа и жирного блеска' },
+          { icon: '💄', title: 'Идеальная база', desc: 'Тонкая текстура создаёт гладкую основу под макияж' },
+          { icon: '✨', title: 'Дополнительный уход', desc: 'Сквалан и витамин Е питают и защищают в течение всего дня' },
+        ],
+        skinTypes: ['Все типы кожи', 'Чувствительная', 'Нормальная', 'Жирная'],
+        keyIngredients: [
+          { icon: '☀️', name: 'УФ-фильтры', inci: 'Ethylhexyl Methoxycinnamate, Benzophenone-3', desc: 'Защищают от UVA и UVB излучения. SPF 15 блокирует около 93% УФ-лучей.', tags: ['SPF', 'Защита'] },
+          { icon: '🌿', name: 'Сквалан', inci: 'Squalane', desc: 'Биоидентичный коже компонент. Питает без жирности, создаёт защитную плёнку.', tags: ['Питание', 'Комфорт'] },
+          { icon: '🍊', name: 'Витамин Е', inci: 'Tocopherol', desc: 'Мощный антиоксидант. Усиливает действие УФ-фильтров и защищает клетки от фотоокисления.', tags: ['Антиоксидант', 'Защита'] },
+          { icon: '💧', name: 'Гиалуронат натрия', inci: 'Sodium Hyaluronate', desc: 'Сохраняет увлажнение в течение дня, предотвращает сухость от UV-воздействия.', tags: ['Увлажнение', 'Комфорт'] },
+        ],
+        inci: 'Aqua (вода), Ethylhexyl Methoxycinnamate (этилгексилметоксикоричная кислота), Glycerin (глицерин), Squalane (сквалан), Benzophenone-3 (бензофенон-3), Sodium Hyaluronate (гиалуронат натрия), Tocopherol (токоферол), Panthenol (пантенол), Carbomer (карбомер), Triethanolamine (триэтаноламин), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: отдушек · парабенов · нанофильтров',
+        usageSteps: [
+          { title: 'Последний шаг утреннего ухода', desc: 'Наносите SPF поверх крема или сыворотки как финальный шаг ухода.' },
+          { title: 'Щедрое количество', desc: 'Для лица — четверть чайной ложки. Меньше — не получите заявленный SPF.' },
+          { title: 'Нанесите за 15–20 минут до выхода', desc: 'Дайте фильтрам активироваться. Химические фильтры требуют времени на образование защитного слоя.' },
+          { title: 'Обновляйте каждые 2 часа', desc: 'На открытом солнце — обновляйте SPF каждые 2 часа для сохранения защиты.' },
+        ],
+        morning: 'Очищение → Тоник → Сыворотка → Крем → SPF',
+        evening: 'Для вечернего ухода SPF не нужен',
+        lifehack: 'SPF нужен даже в пасмурный день и в офисе — 80% УФ-излучения проникает через облака, а UVA-лучи проходят даже сквозь стекло.',
+        pairCats: ['serum', 'cream', 'cleanser'],
+      },
+      mask: {
+        label: 'Маска', labelPlural: 'Маски', subtitle: 'Интенсивный уход за 10 минут',
+        results: [
+          { icon: '✨', title: 'Мгновенный результат', desc: 'Кожа выглядит ухоженной и свежей уже после первого применения' },
+          { icon: '🌿', title: 'Глубокое питание', desc: 'Концентрированные масла и активы проникают глубже, чем обычный крем' },
+          { icon: '💧', title: 'Интенсивное увлажнение', desc: 'Гиалуроновая кислота насыщает кожу влагой за 10 минут воздействия' },
+          { icon: '⚖️', title: 'Баланс кожи', desc: 'Регулирует выработку себума, успокаивает и выравнивает текстуру' },
+        ],
+        skinTypes: ['Все типы кожи', 'Сухая', 'Нормальная', 'Жирная (очищающая)'],
+        keyIngredients: [
+          { icon: '🥑', name: 'Масло авокадо', inci: 'Persea Gratissima Oil', desc: 'Богато витаминами A, D, E. Глубоко питает, смягчает и улучшает упругость.', tags: ['Питание', 'Упругость'] },
+          { icon: '🌰', name: 'Масло ши', inci: 'Butyrospermum Parkii Butter', desc: 'Глубоко питает и восстанавливает сухую кожу. Антиоксидантная защита.', tags: ['Питание', 'Восстановление'] },
+          { icon: '💧', name: 'Гиалуроновая кислота', inci: 'Sodium Hyaluronate', desc: 'За время воздействия маски успевает насытить кожу влагой на нескольких уровнях.', tags: ['Увлажнение', 'Плотность'] },
+          { icon: '🪨', name: 'Каолин', inci: 'Kaolin', desc: 'Мягко адсорбирует излишки себума и загрязнения, не пересушивая кожу.', tags: ['Очищение', 'Поры'] },
+        ],
+        inci: 'Aqua (вода), Glycerin (глицерин), Persea Gratissima Oil (масло авокадо), Butyrospermum Parkii Butter (масло ши), Sodium Hyaluronate (гиалуронат натрия), Niacinamide (ниацинамид), Panthenol (пантенол), Allantoin (аллантоин), Kaolin (каолин), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: парабенов · минерального масла · отдушек',
+        usageSteps: [
+          { title: 'Нанесите на очищенную кожу', desc: 'После умывания и тоника — маска лучше работает на подготовленной коже.' },
+          { title: 'Ровный слой 2–3 мм', desc: 'Нанесите шпателем или пальцами, избегая контура глаз и губ.' },
+          { title: 'Оставьте на 10–15 минут', desc: 'Не пересушивайте очищающие маски до белого — снимайте, когда края только начинают светлеть.' },
+          { title: 'Смойте тёплой водой', desc: 'Питательную маску можно не смывать полностью — промокните излишки и используйте как ночной уход.' },
+        ],
+        morning: 'Маску лучше использовать вечером или в выходной день',
+        evening: 'Очищение → Маска (10–15 мин) → Тоник → Сыворотка → Крем',
+        lifehack: 'Нанесите маску за 30 минут до важного события — утром вы увидите разительный результат: кожа напитана, тон ровный, текстура гладкая.',
+        pairCats: ['serum', 'cleanser', 'toner'],
+      },
+      hair: {
+        label: 'Уход за волосами', labelPlural: 'Уход за волосами', subtitle: 'Красота и здоровье волос',
+        results: [
+          { icon: '✨', title: 'Блеск и гладкость', desc: 'Кератин и протеины шелка восстанавливают структуру волоса, придавая зеркальный блеск' },
+          { icon: '💪', title: 'Сила и объём', desc: 'Белки пшеницы заполняют повреждённые участки волоса, делая его плотнее' },
+          { icon: '🌊', title: 'Управляемость', desc: 'Волосы легче расчёсываются, меньше электризуются и путаются' },
+          { icon: '💧', title: 'Увлажнение изнутри', desc: 'Гирудин и гиалурон насыщают кортекс волоса влагой, предотвращая ломкость' },
+        ],
+        skinTypes: ['Все типы волос', 'Повреждённые', 'Окрашенные', 'Тонкие'],
+        keyIngredients: [
+          { icon: '🧶', name: 'Гидролизованный кератин', inci: 'Hydrolyzed Keratin', desc: 'Восстанавливает структуру волоса изнутри. Заполняет повреждённые участки, делая его гладким и прочным.', tags: ['Восстановление', 'Прочность'] },
+          { icon: '🕸️', name: 'Протеины шёлка', inci: 'Hydrolyzed Silk', desc: 'Создают невесомую защитную плёнку. Придают блеск, мягкость и защищают от термоповреждений.', tags: ['Блеск', 'Защита'] },
+          { icon: '🩸', name: 'Гирудин', inci: 'Hirudin', desc: 'Улучшает микроциркуляцию в луковицах волос. Ускоряет рост и укрепляет корни.', tags: ['Рост', 'Укрепление'] },
+          { icon: '🌾', name: 'Протеины пшеницы', inci: 'Hydrolyzed Wheat Protein', desc: 'Добавляют объём и плотность тонким волосам. Защищают структуру при термообработке.', tags: ['Объём', 'Термозащита'] },
+        ],
+        inci: 'Aqua (вода), Cetearyl Alcohol (цетеарилового спирт), Behentrimonium Methosulfate (бегентримониум метосульфат), Glycerin (глицерин), Hydrolyzed Keratin (гидролизованный кератин), Hydrolyzed Silk (гидролизованный шёлк), Hydrolyzed Wheat Protein (гидролизованный протеин пшеницы), Hirudin (гирудин), Sodium Hyaluronate (гиалуронат натрия), Panthenol (пантенол), Phenoxyethanol (феноксиэтанол).',
+        noList: 'Без: силиконов · парабенов · парфюмерных отдушек · SLS/SLES',
+        usageSteps: [
+          { title: 'Нанесите на влажные волосы', desc: 'После шампуня слегка отожмите воду. Избыток воды разбавит средство.' },
+          { title: 'Распределите от середины до кончиков', desc: 'Не наносите на корни — это утяжелит волосы у основания.' },
+          { title: 'Подождите 2–5 минут', desc: 'Для глубокого восстановления — оставьте под шапочкой. Тепло усиливает проникновение.' },
+          { title: 'Тщательно смойте', desc: 'Полностью смойте средство — остатки утяжеляют волосы и делают их жирными.' },
+        ],
+        morning: 'Шампунь → Кондиционер → Ополоснуть → Стайлинг',
+        evening: 'Шампунь → Маска/Кондиционер → Ополоснуть → Уходовое масло',
+        lifehack: 'Для максимального восстановления нанесите кондиционер на сухие волосы за 30 минут до мытья — активы проникнут глубже и насытят каждый волос изнутри.',
+        pairCats: ['hair', 'cleanser', 'serum'],
+      },
+    };
+
+    // ── HELPERS ────────────────────────────────────────────────────────────
+    function formatPrice(p) {
+      return p.toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function renderStarsFilled(rating, sizeCls) {
+      const cls = sizeCls || 'text-lg';
+      let html = '';
+      const full = Math.floor(rating);
+      for (let i = 0; i < 5; i++) {
+        html += `<span class="${i < full ? 'star-filled' : 'star-empty'} ${cls}">★</span>`;
+      }
+      return html;
+    }
+
+    function renderRatingBars(rating) {
+      const r = Math.min(5, Math.max(3, rating));
+      const five = Math.round((r - 3) * 40 + 20);
+      const four = Math.round((5 - r) * 14 + 2);
+      const three = Math.max(0, 100 - five - four - 2);
+      const two = 1, one = 1;
+      const bars = [[5, five], [4, four], [3, three], [2, two], [1, one]];
+      return bars.map(([s, pct]) =>
+        `<div class="flex items-center gap-2"><span class="w-3">${s}★</span><div class="flex-1 h-1.5 bg-sand dark:bg-sand-dark rounded-full overflow-hidden"><div class="h-full bg-accent rounded-full" style="width:${pct}%"></div></div><span>${pct}%</span></div>`
+      ).join('');
+    }
+
+    // ── TAB RENDERERS ──────────────────────────────────────────────────────
+    function renderTabDescription(p, cat) {
+      const skinTagsHtml = cat.skinTypes.map(s =>
+        `<span class="px-3 py-1.5 rounded-full bg-warm/10 dark:bg-warm-dark/10 border border-warm/20 dark:border-warm-dark/20 text-sm text-ink dark:text-ink-dark">${s}</span>`
+      ).join('');
+      const resultsHtml = cat.results.map(r =>
+        `<div class="flex items-start gap-3 p-4 rounded-2xl bg-sand/30 dark:bg-sand-dark/20">
+          <span class="text-2xl">${r.icon}</span>
+          <div><p class="text-sm font-semibold text-ink dark:text-ink-dark">${r.title}</p><p class="text-xs text-muted dark:text-muted-dark mt-0.5">${r.desc}</p></div>
+        </div>`
+      ).join('');
+      document.getElementById('tab-description').innerHTML = `
+        <div class="max-w-3xl space-y-8">
+          <div class="space-y-4 reveal">
+            <h2 class="font-serif text-2xl text-ink dark:text-ink-dark">О продукте</h2>
+            <p class="text-base text-muted dark:text-muted-dark leading-relaxed">${p.desc}</p>
+          </div>
+          <div class="reveal">
+            <h3 class="font-serif text-xl text-ink dark:text-ink-dark mb-5">Что вы получите</h3>
+            <div class="grid sm:grid-cols-2 gap-4">${resultsHtml}</div>
+          </div>
+          <div class="reveal">
+            <h3 class="font-serif text-xl text-ink dark:text-ink-dark mb-4">Для кого</h3>
+            <div class="flex flex-wrap gap-2">${skinTagsHtml}</div>
+          </div>
+        </div>`;
+      triggerReveal();
+    }
+
+    function renderTabIngredients(p, cat) {
+      const ingrHtml = cat.keyIngredients.map(ing => `
+        <div class="ing-card p-4 rounded-2xl bg-sand/30 dark:bg-sand-dark/20 cursor-pointer" onclick="toggleIng(this)">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-xl">${ing.icon}</span>
+              <div>
+                <p class="text-sm font-semibold text-ink dark:text-ink-dark">${ing.name}</p>
+                <p class="text-xs text-muted dark:text-muted-dark">${ing.inci}</p>
+              </div>
+            </div>
+            <svg class="ing-arrow w-4 h-4 text-muted dark:text-muted-dark transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round"/></svg>
+          </div>
+          <div class="ing-desc hidden mt-3 pt-3 border-t border-sand/40 dark:border-sand-dark/30">
+            <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">${ing.desc}</p>
+            <div class="flex gap-2 mt-2">${ing.tags.map(t => `<span class="text-xs px-2 py-0.5 rounded-full bg-sage/20 text-sage dark:text-sage-dark font-medium">${t}</span>`).join('')}</div>
+          </div>
+        </div>`).join('');
+      document.getElementById('tab-ingredients').innerHTML = `
+        <div class="max-w-3xl space-y-8">
+          <div class="reveal space-y-3">
+            <h2 class="font-serif text-2xl text-ink dark:text-ink-dark">Состав</h2>
+            <p class="text-sm text-muted dark:text-muted-dark">Нажмите на ингредиент, чтобы узнать, зачем он нужен.</p>
+          </div>
+          <div class="reveal">
+            <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Ключевые активы</p>
+            <div class="space-y-3">${ingrHtml}</div>
+          </div>
+          <div class="reveal">
+            <p class="text-xs font-semibold uppercase tracking-widest text-muted dark:text-muted-dark mb-3">Полный состав (INCI)</p>
+            <p class="text-xs text-muted dark:text-muted-dark leading-loose font-mono bg-sand/30 dark:bg-sand-dark/20 rounded-2xl p-4">${cat.inci}</p>
+            <p class="text-xs text-muted dark:text-muted-dark mt-2">${cat.noList}</p>
+          </div>
+        </div>`;
+      triggerReveal();
+    }
+
+    function renderTabUsage(p, cat) {
+      const stepsHtml = cat.usageSteps.map((s, i) => `
+        <div class="flex gap-4">
+          <div class="flex-shrink-0 w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">${i + 1}</div>
+          <div class="pt-0.5">
+            <p class="text-sm font-semibold text-ink dark:text-ink-dark">${s.title}</p>
+            <p class="text-sm text-muted dark:text-muted-dark mt-0.5">${s.desc}</p>
+          </div>
+        </div>`).join('');
+      document.getElementById('tab-usage').innerHTML = `
+        <div class="max-w-3xl space-y-8">
+          <div class="reveal">
+            <h2 class="font-serif text-2xl text-ink dark:text-ink-dark mb-6">Способ применения</h2>
+            <div class="space-y-4">${stepsHtml}</div>
+          </div>
+          <div class="reveal grid sm:grid-cols-2 gap-4">
+            <div class="p-4 rounded-2xl bg-warm/10 dark:bg-warm-dark/10 border border-warm/20 dark:border-warm-dark/20">
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-2">☀️ Утро</p>
+              <p class="text-xs text-muted dark:text-muted-dark leading-relaxed">${cat.morning}</p>
+            </div>
+            <div class="p-4 rounded-2xl bg-warm/10 dark:bg-warm-dark/10 border border-warm/20 dark:border-warm-dark/20">
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-2">🌙 Вечер</p>
+              <p class="text-xs text-muted dark:text-muted-dark leading-relaxed">${cat.evening}</p>
+            </div>
+          </div>
+          <div class="reveal p-4 rounded-2xl bg-accent/5 border border-accent/20">
+            <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-1">💡 Лайфхак</p>
+            <p class="text-sm text-muted dark:text-muted-dark">${cat.lifehack}</p>
+          </div>
+        </div>`;
+      triggerReveal();
+    }
+
+    function renderTabPairing(p, cat) {
+      const pairs = [];
+      for (const pairCat of cat.pairCats) {
+        const found = PRODUCTS.find(x => x.id !== p.id && x.category === pairCat);
+        if (found && !pairs.find(x => x.id === found.id)) pairs.push(found);
+        if (pairs.length >= 3) break;
+      }
+      const pairCatLabels = { serum: 'Сыворотка', cream: 'Крем', cleanser: 'Очищение', toner: 'Тоник', spf: 'SPF-защита', mask: 'Маска', hair: 'Для волос' };
+      const cardsHtml = pairs.map(q => `
+        <div class="group rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:border-warm/40 transition-colors">
+          <a href="product.html?id=${q.id}" class="block">
+            <div class="aspect-square bg-gradient-to-br from-sand/50 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center p-6">
+              <div class="text-6xl">${q.emoji}</div>
+            </div>
+            <div class="p-4">
+              <p class="text-xs text-accent font-medium mb-0.5">${pairCatLabels[q.category] || q.category}</p>
+              <p class="text-sm font-semibold text-ink dark:text-ink-dark">${q.name}</p>
+              <p class="text-xs text-muted dark:text-muted-dark mt-1 leading-relaxed">${q.desc.substring(0, 70)}…</p>
+              <div class="flex items-center justify-between mt-3">
+                <span class="text-sm font-semibold text-ink dark:text-ink-dark">${formatPrice(q.price)}</span>
+                <span class="text-xs text-accent hover:underline font-medium">Подробнее →</span>
+              </div>
+            </div>
+          </a>
+        </div>`).join('');
+      document.getElementById('tab-pairing').innerHTML = `
+        <div class="max-w-4xl space-y-8">
+          <div class="reveal">
+            <h2 class="font-serif text-2xl text-ink dark:text-ink-dark">Что хорошо дополнит уход</h2>
+            <p class="text-sm text-muted dark:text-muted-dark mt-2">Эти средства совместимы и усилят результат.</p>
+          </div>
+          <div class="reveal grid sm:grid-cols-3 gap-5">${cardsHtml}</div>
+          <div class="reveal p-5 rounded-2xl bg-gradient-to-r from-sand/50 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/10 border border-warm/20 dark:border-warm-dark/20 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-1">Выгода 20% на набор</p>
+              <p class="font-serif text-lg text-ink dark:text-ink-dark">Полная рутина по уходу</p>
+              <p class="text-sm text-muted dark:text-muted-dark mt-0.5">Несколько средств — максимальный результат в одном заказе</p>
+            </div>
+            <div class="text-right flex-shrink-0">
+              <a href="catalog.html" class="inline-block mt-2 px-5 py-2 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-full transition-colors shadow-sm shadow-accent/20">Смотреть каталог</a>
+            </div>
+          </div>
+        </div>`;
+      triggerReveal();
+    }
+
+    // ── LOAD USER REVIEWS ─────────────────────────────────────────────────
+    function loadUserReviews(productName) {
+      const all = JSON.parse(localStorage.getItem('marya_reviews') || '[]');
+      const approved = all.filter(r => r.product === productName && r.status === 'approved');
+      const container = document.getElementById('user-reviews-list');
+      if (!approved.length) { container.innerHTML = ''; return; }
+      const colors = ['bg-warm/30', 'bg-sage/30', 'bg-accent/20'];
+      const textColors = ['text-warm dark:text-warm-dark', 'text-sage dark:text-sage-dark', 'text-accent'];
+      container.innerHTML = approved.map((r, i) => {
+        const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
+        const initial = r.name.charAt(0).toUpperCase();
+        const ci = i % 3;
+        return `<div class="p-5 rounded-2xl bg-sand/30 dark:bg-sand-dark/20">
+          <div class="flex items-center gap-0.5 mb-3">${[...Array(5)].map((_, si) => `<span class="${si < r.rating ? 'star-filled' : 'star-empty'} text-sm">★</span>`).join('')}</div>
+          <p class="text-sm text-ink dark:text-ink-dark leading-relaxed mb-4">"${r.text}"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full ${colors[ci]} flex items-center justify-center text-sm font-semibold ${textColors[ci]}">${initial}</div>
+            <div><p class="text-xs font-semibold text-ink dark:text-ink-dark">${r.name}</p><p class="text-xs text-muted dark:text-muted-dark">${r.skin ? r.skin + ' кожа · ' : ''}${r.date}</p></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── INIT PRODUCT ───────────────────────────────────────────────────────
+    let currentProduct = null;
+
+    function initProduct() {
+      const id = parseInt(new URLSearchParams(window.location.search).get('id')) || 4;
+      const p = PRODUCTS.find(x => x.id === id) || PRODUCTS[3];
+      const cat = CAT[p.category] || CAT.serum;
+      currentProduct = p;
+
+      // Meta
+      document.getElementById('page-title').textContent = p.name + ' — Марья';
+      document.getElementById('page-desc').setAttribute('content', p.desc);
+
+      // Breadcrumb
+      document.getElementById('breadcrumb-category-link').textContent = cat.labelPlural;
+      document.getElementById('breadcrumb-category-link').href = 'catalog.html?cat=' + p.category;
+      document.getElementById('breadcrumb-product').textContent = p.name;
+
+      // Badge
+      const badgeEl = document.getElementById('product-badge');
+      if (p.badge) { badgeEl.textContent = p.badge; badgeEl.classList.remove('hidden'); }
+      else { badgeEl.classList.add('hidden'); }
+
+      // Emoji + volume
+      document.getElementById('product-emoji').textContent = p.emoji;
+      document.getElementById('product-volume-img').textContent = p.volume;
+
+      // Category tag
+      document.getElementById('product-category-tag').textContent = cat.label;
+      document.getElementById('product-subtitle').textContent = cat.subtitle;
+
+      // Name
+      document.getElementById('product-name').textContent = p.name;
+
+      // Rating
+      document.getElementById('rating-stars').innerHTML = renderStarsFilled(p.rating, 'text-lg');
+      document.getElementById('rating-score').textContent = p.rating;
+      document.getElementById('rating-count').textContent = p.reviews + ' отзывов';
+
+      // Description
+      document.getElementById('product-desc').textContent = p.desc;
+
+      // Volume
+      document.getElementById('product-volume').textContent = p.volume;
+
+      // Price
+      document.getElementById('product-price').textContent = formatPrice(p.price);
+      const oldPriceEl = document.getElementById('product-old-price');
+      const discountEl = document.getElementById('product-discount');
+      if (p.oldPrice) {
+        oldPriceEl.textContent = formatPrice(p.oldPrice);
+        oldPriceEl.classList.remove('hidden');
+        const pct = Math.round((1 - p.price / p.oldPrice) * 100);
+        discountEl.textContent = 'Скидка ' + pct + '% · Только сейчас';
+        discountEl.classList.remove('hidden');
+      } else {
+        oldPriceEl.classList.add('hidden');
+        discountEl.classList.add('hidden');
+      }
+
+      // Mobile sticky
+      document.getElementById('sticky-name').textContent = p.name;
+      document.getElementById('sticky-price').textContent = formatPrice(p.price);
+
+      // Reviews section
+      document.getElementById('reviews-score').textContent = p.rating;
+      document.getElementById('reviews-stars').innerHTML = renderStarsFilled(p.rating, 'text-base');
+      document.getElementById('reviews-count-text').textContent = p.reviews + ' покупателей поделились мнением';
+      document.getElementById('reviews-btn').textContent = 'Показать все ' + p.reviews + ' отзывов';
+      document.getElementById('rating-bars').innerHTML = renderRatingBars(p.rating);
+
+      // Tabs
+      renderTabDescription(p, cat);
+      renderTabIngredients(p, cat);
+      renderTabUsage(p, cat);
+      renderTabPairing(p, cat);
+
+      // User reviews from localStorage
+      loadUserReviews(p.name);
+    }
+
+    // ── UI FUNCTIONS ───────────────────────────────────────────────────────
+    function setThumb(index) {
+      document.querySelectorAll('.thumb-item').forEach((el, i) => el.classList.toggle('active', i === index));
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        const active = btn.getAttribute('onclick') === `switchTab('${name}')`;
+        btn.classList.toggle('active', active);
+        if (!active) { btn.classList.add('text-muted', 'dark:text-muted-dark'); btn.classList.remove('text-accent'); }
+        else { btn.classList.remove('text-muted', 'dark:text-muted-dark'); }
+      });
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      triggerReveal();
+    }
+
+    function toggleIng(card) {
+      const desc = card.querySelector('.ing-desc');
+      const arrow = card.querySelector('.ing-arrow');
+      const open = !desc.classList.contains('hidden');
+      desc.classList.toggle('hidden', open);
+      arrow.style.transform = open ? '' : 'rotate(180deg)';
+    }
+
+    let qty = 1;
+    function changeQty(delta) {
+      qty = Math.max(1, qty + delta);
+      document.getElementById('qty-display').textContent = qty;
+    }
+
+    const CAT_COLORS = {
+      serum:    'from-blue-50 to-blue-100',
+      toner:    'from-pink-50 to-rose-100',
+      cream:    'from-amber-50 to-orange-100',
+      cleanser: 'from-teal-50 to-cyan-100',
+      mask:     'from-purple-50 to-violet-100',
+      spf:      'from-orange-50 to-amber-100',
+      hair:     'from-green-50 to-emerald-100',
+    };
+
+    function getCart() {
+      try { return JSON.parse(localStorage.getItem('marya_cart')) || []; } catch { return []; }
+    }
+    function saveCartLS(cart) {
+      localStorage.setItem('marya_cart', JSON.stringify(cart));
+    }
+    function updateCartBadge() {
+      const cart = getCart();
+      const total = cart.reduce((s, i) => s + i.qty, 0);
+      document.getElementById('cart-count').textContent = total;
+    }
+
+    function addToCart() {
+      if (!currentProduct) return;
+      const cart = getCart();
+      const existing = cart.find(i => i.id === currentProduct.id);
+      if (existing) {
+        existing.qty = Math.min(10, existing.qty + qty);
+      } else {
+        cart.push({
+          id:       currentProduct.id,
+          name:     currentProduct.name,
+          emoji:    currentProduct.emoji,
+          volume:   currentProduct.volume,
+          price:    currentProduct.price,
+          oldPrice: currentProduct.oldPrice || null,
+          color:    CAT_COLORS[currentProduct.category] || 'from-sand/30 to-warm/30',
+          qty:      qty,
+        });
+      }
+      saveCartLS(cart);
+      updateCartBadge();
+      showToast('Добавлено в корзину' + (qty > 1 ? ' (' + qty + ' шт.)' : ''));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.remove('opacity-0');
+      t.classList.add('opacity-100');
+      setTimeout(() => { t.classList.remove('opacity-100'); t.classList.add('opacity-0'); }, 2500);
+    }
+
+    let selectedRating = 0;
+    function setupStarPicker() {
+      document.querySelectorAll('.star-pick').forEach(btn => {
+        btn.addEventListener('click', () => {
+          selectedRating = parseInt(btn.dataset.val);
+          document.getElementById('review-rating').value = selectedRating;
+          document.querySelectorAll('.star-pick').forEach((s, i) => { s.style.color = i < selectedRating ? '#D4956A' : ''; });
+          document.getElementById('rating-error').classList.add('hidden');
+        });
+        btn.addEventListener('mouseenter', () => {
+          const val = parseInt(btn.dataset.val);
+          document.querySelectorAll('.star-pick').forEach((s, i) => { s.style.color = i < val ? '#D4956A' : ''; });
+        });
+        btn.addEventListener('mouseleave', () => {
+          document.querySelectorAll('.star-pick').forEach((s, i) => { s.style.color = i < selectedRating ? '#D4956A' : ''; });
+        });
+      });
+    }
+
+    function submitReview(e) {
+      e.preventDefault();
+      if (selectedRating === 0) { document.getElementById('rating-error').classList.remove('hidden'); return; }
+      const review = {
+        id: Date.now(),
+        product: currentProduct ? currentProduct.name : 'Продукт',
+        name: document.getElementById('review-name').value.trim(),
+        skin: document.getElementById('review-skin').value || '',
+        rating: selectedRating,
+        text: document.getElementById('review-text').value.trim(),
+        date: new Date().toLocaleDateString('ru-RU'),
+        status: 'pending'
+      };
+      const reviews = JSON.parse(localStorage.getItem('marya_reviews') || '[]');
+      reviews.push(review);
+      localStorage.setItem('marya_reviews', JSON.stringify(reviews));
+      document.getElementById('review-form').classList.add('hidden');
+      document.getElementById('review-success').classList.remove('hidden');
+    }
+
+    function getWishlist() {
+      try { return JSON.parse(localStorage.getItem('marya_wishlist')) || []; } catch { return []; }
+    }
+    function saveWishlist(list) { localStorage.setItem('marya_wishlist', JSON.stringify(list)); }
+
+    function updateWishlistIcon() {
+      if (!currentProduct) return;
+      const list = getWishlist();
+      const inList = list.some(i => i.id === currentProduct.id);
+      const icon = document.getElementById('heart-icon');
+      if (icon) {
+        icon.setAttribute('fill', inList ? '#D4956A' : 'none');
+        icon.setAttribute('stroke', inList ? '#D4956A' : 'currentColor');
+      }
+    }
+
+    function toggleWishlist() {
+      if (!currentProduct) return;
+      let list = getWishlist();
+      const idx = list.findIndex(i => i.id === currentProduct.id);
+      if (idx !== -1) {
+        list.splice(idx, 1);
+        showToast('Удалено из избранного');
+      } else {
+        list.push({
+          id:       currentProduct.id,
+          name:     currentProduct.name,
+          emoji:    currentProduct.emoji,
+          volume:   currentProduct.volume,
+          price:    currentProduct.price,
+          oldPrice: currentProduct.oldPrice || null,
+          category: currentProduct.category,
+          addedAt:  new Date().toISOString(),
+        });
+        showToast('Добавлено в избранное');
+      }
+      saveWishlist(list);
+      updateWishlistIcon();
+    }
+
+    function triggerReveal() {
+      document.querySelectorAll('.reveal').forEach(el => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top < window.innerHeight - 60) el.classList.add('visible');
+      });
+    }
+
+    window.addEventListener('scroll', triggerReveal, { passive: true });
+
+    // ── RUN ───────────────────────────────────────────────────────────────
+    initProduct();
+    setupStarPicker();
+    triggerReveal();
+    updateCartBadge();
+    updateWishlistIcon();
+
+    // ─── Catalog Mega-Menu ────────────────────────
+    const catalogData = {
+      face: {
+        categories: [
+          { name: 'Все средства', highlight: true, cat: null },
+          { name: 'Очищение',                       cat: 'cleanser' },
+          { name: 'Средства для снятия макияжа',    cat: 'makeup'   },
+          { name: 'Тонизирование',                  cat: 'toner'    },
+          { name: 'Пилинги и скрабы',               cat: 'scrub'    },
+          { name: 'Карбокситерапия',                cat: 'carboxy'  },
+          { name: 'Сыворотки',                      cat: 'serum'    },
+          { name: 'Средства для массажа',           cat: 'massage'  },
+          { name: 'Маски',                          cat: 'mask'     },
+          { name: 'Кремы и гели',                   cat: 'cream'    },
+          { name: 'Солнцезащитные средства',        cat: 'spf'      },
+          { name: 'Уход за кожей вокруг глаз',      cat: 'eye'      },
+          { name: 'Средства для ухода за губами',   cat: 'lip'      },
+        ],
+        purposes: [
+          { name: 'Анти-акне',              code: 'acne'        },
+          { name: 'Увлажнение',             code: 'moisture'    },
+          { name: 'Питание',                code: 'nutrition'   },
+          { name: 'Профилактика купероза',   code: null          },
+          { name: 'Лифтинг',               code: 'lifting'     },
+          { name: 'Антивозрастной уход',    code: 'aging'       },
+          { name: 'Осветление',             code: 'brightening' },
+          { name: 'Регенерация',            code: null          },
+          { name: 'Матирование',            code: null          },
+          { name: 'Зимний уход',            code: null          },
+          { name: 'Очищение',               code: 'cleansing'   },
+          { name: 'Уход за шеей и декольте',code: null          },
+          { name: 'Упругость',              code: 'firmness'    },
+          { name: 'Восстановление',         code: null          },
+        ]
+      },
+      body: {
+        categories: [
+          { name: 'Все средства',          highlight: true, cat: null       },
+          { name: 'Средства для очищения',              cat: 'cleanser' },
+          { name: 'Скрабы',                             cat: 'scrub'    },
+          { name: 'Интенсивный уход',                   cat: null       },
+          { name: 'Средства для массажа',               cat: 'massage'  },
+          { name: 'СПА-обертывание',                    cat: null       },
+          { name: 'Бандажное обертывание',              cat: null       },
+          { name: 'Кремы и гели',                       cat: 'cream'    },
+          { name: 'Интимная гигиена',                   cat: null       },
+        ],
+        purposes: [
+          { name: 'Антицеллюлитный уход', code: 'anticellulite' },
+          { name: 'Похудение',            code: null             },
+          { name: 'Коррекция стрий',      code: null             },
+          { name: 'Снятие отёдности',     code: null             },
+          { name: 'Моделирование',        code: 'modelling'      },
+          { name: 'Детокс',               code: null             },
+          { name: 'Тонизирование',        code: null             },
+        ]
+      },
+      hands: {
+        categories: [
+          { name: 'Все средства',                        highlight: true, cat: null       },
+          { name: 'Средства для очищения кожи рук и ног',               cat: 'cleanser' },
+          { name: 'Скрабы для рук и ног',                               cat: 'scrub'    },
+          { name: 'Средства для кутикулы',                              cat: null       },
+          { name: 'Парафинотерапия для рук и ног',                      cat: null       },
+          { name: 'Кремы для рук',                                      cat: 'cream'    },
+          { name: 'Кремы для ног',                                      cat: 'cream'    },
+          { name: 'Средства от натоптышей',                             cat: null       },
+          { name: 'Антисептики',                                        cat: null       },
+          { name: 'Дезодоранты для ног',                                cat: null       },
+        ],
+        purposes: [
+          { name: 'Здоровая кутикула',        code: null },
+          { name: 'Уменьшение гиперкератоза', code: null },
+          { name: 'Уменьшение гипергидроза',  code: null },
+          { name: 'Борьба с трещинами',       code: null },
+          { name: 'Удаление мозолей',         code: null },
+          { name: 'Охлаждение',               code: null },
+        ]
+      },
+      hair: {
+        categories: [
+          { name: 'Все средства',     highlight: true, cat: null          },
+          { name: 'Шампуни',                           cat: 'shampoo'     },
+          { name: 'Бальзамы',                          cat: null          },
+          { name: 'Кондиционеры',                      cat: 'conditioner' },
+          { name: 'Скрабы и пилинги',                  cat: 'scrub'       },
+          { name: 'Несмываемый уход',                  cat: null          },
+          { name: 'Укладка и стайлинг',                cat: null          },
+          { name: 'Маски',                             cat: 'mask'        },
+          { name: 'Бустеры',                           cat: null          },
+          { name: 'Сухие шампуни',                     cat: null          },
+        ],
+        purposes: [
+          { name: 'Для свежести',          code: null        },
+          { name: 'Для повреждённых',      code: null        },
+          { name: 'Для укладки',           code: null        },
+          { name: 'Для блеска',            code: null        },
+          { name: 'Для гладкости',         code: null        },
+          { name: 'Для объёма',            code: null        },
+          { name: 'Для роста',             code: null        },
+          { name: 'Для осветлённых волос', code: null        },
+          { name: 'Для окрашенных волос',  code: null        },
+          { name: 'Глубокое очищение',     code: 'cleansing' },
+          { name: 'Против перхоти',        code: null        },
+          { name: 'Разглаживание',         code: null        },
+          { name: 'Против выпадения',      code: null        },
+          { name: 'Для кудрявых',          code: null        },
+        ]
+      }
+    };
+    function switchZone(zone) {
+      if (!catalogData[zone]) return;
+      document.querySelectorAll('.zone-btn[data-zone]').forEach(b => b.classList.toggle('zone-active', b.dataset.zone === zone));
+      const d = catalogData[zone];
+      document.getElementById('mega-cat-list').innerHTML = d.categories.map(c => {
+        const params = [zone ? `zone=${zone}` : '', c.cat ? `cat=${c.cat}` : ''].filter(Boolean).join('&');
+        return `<a href="catalog.html${params ? '?' + params : ''}" class="cat-link${c.highlight ? ' cat-highlight' : ''}">${c.name}</a>`;
+      }).join('');
+      document.getElementById('mega-dest-list').innerHTML = d.purposes.map(p => {
+        const params = [zone ? `zone=${zone}` : '', p.code ? `purpose=${p.code}` : ''].filter(Boolean).join('&');
+        return `<a href="catalog.html${params ? '?' + params : ''}" class="dest-link">${p.name}</a>`;
+      }).join('');
+    }
+    switchZone('face');
+  </script>
+</body>
+</html>
