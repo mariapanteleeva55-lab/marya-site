@@ -1174,15 +1174,51 @@ switchZone('face');
 
 // ── AUTH CHECK + LOGOUT ────────────────────────────────────────────
 async function initProfile(){
+  // Проверяем — это переход по ссылке сброса пароля?
+  _supabase.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      openResetModal();
+    }
+  });
+
   const { data: { session } } = await _supabase.auth.getSession();
   if (!session) {
-    // Не авторизован — возвращаем на главную
     window.location.href = 'index.html';
     return;
   }
   await renderHero();
   await renderProfileForm();
   initFromUrl();
+}
+
+function openResetModal() {
+  const m = document.getElementById('reset-pwd-modal');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeResetModal() {
+  const m = document.getElementById('reset-pwd-modal');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+  document.body.style.overflow = '';
+}
+
+async function doSetNewPassword() {
+  const pwd  = document.getElementById('new-pwd').value;
+  const pwd2 = document.getElementById('new-pwd2').value;
+  const errEl = document.getElementById('new-pwd-error');
+  errEl.classList.add('hidden');
+
+  if (pwd.length < 6) { errEl.textContent = 'Пароль — минимум 6 символов'; errEl.classList.remove('hidden'); return; }
+  if (pwd !== pwd2)   { errEl.textContent = 'Пароли не совпадают'; errEl.classList.remove('hidden'); return; }
+
+  const { error } = await _supabase.auth.updateUser({ password: pwd });
+  if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
+
+  closeResetModal();
+  showToast('Пароль успешно изменён');
 }
 
 async function logout(){
@@ -1194,5 +1230,30 @@ async function logout(){
 initProfile();
 
 </script>
+
+<!-- ═══════════ МОДАЛЬНОЕ ОКНО СБРОСА ПАРОЛЯ ═══════════ -->
+<div id="reset-pwd-modal" class="fixed inset-0 z-[200] hidden items-center justify-center p-4">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
+  <div class="relative bg-cream dark:bg-cream-dark rounded-2xl shadow-2xl w-full max-w-sm p-8">
+    <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Новый пароль</h2>
+    <p class="text-sm text-muted dark:text-muted-dark mb-6">Придумайте новый пароль для вашего аккаунта.</p>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs text-muted dark:text-muted-dark mb-1">Новый пароль</label>
+        <input id="new-pwd" type="password" placeholder="Минимум 6 символов"
+          class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/>
+      </div>
+      <div>
+        <label class="block text-xs text-muted dark:text-muted-dark mb-1">Повторите пароль</label>
+        <input id="new-pwd2" type="password" placeholder="Повторите пароль"
+          class="w-full px-4 py-3 rounded-xl border border-sand dark:border-sand-dark bg-white dark:bg-sand-dark/20 text-ink dark:text-ink-dark text-sm focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent transition"/>
+      </div>
+      <div id="new-pwd-error" class="hidden text-xs text-red-500 px-1"></div>
+      <button onclick="doSetNewPassword()" class="w-full py-3 bg-accent hover:bg-accent/90 text-white rounded-xl text-sm font-medium transition-colors">
+        Сохранить пароль
+      </button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
