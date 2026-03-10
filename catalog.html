@@ -191,7 +191,9 @@
 <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
-    <a href="index.html" class="font-serif text-2xl font-normal tracking-wide text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <a href="index.html">
+      <img src="логомарьявеб-nobg.png" alt="Марья" style="height:240px;width:auto;opacity:.7">
+    </a>
 
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
       <div class="catalog-wrap relative">
@@ -1542,8 +1544,14 @@ async function linkReferral(userId) {
   } catch(e) { localStorage.removeItem('marya_ref'); }
 
   const sessionKey = 'marya_sid';
-  let sid = sessionStorage.getItem(sessionKey);
-  if (!sid) { sid = Math.random().toString(36).slice(2); sessionStorage.setItem(sessionKey, sid); }
+  const sidData = JSON.parse(localStorage.getItem(sessionKey) || 'null');
+  let sid;
+  if (sidData && sidData.exp > Date.now()) {
+    sid = sidData.id;
+  } else {
+    sid = Math.random().toString(36).slice(2);
+    localStorage.setItem(sessionKey, JSON.stringify({ id: sid, exp: Date.now() + 86400000 }));
+  }
 
   window.addEventListener('load', async function() {
     try {

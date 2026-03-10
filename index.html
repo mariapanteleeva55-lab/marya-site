@@ -260,8 +260,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
       <!-- Логотип -->
-      <a href="#" class="font-serif text-2xl font-normal tracking-wide text-ink dark:text-ink-dark hover:text-accent transition-colors">
-        Марья
+      <a href="#">
+        <img src="логомарьявеб-nobg.png" alt="Марья" class="h-60 w-auto opacity-70">
       </a>
 
       <!-- Навигация (desktop) -->
@@ -409,13 +409,13 @@
           <!-- Теглайн -->
           <div class="inline-flex items-center gap-2 px-4 py-2 bg-warm/10 dark:bg-warm-dark/10 border border-warm/20 dark:border-warm-dark/20 rounded-full text-sm text-warm dark:text-warm-dark font-medium">
             <span class="w-1.5 h-1.5 bg-accent rounded-full animate-pulse"></span>
-            Персональная рутина за 60 секунд
+            Персональный уход за 60 секунд
           </div>
 
           <!-- Headline -->
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-tight text-ink dark:text-ink-dark">
             Уход, собранный<br/>
-            <span class="text-accent">под вашу кожу.</span><br/>
+            <span class="text-accent">специально для вашей кожи.</span><br/>
             За 60 секунд.
           </h1>
 
@@ -1648,8 +1648,14 @@
 
     // Уникальный session_id для трекинга посетителей
     const sessionKey = 'marya_sid';
-    let sid = sessionStorage.getItem(sessionKey);
-    if (!sid) { sid = Math.random().toString(36).slice(2); sessionStorage.setItem(sessionKey, sid); }
+    const sidData = JSON.parse(localStorage.getItem(sessionKey) || 'null');
+    let sid;
+    if (sidData && sidData.exp > Date.now()) {
+      sid = sidData.id;
+    } else {
+      sid = Math.random().toString(36).slice(2);
+      localStorage.setItem(sessionKey, JSON.stringify({ id: sid, exp: Date.now() + 86400000 }));
+    }
 
     // Отправляем событие просмотра страницы
     window.addEventListener('load', async function() {
