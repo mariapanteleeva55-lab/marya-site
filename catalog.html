@@ -1105,6 +1105,7 @@ async function addToCart(id) {
     localStorage.setItem('marya_cart', JSON.stringify(saved));
   }
 
+  _supabase.from('analytics_events').insert({ event_type: 'add_to_cart', meta: { product_id: id }, user_id: (await _supabase.auth.getSession()).data.session?.user?.id || null }).catch(()=>{});
   showToast('Добавлено в корзину — перейти?', true, id);
 }
 
