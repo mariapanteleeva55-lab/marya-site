@@ -1508,7 +1508,7 @@
       errEl.classList.add('hidden');
       if (!email) { errEl.textContent = 'Введите email'; errEl.classList.remove('hidden'); return; }
       const { error } = await _supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/profile.html'
+        redirectTo: window.location.href.replace(/\/[^\/]*(\?.*)?$/, '/') + 'profile.html'
       });
       if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
       document.getElementById('form-reset').classList.add('hidden');
