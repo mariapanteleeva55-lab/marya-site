@@ -42,13 +42,35 @@
 </head>
 <body class="min-h-screen">
 
-  <!-- Доступ закрыт (показывается пока не загрузились данные) -->
+  <!-- Форма входа / Доступ закрыт -->
   <div id="access-denied" class="hidden fixed inset-0 bg-cream dark:bg-ink flex items-center justify-center z-50">
-    <div class="text-center p-8">
-      <p class="text-4xl mb-4">🔒</p>
-      <p class="text-lg font-semibold text-ink dark:text-cream mb-2">Доступ закрыт</p>
-      <p class="text-sm text-muted mb-6">Эта страница только для администратора</p>
-      <a href="index.html" class="px-6 py-3 bg-accent text-white rounded-full text-sm font-medium hover:bg-accent/90 transition-colors">На главную</a>
+    <div class="w-full max-w-sm p-8">
+      <!-- Заголовок -->
+      <div class="text-center mb-6">
+        <p class="font-serif text-2xl text-ink dark:text-cream mb-1">МАРЬЯ</p>
+        <p class="text-sm text-muted">Вход в панель администратора</p>
+      </div>
+      <!-- Форма -->
+      <div id="login-form">
+        <div class="mb-3">
+          <input id="admin-email" type="email" placeholder="Email" autocomplete="email"
+            class="w-full border border-sand dark:border-[#2A2420] rounded-xl px-4 py-3 text-sm bg-white dark:bg-[#231A12] text-ink dark:text-cream outline-none focus:border-accent transition-colors">
+        </div>
+        <div class="mb-4">
+          <input id="admin-password" type="password" placeholder="Пароль" autocomplete="current-password"
+            class="w-full border border-sand dark:border-[#2A2420] rounded-xl px-4 py-3 text-sm bg-white dark:bg-[#231A12] text-ink dark:text-cream outline-none focus:border-accent transition-colors">
+        </div>
+        <p id="login-error" class="hidden text-xs text-red-500 mb-3 text-center"></p>
+        <button onclick="doAdminLogin()"
+          class="w-full py-3 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent/90 transition-colors">
+          Войти
+        </button>
+      </div>
+      <!-- Нет доступа (не admin email) -->
+      <div id="no-access" class="hidden text-center mt-4">
+        <p class="text-sm text-muted mb-4">Этот аккаунт не является администратором</p>
+        <a href="index.html" class="text-xs text-accent hover:underline">На главную</a>
+      </div>
     </div>
   </div>
 
@@ -191,19 +213,17 @@
 
   // ── ИНИЦИАЛИЗАЦИЯ ─────────────────────────────────────────────────
   window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session } } = await _supabase.auth.getSession();
+    let session = null;
+    try {
+      const { data } = await _supabase.auth.getSession();
+      session = data?.session || null;
+    } catch(e) {}
 
     if (!session || session.user.email !== ADMIN_EMAIL) {
       document.getElementById('loading-screen').classList.add('hidden');
       document.getElementById('access-denied').classList.remove('hidden');
       return;
     }
-
-    // Явно устанавливаем сессию чтобы клиент отправлял токен в запросах
-    await _supabase.auth.setSession({
-      access_token:  session.access_token,
-      refresh_token: session.refresh_token
-    });
 
     document.getElementById('loading-screen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
