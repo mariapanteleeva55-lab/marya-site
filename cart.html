@@ -962,7 +962,8 @@ function calcBonusEarn(orderTotal){
 function pointsDiscount(){
   if (!state.usePoints) return 0;
   const balance = getBonus().balance;
-  const maxDiscount = subtotal() - discount() - subDiscount() + deliveryCost();
+  const orderBase = subtotal() - discount() - subDiscount() + deliveryCost();
+  const maxDiscount = Math.floor(orderBase * 0.5); // не более 50% заказа
   return Math.min(balance, maxDiscount);
 }
 function subDiscount(){ return state.subscription ? Math.round((subtotal()-discount())*0.15) : 0; }
