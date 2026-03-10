@@ -236,6 +236,10 @@
         <span class="text-base leading-none">◈</span>
         Бонусы
       </button>
+      <button class="tab-btn" onclick="switchTab('partner')" data-tab="partner">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round"/></svg>
+        Партнёры
+      </button>
     </div>
   </div>
 </div>
@@ -396,6 +400,80 @@
     </div>
     <div id="bonus-history-empty" class="hidden text-center py-8 text-sm text-muted dark:text-muted-dark">
       Совершите первую покупку, чтобы начать копить баллы
+    </div>
+  </div>
+
+  <!-- ══════ TAB: ПАРТНЁРЫ ══════ -->
+  <div id="tab-partner" class="tab-panel">
+
+    <!-- Tier + баланс -->
+    <div class="p-6 rounded-3xl border border-sand dark:border-sand-dark/30 bg-gradient-to-br from-sand/30 to-cream dark:from-sand-dark/20 dark:to-cream-dark mb-6">
+      <div class="flex items-start justify-between mb-5">
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark font-medium uppercase tracking-widest mb-1">Партнёрский статус</p>
+          <div id="partner-tier-badge" class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/30 text-accent text-sm font-semibold">
+            Базовый · 5%
+          </div>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-muted dark:text-muted-dark mb-1">Баланс к выплате</p>
+          <p class="font-serif text-3xl text-ink dark:text-ink-dark"><span id="partner-balance">0</span> <span class="text-base font-sans text-muted dark:text-muted-dark">₽</span></p>
+        </div>
+      </div>
+
+      <!-- Прогресс до 100k -->
+      <div>
+        <div class="flex justify-between text-xs text-muted dark:text-muted-dark mb-2">
+          <span>Покупки рефералов</span>
+          <span><span id="partner-spent">0</span> / 100 000 ₽ до ставки 10%</span>
+        </div>
+        <div class="h-2 bg-sand dark:bg-sand-dark/40 rounded-full overflow-hidden">
+          <div id="partner-progress-bar" class="h-full bg-gradient-to-r from-accent to-warm rounded-full transition-all duration-700" style="width:0%"></div>
+        </div>
+        <p id="partner-premium-note" class="hidden mt-2 text-xs font-semibold text-sage dark:text-sage-dark">Поздравляем! Вы достигли ставки 10%</p>
+      </div>
+    </div>
+
+    <!-- Реферальная ссылка -->
+    <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark mb-6">
+      <p class="text-xs text-muted dark:text-muted-dark font-medium uppercase tracking-widest mb-3">Ваша реферальная ссылка</p>
+      <div class="flex gap-2">
+        <input id="partner-link-input" type="text" readonly
+          class="flex-1 form-input text-xs font-mono bg-sand/30 dark:bg-sand-dark/20 cursor-text"
+          value="Загрузка...">
+        <button onclick="copyPartnerLink()" class="px-4 py-2 rounded-xl bg-accent text-white text-sm font-medium hover:bg-accent/90 transition-colors whitespace-nowrap">
+          Скопировать
+        </button>
+      </div>
+      <p id="partner-copy-note" class="hidden mt-2 text-xs text-sage dark:text-sage-dark">Ссылка скопирована!</p>
+      <p class="mt-3 text-xs text-muted dark:text-muted-dark">Отправьте ссылку другу — он получит <strong>500 бонусных баллов</strong> при регистрации, а вы — <strong>5% (или 10%)</strong> с каждой его покупки.</p>
+    </div>
+
+    <!-- Статистика -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark text-center">
+        <p class="text-2xl font-serif text-ink dark:text-ink-dark" id="partner-stat-refs">0</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-1">Рефералов</p>
+      </div>
+      <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark text-center">
+        <p class="text-2xl font-serif text-ink dark:text-ink-dark" id="partner-stat-orders">0</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-1">Заказов рефералов</p>
+      </div>
+      <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark text-center">
+        <p class="text-2xl font-serif text-ink dark:text-ink-dark" id="partner-stat-earned">0 ₽</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-1">Заработано всего</p>
+      </div>
+      <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark text-center">
+        <p class="text-2xl font-serif text-accent" id="partner-stat-rate">5%</p>
+        <p class="text-[11px] text-muted dark:text-muted-dark mt-1">Текущая ставка</p>
+      </div>
+    </div>
+
+    <!-- История начислений -->
+    <h3 class="font-semibold text-sm text-ink dark:text-ink-dark mb-3">История начислений</h3>
+    <div id="partner-rewards-list" class="space-y-2"></div>
+    <div id="partner-rewards-empty" class="hidden text-center py-10 text-sm text-muted dark:text-muted-dark">
+      Пока нет начислений — поделитесь ссылкой с друзьями
     </div>
   </div>
 
@@ -660,6 +738,7 @@ function switchTab(name){
   if (name === 'orders')   renderOrders();
   if (name === 'wishlist') renderWishlist();
   if (name === 'quiz')     renderQuizTab();
+  if (name === 'partner')  renderPartner();
 }
 
 // ── HERO ───────────────────────────────────────────────────────────
@@ -940,6 +1019,113 @@ async function renderBonus(){
         ${h.amount > 0 ? '+' : ''}${h.amount}
       </span>
     </div>`).join('');
+}
+
+// ── ПАРТНЁРЫ ──────────────────────────────────────────────────────
+
+async function ensureReferralCode(userId) {
+  // Проверяем, есть ли уже код
+  const { data: existing } = await _supabase
+    .from('referral_codes').select('code').eq('user_id', userId).single();
+  if (existing?.code) return existing.code;
+
+  // Генерируем новый код через БД-функцию
+  const { data: generated } = await _supabase.rpc('generate_referral_code');
+  if (!generated) return null;
+
+  await _supabase.from('referral_codes').insert({ user_id: userId, code: generated });
+  return generated;
+}
+
+async function renderPartner() {
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (!session) return;
+  const userId = session.user.id;
+
+  // Генерируем реферальный код если нет
+  const code = await ensureReferralCode(userId);
+  const link = code ? (window.location.origin + '/?ref=' + code) : '';
+  document.getElementById('partner-link-input').value = link || 'Ошибка генерации ссылки';
+
+  // Трекинг открытия вкладки
+  _supabase.from('analytics_events').insert({
+    event_type: 'ref_link_view', user_id: userId
+  }).then(()=>{}).catch(()=>{});
+
+  // Данные партнёрского аккаунта
+  const { data: partnerRow } = await _supabase
+    .from('partner_accounts').select('*').eq('user_id', userId).single();
+
+  const balance        = partnerRow?.balance || 0;
+  const totalEarned    = partnerRow?.total_earned || 0;
+  const totalSpent     = partnerRow?.total_referrals_spent || 0;
+  const tier           = partnerRow?.tier || 'base';
+  const isPremium      = tier === 'premium';
+  const rate           = isPremium ? 10 : 5;
+  const progressPct    = Math.min(100, (totalSpent / 100000) * 100);
+
+  document.getElementById('partner-balance').textContent       = balance.toLocaleString('ru-RU');
+  document.getElementById('partner-spent').textContent         = totalSpent.toLocaleString('ru-RU');
+  document.getElementById('partner-progress-bar').style.width  = progressPct + '%';
+  document.getElementById('partner-stat-earned').textContent   = totalEarned.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('partner-stat-rate').textContent     = rate + '%';
+
+  const badge = document.getElementById('partner-tier-badge');
+  if (isPremium) {
+    badge.textContent = 'Премиум · 10%';
+    badge.className = 'inline-flex items-center gap-2 px-3 py-1 rounded-full bg-warm/10 border border-warm/40 text-warm text-sm font-semibold';
+    document.getElementById('partner-premium-note').classList.remove('hidden');
+  } else {
+    badge.textContent = 'Базовый · 5%';
+  }
+
+  // Количество рефералов
+  const { data: refs, count: refCount } = await _supabase
+    .from('referrals').select('referee_id', { count: 'exact' }).eq('referrer_id', userId);
+  document.getElementById('partner-stat-refs').textContent = refCount || 0;
+
+  // История начислений
+  const { data: rewards } = await _supabase
+    .from('referral_rewards')
+    .select('*')
+    .eq('referrer_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(30);
+
+  document.getElementById('partner-stat-orders').textContent = rewards?.length || 0;
+
+  const list  = document.getElementById('partner-rewards-list');
+  const empty = document.getElementById('partner-rewards-empty');
+
+  if (!rewards || rewards.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+  list.innerHTML = rewards.map(r => {
+    const d = new Date(r.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
+    const rateLabel = Math.round(r.reward_rate * 100) + '%';
+    return `<div class="flex items-center justify-between p-3 rounded-xl border border-sand dark:border-sand-dark/30 bg-white dark:bg-ink-dark text-sm">
+      <div>
+        <p class="text-xs text-muted dark:text-muted-dark">${d} · Заказ ${r.order_id}</p>
+        <p class="font-medium text-ink dark:text-ink-dark mt-0.5">${r.order_amount.toLocaleString('ru-RU')} ₽ × ${rateLabel}</p>
+      </div>
+      <div class="text-right">
+        <p class="font-bold text-sage dark:text-sage-dark">+${r.reward_amount.toLocaleString('ru-RU')} ₽</p>
+        <p class="text-[10px] text-muted dark:text-muted-dark">${r.status === 'paid' ? 'Выплачено' : 'Начислено'}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function copyPartnerLink() {
+  const input = document.getElementById('partner-link-input');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const note = document.getElementById('partner-copy-note');
+    note.classList.remove('hidden');
+    setTimeout(() => note.classList.add('hidden'), 2500);
+  });
 }
 
 // ── QUIZ ──────────────────────────────────────────────────────────

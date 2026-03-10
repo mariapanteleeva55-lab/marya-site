@@ -1364,6 +1364,15 @@ async function placeOrder(){
     if (bonusUsed > 0) historyRows.push({ user_id: session.user.id, amount: -bonusUsed, reason: 'Списано по заказу ' + orderId, order_id: orderId });
     if (bonusEarned > 0) historyRows.push({ user_id: session.user.id, amount: bonusEarned, reason: 'Заказ ' + orderId, order_id: orderId });
     if (historyRows.length) await _supabase.from('bonus_history').insert(historyRows);
+
+    // Трекинг покупки для аналитики
+    _supabase.from('analytics_events').insert({
+      event_type: 'purchase', user_id: session.user.id,
+      value: orderTotal, meta: { order_id: orderId }
+    }).then(()=>{}).catch(()=>{});
+
+    // Начисление вознаграждения партнёру-рефереру
+    await creditPartnerReward(session.user.id, orderId, orderTotal);
   }
 
   document.getElementById('success-order-num').textContent    = orderId;
@@ -1381,6 +1390,54 @@ async function placeOrder(){
   await saveCart();
   showView('success');
   window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── ПАРТНЁРСКОЕ ВОЗНАГРАЖДЕНИЕ ────────────────────────────────────
+async function creditPartnerReward(buyerId, orderId, orderTotal) {
+  try {
+    // Найти реферера покупателя
+    const { data: refRow } = await _supabase
+      .from('referrals').select('referrer_id').eq('referee_id', buyerId).single();
+    if (!refRow) return; // покупатель не является чьим-то рефералом
+
+    const referrerId = refRow.referrer_id;
+
+    // Получить текущий аккаунт партнёра
+    const { data: partner } = await _supabase
+      .from('partner_accounts').select('*').eq('user_id', referrerId).single();
+
+    const curBalance   = partner?.balance || 0;
+    const curEarned    = partner?.total_earned || 0;
+    const curSpent     = partner?.total_referrals_spent || 0;
+    const curTier      = partner?.tier || 'base';
+
+    // Определяем ставку: если уже premium или достигли 100k — 10%, иначе 5%
+    const newTotalSpent = curSpent + orderTotal;
+    const isPremium     = curTier === 'premium' || newTotalSpent >= 100000;
+    const rate          = isPremium ? 0.10 : 0.05;
+    const reward        = Math.round(orderTotal * rate * 100) / 100;
+
+    // Обновляем партнёрский аккаунт
+    await _supabase.from('partner_accounts').upsert({
+      user_id:               referrerId,
+      balance:               curBalance + reward,
+      total_earned:          curEarned + reward,
+      total_referrals_spent: newTotalSpent,
+      tier:                  isPremium ? 'premium' : 'base',
+      updated_at:            new Date().toISOString()
+    });
+
+    // Записываем в историю вознаграждений
+    await _supabase.from('referral_rewards').insert({
+      referrer_id:   referrerId,
+      referee_id:    buyerId,
+      order_id:      orderId,
+      order_amount:  orderTotal,
+      reward_rate:   rate,
+      reward_amount: reward,
+      status:        'pending'
+    });
+  } catch(e) {}
 }
 
 // ── PHONE FORMAT ──────────────────────────────────────────────────
@@ -1675,7 +1732,11 @@ switchZone('face');
     if (password.length < 6) { errEl.textContent = 'Пароль — минимум 6 символов'; errEl.classList.remove('hidden'); return; }
     const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { name, lastname } } });
     if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-    if (data.user) { await _supabase.from('profiles').upsert({ id: data.user.id, name, lastname, updated_at: new Date().toISOString() }); }
+    if (data.user) {
+      await _supabase.from('profiles').upsert({ id: data.user.id, name, lastname, updated_at: new Date().toISOString() });
+      await linkReferral(data.user.id);
+      _supabase.from('analytics_events').insert({ event_type: 'registration', user_id: data.user.id }).then(()=>{}).catch(()=>{});
+    }
     document.getElementById('form-register').classList.add('hidden');
     const s = document.getElementById('form-success');
     s.classList.remove('hidden');
@@ -1685,6 +1746,61 @@ switchZone('face');
   }
   initAuth();
   _supabase.auth.onAuthStateChange((_event, session) => { updateAuthUI(session?.user || null); });
+</script>
+
+<script>
+// --- Реферальная привязка при регистрации ---
+async function linkReferral(userId) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('marya_ref') || 'null');
+    if (!stored || !stored.code || stored.expires < Date.now()) return;
+    const { data: codeRow } = await _supabase
+      .from('referral_codes').select('user_id').eq('code', stored.code).single();
+    if (!codeRow || codeRow.user_id === userId) return;
+    const { error: refErr } = await _supabase.from('referrals').insert({
+      referrer_id: codeRow.user_id, referee_id: userId
+    });
+    if (refErr) return;
+    const { data: bonusRow } = await _supabase
+      .from('bonus_accounts').select('balance, total_spent').eq('user_id', userId).single();
+    await _supabase.from('bonus_accounts').upsert({
+      user_id: userId, balance: (bonusRow?.balance || 0) + 500, total_spent: bonusRow?.total_spent || 0
+    });
+    await _supabase.from('bonus_history').insert({
+      user_id: userId, amount: 500, reason: 'Приветственный бонус по реферальной ссылке'
+    });
+    localStorage.removeItem('marya_ref');
+  } catch(e) {}
+}
+
+// --- Реферальный трекер ---
+(function(){
+  const ref = new URLSearchParams(window.location.search).get('ref');
+  if (ref) {
+    const expires = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    localStorage.setItem('marya_ref', JSON.stringify({ code: ref.toUpperCase(), expires }));
+  }
+  try {
+    const stored = JSON.parse(localStorage.getItem('marya_ref') || 'null');
+    if (stored && stored.expires < Date.now()) localStorage.removeItem('marya_ref');
+  } catch(e) { localStorage.removeItem('marya_ref'); }
+
+  const sessionKey = 'marya_sid';
+  let sid = sessionStorage.getItem(sessionKey);
+  if (!sid) { sid = Math.random().toString(36).slice(2); sessionStorage.setItem(sessionKey, sid); }
+
+  window.addEventListener('load', async function() {
+    try {
+      const { data: { session } } = await _supabase.auth.getSession();
+      await _supabase.from('analytics_events').insert({
+        event_type: 'pageview',
+        page: window.location.pathname || '/cart',
+        user_id: session?.user?.id || null,
+        session_id: sid
+      });
+    } catch(e) {}
+  });
+})();
 </script>
 </body>
 </html>

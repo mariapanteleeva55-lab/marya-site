@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Марья — Дашборд</title>
+  <meta name="robots" content="noindex, nofollow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            accent:  '#D4956A',
+            warm:    '#C4A882',
+            ink:     '#2C2018',
+            cream:   '#FDF8F3',
+            sand:    '#E8DDD0',
+            muted:   '#7A6A5A',
+            sage:    '#7A9E7E',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    *{box-sizing:border-box}
+    body{font-family:'Inter',system-ui,sans-serif;background:#F5EDE4;color:#2C2018}
+    .dark body{background:#1A1310;color:#F5EDE4}
+    .card{background:#FDF8F3;border-radius:20px;border:1px solid #E8DDD0;padding:20px}
+    .dark .card{background:#231A12;border-color:#2A2420}
+    .stat-num{font-family:Georgia,serif;font-size:2rem;font-weight:600;line-height:1.1;color:#2C2018}
+    .dark .stat-num{color:#F5EDE4}
+    .badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .badge-up{background:rgba(122,158,126,.15);color:#5a8a60}
+    .badge-down{background:rgba(200,80,80,.1);color:#c45555}
+    canvas{max-height:240px}
+  </style>
+</head>
+<body class="min-h-screen">
+
+  <!-- Доступ закрыт (показывается пока не загрузились данные) -->
+  <div id="access-denied" class="hidden fixed inset-0 bg-cream dark:bg-ink flex items-center justify-center z-50">
+    <div class="text-center p-8">
+      <p class="text-4xl mb-4">🔒</p>
+      <p class="text-lg font-semibold text-ink dark:text-cream mb-2">Доступ закрыт</p>
+      <p class="text-sm text-muted mb-6">Эта страница только для администратора</p>
+      <a href="index.html" class="px-6 py-3 bg-accent text-white rounded-full text-sm font-medium hover:bg-accent/90 transition-colors">На главную</a>
+    </div>
+  </div>
+
+  <!-- Загрузка -->
+  <div id="loading-screen" class="fixed inset-0 bg-cream dark:bg-ink flex items-center justify-center z-40">
+    <div class="text-center">
+      <div class="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-3"></div>
+      <p class="text-sm text-muted">Загрузка дашборда...</p>
+    </div>
+  </div>
+
+  <!-- Основной контент -->
+  <div id="dashboard" class="hidden min-h-screen">
+
+    <!-- Header -->
+    <header style="background:rgba(253,248,243,.95);backdrop-filter:blur(12px);border-bottom:1px solid #E8DDD0"
+      class="sticky top-0 z-30 px-6 py-4 flex items-center justify-between dark:border-[#2A2420]">
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="text-xs text-muted hover:text-accent transition-colors">← Сайт</a>
+        <span class="text-muted/40">|</span>
+        <span class="font-serif text-xl text-ink dark:text-cream">МАРЬЯ</span>
+        <span class="badge" style="background:rgba(212,149,106,.12);color:#D4956A;margin-left:4px">Дашборд</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- Период -->
+        <select id="period-select" onchange="loadAll()"
+          class="text-sm border border-sand dark:border-[#2A2420] rounded-xl px-3 py-1.5 bg-white dark:bg-[#231A12] text-ink dark:text-cream outline-none cursor-pointer">
+          <option value="7">7 дней</option>
+          <option value="30" selected>30 дней</option>
+          <option value="90">90 дней</option>
+        </select>
+        <!-- Dark mode -->
+        <button onclick="document.documentElement.classList.toggle('dark')"
+          class="w-8 h-8 rounded-full border border-sand dark:border-[#2A2420] flex items-center justify-center text-sm hover:border-accent transition-colors">
+          ☾
+        </button>
+      </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-8">
+
+      <!-- ══ КПИ-карточки ══ -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Посетители</p>
+          <p class="stat-num" id="kpi-visitors">—</p>
+          <p class="text-[11px] text-muted mt-1">уникальных сессий</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">В корзину</p>
+          <p class="stat-num" id="kpi-cart">—</p>
+          <p class="text-[11px] text-muted mt-1">событий add_to_cart</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Покупок</p>
+          <p class="stat-num" id="kpi-orders">—</p>
+          <p class="text-[11px] text-muted mt-1">завершённых заказов</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Выручка</p>
+          <p class="stat-num" id="kpi-revenue">—</p>
+          <p class="text-[11px] text-muted mt-1">за период, ₽</p>
+        </div>
+      </div>
+
+      <!-- ══ Вторая строка КПИ ══ -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Регистрации</p>
+          <p class="stat-num" id="kpi-registrations">—</p>
+          <p class="text-[11px] text-muted mt-1">новых пользователей</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Рефералов</p>
+          <p class="stat-num" id="kpi-referrals">—</p>
+          <p class="text-[11px] text-muted mt-1">привлечено партнёрами</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Партн. ссылок</p>
+          <p class="stat-num" id="kpi-reflinks">—</p>
+          <p class="text-[11px] text-muted mt-1">просмотров вкладки</p>
+        </div>
+        <div class="card">
+          <p class="text-xs text-muted dark:text-muted font-medium uppercase tracking-widest mb-2">Начислено партнёрам</p>
+          <p class="stat-num" id="kpi-partner-total">—</p>
+          <p class="text-[11px] text-muted mt-1">₽ к выплате</p>
+        </div>
+      </div>
+
+      <!-- ══ Конверсионная воронка ══ -->
+      <div class="card">
+        <h2 class="text-sm font-semibold text-ink dark:text-cream mb-5">Воронка конверсии</h2>
+        <div class="space-y-3" id="funnel-container">
+          <!-- Filled by JS -->
+        </div>
+      </div>
+
+      <!-- ══ График продаж ══ -->
+      <div class="card">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-sm font-semibold text-ink dark:text-cream">Покупки по дням</h2>
+          <span class="text-[11px] text-muted">кол-во заказов</span>
+        </div>
+        <canvas id="orders-chart"></canvas>
+      </div>
+
+      <!-- ══ Нижний ряд: партнёры + последние заказы ══ -->
+      <div class="grid sm:grid-cols-2 gap-6">
+
+        <!-- Топ партнёры -->
+        <div class="card">
+          <h2 class="text-sm font-semibold text-ink dark:text-cream mb-4">Топ партнёры</h2>
+          <div id="partners-list" class="space-y-2">
+            <p class="text-xs text-muted">Загрузка...</p>
+          </div>
+        </div>
+
+        <!-- Последние заказы -->
+        <div class="card">
+          <h2 class="text-sm font-semibold text-ink dark:text-cream mb-4">Последние заказы</h2>
+          <div id="recent-orders-list" class="space-y-2">
+            <p class="text-xs text-muted">Загрузка...</p>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div><!-- /dashboard -->
+
+  <script>
+  // ── SUPABASE ──────────────────────────────────────────────────────
+  const _supabase = window.supabase.createClient(
+    'https://cizdsiqolarjcgmwbafp.supabase.co',
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA5MjUyOTIsImV4cCI6MjA1NjUwMTI5Mn0.rj8UUzevkJiRHwYy2CfJ7YUVhbSJb_BSVL4jJMXKF5w'
+  );
+
+  // !! Укажите ваш admin email !!
+  const ADMIN_EMAIL = 'maria.panteleeva55@gmail.com';
+
+  // ── ИНИЦИАЛИЗАЦИЯ ─────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', async () => {
+    const { data: { session } } = await _supabase.auth.getSession();
+
+    if (!session || session.user.email !== ADMIN_EMAIL) {
+      document.getElementById('loading-screen').classList.add('hidden');
+      document.getElementById('access-denied').classList.remove('hidden');
+      return;
+    }
+
+    document.getElementById('loading-screen').classList.add('hidden');
+    document.getElementById('dashboard').classList.remove('hidden');
+    await loadAll();
+  });
+
+  // ── УТИЛИТЫ ───────────────────────────────────────────────────────
+  function getPeriodDays() {
+    return parseInt(document.getElementById('period-select').value) || 30;
+  }
+
+  function dateFrom(days) {
+    const d = new Date();
+    d.setDate(d.getDate() - days);
+    return d.toISOString();
+  }
+
+  function fmtNum(n) {
+    if (n === null || n === undefined) return '—';
+    return n.toLocaleString('ru-RU');
+  }
+
+  function fmtRub(n) {
+    if (!n) return '0 ₽';
+    return n.toLocaleString('ru-RU') + ' ₽';
+  }
+
+  // ── ГЛАВНАЯ ЗАГРУЗКА ─────────────────────────────────────────────
+  let ordersChart = null;
+
+  async function loadAll() {
+    const days = getPeriodDays();
+    const from = dateFrom(days);
+
+    // Запросы параллельно
+    const [
+      visitorsRes,
+      cartRes,
+      purchaseRes,
+      registrationRes,
+      referralsRes,
+      refLinkRes,
+      partnersRes,
+      recentOrdersRes,
+      ordersChartRes,
+    ] = await Promise.all([
+      // Уникальные посетители (уникальные session_id)
+      _supabase.from('analytics_events')
+        .select('session_id', { count: 'exact' })
+        .eq('event_type', 'pageview')
+        .gte('created_at', from),
+
+      // Добавлений в корзину
+      _supabase.from('analytics_events')
+        .select('id', { count: 'exact' })
+        .eq('event_type', 'add_to_cart')
+        .gte('created_at', from),
+
+      // Покупки
+      _supabase.from('analytics_events')
+        .select('value', { count: 'exact' })
+        .eq('event_type', 'purchase')
+        .gte('created_at', from),
+
+      // Регистрации
+      _supabase.from('analytics_events')
+        .select('id', { count: 'exact' })
+        .eq('event_type', 'registration')
+        .gte('created_at', from),
+
+      // Новые рефералы
+      _supabase.from('referrals')
+        .select('id', { count: 'exact' })
+        .gte('created_at', from),
+
+      // Просмотры вкладки партнёры
+      _supabase.from('analytics_events')
+        .select('id', { count: 'exact' })
+        .eq('event_type', 'ref_link_view')
+        .gte('created_at', from),
+
+      // Топ партнёры
+      _supabase.from('partner_accounts')
+        .select('user_id, balance, total_earned, total_referrals_spent, tier')
+        .order('total_earned', { ascending: false })
+        .limit(8),
+
+      // Последние заказы
+      _supabase.from('orders')
+        .select('id, total, status, created_at, user_id')
+        .order('created_at', { ascending: false })
+        .limit(8),
+
+      // Заказы для графика
+      _supabase.from('orders')
+        .select('created_at, total')
+        .gte('created_at', from)
+        .order('created_at', { ascending: true }),
+    ]);
+
+    // ── КПИ ───────────────────────────────────────────────────────
+    // Уникальные сессии
+    const sessions = new Set((visitorsRes.data || []).map(r => r.session_id));
+    document.getElementById('kpi-visitors').textContent       = fmtNum(sessions.size);
+
+    document.getElementById('kpi-cart').textContent           = fmtNum(cartRes.count || 0);
+    document.getElementById('kpi-orders').textContent         = fmtNum(purchaseRes.count || 0);
+    document.getElementById('kpi-registrations').textContent  = fmtNum(registrationRes.count || 0);
+    document.getElementById('kpi-referrals').textContent      = fmtNum(referralsRes.count || 0);
+    document.getElementById('kpi-reflinks').textContent       = fmtNum(refLinkRes.count || 0);
+
+    // Выручка
+    const revenue = (purchaseRes.data || []).reduce((s, r) => s + (r.value || 0), 0);
+    document.getElementById('kpi-revenue').textContent        = fmtRub(Math.round(revenue));
+
+    // Сумма начислений партнёрам (все pending)
+    const { data: partnerRewards } = await _supabase
+      .from('referral_rewards').select('reward_amount').eq('status', 'pending');
+    const totalPending = (partnerRewards || []).reduce((s, r) => s + (r.reward_amount || 0), 0);
+    document.getElementById('kpi-partner-total').textContent  = fmtRub(Math.round(totalPending));
+
+    // ── ВОРОНКА ───────────────────────────────────────────────────
+    const funnelData = [
+      { label: 'Посетители',       val: sessions.size,           color: '#C4A882' },
+      { label: 'Добавили в корзину', val: cartRes.count || 0,    color: '#D4956A' },
+      { label: 'Оформили заказ',   val: purchaseRes.count || 0,  color: '#7A9E7E' },
+    ];
+    const maxVal = funnelData[0].val || 1;
+    document.getElementById('funnel-container').innerHTML = funnelData.map((f, i) => {
+      const pct = Math.round((f.val / maxVal) * 100);
+      const conv = i > 0 ? ` · конв. ${Math.round((f.val / (funnelData[i-1].val || 1)) * 100)}%` : '';
+      return `<div>
+        <div class="flex items-center justify-between text-xs text-muted mb-1">
+          <span class="font-medium text-ink dark:text-cream">${f.label}</span>
+          <span>${fmtNum(f.val)}${conv}</span>
+        </div>
+        <div class="h-3 bg-sand dark:bg-[#2A2420] rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-700" style="width:${pct}%;background:${f.color}"></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    // ── ГРАФИК ЗАКАЗОВ ────────────────────────────────────────────
+    const ordersRaw = ordersChartRes.data || [];
+    // Группировка по дате
+    const grouped = {};
+    ordersRaw.forEach(o => {
+      const d = o.created_at.slice(0, 10);
+      grouped[d] = (grouped[d] || 0) + 1;
+    });
+    // Заполняем все дни
+    const labels = [], values = [];
+    for (let i = days - 1; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      labels.push(key.slice(5)); // MM-DD
+      values.push(grouped[key] || 0);
+    }
+
+    if (ordersChart) ordersChart.destroy();
+    const ctx = document.getElementById('orders-chart').getContext('2d');
+    ordersChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: 'rgba(212,149,106,.6)',
+          borderColor: '#D4956A',
+          borderWidth: 1,
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 1, color: '#7A6A5A' }, grid: { color: 'rgba(200,180,160,.2)' } },
+          x: { ticks: { color: '#7A6A5A', maxTicksLimit: 14 }, grid: { display: false } }
+        }
+      }
+    });
+
+    // ── ТОП ПАРТНЁРЫ ─────────────────────────────────────────────
+    const pList = document.getElementById('partners-list');
+    if (!partnersRes.data || partnersRes.data.length === 0) {
+      pList.innerHTML = '<p class="text-xs text-muted">Нет партнёров</p>';
+    } else {
+      // Подтягиваем email партнёров
+      pList.innerHTML = partnersRes.data.map((p, i) => {
+        const tierLabel = p.tier === 'premium' ? '10%' : '5%';
+        const tierColor = p.tier === 'premium' ? '#C4A882' : '#D4956A';
+        return `<div class="flex items-center justify-between py-2 border-b border-sand dark:border-[#2A2420] last:border-0">
+          <div class="flex items-center gap-2">
+            <span class="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white" style="background:${tierColor}">${i+1}</span>
+            <div>
+              <p class="text-xs font-medium text-ink dark:text-cream truncate max-w-[120px]">${p.user_id.slice(0,8)}…</p>
+              <p class="text-[10px] text-muted">Ставка ${tierLabel} · ${fmtNum(Math.round(p.total_referrals_spent))} ₽ покупок рефералов</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold" style="color:${tierColor}">+${fmtRub(Math.round(p.total_earned))}</p>
+            <p class="text-[10px] text-muted">баланс ${fmtRub(Math.round(p.balance))}</p>
+          </div>
+        </div>`;
+      }).join('');
+    }
+
+    // ── ПОСЛЕДНИЕ ЗАКАЗЫ ─────────────────────────────────────────
+    const oList = document.getElementById('recent-orders-list');
+    const statusLabel = { processing:'В обработке', shipped:'Отправлен', delivered:'Доставлен', cancelled:'Отменён' };
+    const statusColor = { processing:'#C4A882', shipped:'#7A9E7E', delivered:'#5a8a60', cancelled:'#c45555' };
+    if (!recentOrdersRes.data || recentOrdersRes.data.length === 0) {
+      oList.innerHTML = '<p class="text-xs text-muted">Нет заказов</p>';
+    } else {
+      oList.innerHTML = recentOrdersRes.data.map(o => {
+        const d = new Date(o.created_at).toLocaleDateString('ru-RU', { day:'numeric', month:'short' });
+        const st = o.status || 'processing';
+        return `<div class="flex items-center justify-between py-2 border-b border-sand dark:border-[#2A2420] last:border-0">
+          <div>
+            <p class="text-xs font-medium text-ink dark:text-cream">${o.id}</p>
+            <p class="text-[10px] text-muted">${d}</p>
+          </div>
+          <div class="text-right">
+            <p class="text-sm font-bold text-ink dark:text-cream">${fmtRub(o.total)}</p>
+            <p class="text-[10px] font-semibold" style="color:${statusColor[st] || '#7A6A5A'}">${statusLabel[st] || st}</p>
+          </div>
+        </div>`;
+      }).join('');
+    }
+  }
+  </script>
+
+</body>
+</html>

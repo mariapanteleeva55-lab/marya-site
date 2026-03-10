@@ -1487,7 +1487,11 @@ switchZone('face');
     if (password.length < 6) { errEl.textContent = 'Пароль — минимум 6 символов'; errEl.classList.remove('hidden'); return; }
     const { data, error } = await _supabase.auth.signUp({ email, password, options: { data: { name, lastname } } });
     if (error) { errEl.textContent = error.message; errEl.classList.remove('hidden'); return; }
-    if (data.user) { await _supabase.from('profiles').upsert({ id: data.user.id, name, lastname, updated_at: new Date().toISOString() }); }
+    if (data.user) {
+      await _supabase.from('profiles').upsert({ id: data.user.id, name, lastname, updated_at: new Date().toISOString() });
+      await linkReferral(data.user.id);
+      _supabase.from('analytics_events').insert({ event_type: 'registration', user_id: data.user.id }).then(()=>{}).catch(()=>{});
+    }
     document.getElementById('form-register').classList.add('hidden');
     const s = document.getElementById('form-success');
     s.classList.remove('hidden');
@@ -1497,6 +1501,61 @@ switchZone('face');
   }
   initAuth();
   _supabase.auth.onAuthStateChange((_event, session) => { updateAuthUI(session?.user || null); });
+</script>
+
+<script>
+// --- Реферальная привязка при регистрации ---
+async function linkReferral(userId) {
+  try {
+    const stored = JSON.parse(localStorage.getItem('marya_ref') || 'null');
+    if (!stored || !stored.code || stored.expires < Date.now()) return;
+    const { data: codeRow } = await _supabase
+      .from('referral_codes').select('user_id').eq('code', stored.code).single();
+    if (!codeRow || codeRow.user_id === userId) return;
+    const { error: refErr } = await _supabase.from('referrals').insert({
+      referrer_id: codeRow.user_id, referee_id: userId
+    });
+    if (refErr) return;
+    const { data: bonusRow } = await _supabase
+      .from('bonus_accounts').select('balance, total_spent').eq('user_id', userId).single();
+    await _supabase.from('bonus_accounts').upsert({
+      user_id: userId, balance: (bonusRow?.balance || 0) + 500, total_spent: bonusRow?.total_spent || 0
+    });
+    await _supabase.from('bonus_history').insert({
+      user_id: userId, amount: 500, reason: 'Приветственный бонус по реферальной ссылке'
+    });
+    localStorage.removeItem('marya_ref');
+  } catch(e) {}
+}
+
+// --- Реферальный трекер ---
+(function(){
+  const ref = new URLSearchParams(window.location.search).get('ref');
+  if (ref) {
+    const expires = Date.now() + 30 * 24 * 60 * 60 * 1000;
+    localStorage.setItem('marya_ref', JSON.stringify({ code: ref.toUpperCase(), expires }));
+  }
+  try {
+    const stored = JSON.parse(localStorage.getItem('marya_ref') || 'null');
+    if (stored && stored.expires < Date.now()) localStorage.removeItem('marya_ref');
+  } catch(e) { localStorage.removeItem('marya_ref'); }
+
+  const sessionKey = 'marya_sid';
+  let sid = sessionStorage.getItem(sessionKey);
+  if (!sid) { sid = Math.random().toString(36).slice(2); sessionStorage.setItem(sessionKey, sid); }
+
+  window.addEventListener('load', async function() {
+    try {
+      const { data: { session } } = await _supabase.auth.getSession();
+      await _supabase.from('analytics_events').insert({
+        event_type: 'pageview',
+        page: window.location.pathname || '/catalog',
+        user_id: session?.user?.id || null,
+        session_id: sid
+      });
+    } catch(e) {}
+  });
+})();
 </script>
 </body>
 </html>
