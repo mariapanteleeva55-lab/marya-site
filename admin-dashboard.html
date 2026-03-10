@@ -199,6 +199,12 @@
       return;
     }
 
+    // Явно устанавливаем сессию чтобы клиент отправлял токен в запросах
+    await _supabase.auth.setSession({
+      access_token:  session.access_token,
+      refresh_token: session.refresh_token
+    });
+
     document.getElementById('loading-screen').classList.add('hidden');
     document.getElementById('dashboard').classList.remove('hidden');
     await loadAll();
