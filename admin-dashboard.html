@@ -299,11 +299,9 @@
         .select('id', { count: 'exact' })
         .gte('created_at', from),
 
-      // Просмотры вкладки партнёры
-      _supabase.from('analytics_events')
-        .select('id', { count: 'exact' })
-        .eq('event_type', 'ref_link_view')
-        .gte('created_at', from),
+      // Уникальные партнёрские ссылки (сгенерированных кодов)
+      _supabase.from('referral_codes')
+        .select('user_id', { count: 'exact' }),
 
       // Топ партнёры
       _supabase.from('partner_accounts')
