@@ -1365,6 +1365,16 @@ switchZone('face');
 // ── AUTH CHECK + LOGOUT ────────────────────────────────────────────
 async function initProfile(){
   // Проверяем — это переход по ссылке сброса пароля?
+  // 1. Сразу проверяем хэш URL (до любых редиректов)
+  const hashParams = new URLSearchParams(window.location.hash.substring(1));
+  if (hashParams.get('type') === 'recovery') {
+    // Ждём пока Supabase обработает токен из хэша
+    await _supabase.auth.getSession();
+    openResetModal();
+    return;
+  }
+
+  // 2. Резервный перехват через событие (если хэш уже очищен)
   _supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'PASSWORD_RECOVERY') {
       openResetModal();
