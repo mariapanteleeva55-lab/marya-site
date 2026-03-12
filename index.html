@@ -379,17 +379,20 @@
       </div>
     </div>
 
-    <!-- Mobile menu (bottom sheet) -->
-    <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 transition-transform duration-300" style="transform: translateY(100%)">
-      <div class="flex flex-col gap-4 text-base font-medium">
-        <a href="catalog.html"  onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
-        <a href="brand.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
-        <a href="quiz.html"     onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
-        <a href="#blog"         onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
-        <a href="#skin-types"   onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
-      </div>
-    </div>
   </header>
+
+  <!-- Mobile menu (bottom sheet) — вне header, чтобы fixed работал от viewport -->
+  <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-[60] transition-transform duration-300" style="transform: translateY(100%)">
+    <div class="flex flex-col gap-4 text-base font-medium">
+      <a href="catalog.html"  onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+      <a href="brand.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+      <a href="quiz.html"     onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+      <a href="#blog"         onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+      <a href="#skin-types"   onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
+    </div>
+  </div>
+  <!-- Overlay под меню -->
+  <div id="menu-overlay" class="lg:hidden fixed inset-0 z-[55] bg-ink/30 backdrop-blur-sm hidden" onclick="toggleMenu()"></div>
 
   <main>
 
@@ -401,7 +404,7 @@
       <!-- Логотип — максимально высоко, сразу под шапкой -->
       <div class="px-4 sm:px-6 pt-4 pb-0 relative z-10">
         <div class="max-w-7xl mx-auto">
-          <img src="лого новый-nobg.png" alt="Марья" class="h-[60px] w-auto">
+          <img src="лого новый-nobg.png" alt="Марья" class="h-[40px] w-auto">
         </div>
       </div>
 
@@ -430,10 +433,10 @@
       </div>
 
       <div class="flex-1 flex items-center">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-12 items-center py-8">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full grid lg:grid-cols-2 gap-6 lg:gap-12 items-center py-8">
 
         <!-- Текстовая часть -->
-        <div class="relative z-10 space-y-8">
+        <div class="relative z-10 space-y-5 lg:space-y-8">
           <!-- Headline -->
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-normal leading-tight text-ink dark:text-ink-dark">
             Уход, собранный<br/>
@@ -477,8 +480,8 @@
         </div>
 
         <!-- Визуальная часть (Hero Image) -->
-        <div class="hidden lg:flex justify-center items-center relative">
-          <div id="hero-img-wrap" class="hero-image-wrap relative w-[400px] h-[480px]">
+        <div class="flex justify-center items-center relative">
+          <div id="hero-img-wrap" class="hero-image-wrap relative w-[260px] h-[320px] sm:w-[340px] sm:h-[410px] lg:w-[400px] lg:h-[480px]">
             <!-- Главный блоб с изображением -->
             <div class="hero-fade-bottom absolute inset-0 rounded-[40%_60%_60%_40%/40%_40%_60%_60%] overflow-hidden bg-gradient-to-br from-sand to-warm/60 dark:from-sand-dark dark:to-warm-dark/40 blob">
               <img src="девушка мажет на лицо крем.png" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal"/>
@@ -688,12 +691,9 @@
           <!-- Карточка 1: Антивозрастная сыворотка -->
           <article class="product-card bg-cream dark:bg-cream-dark rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:shadow-xl hover:shadow-warm/10 transition-all hover:-translate-y-1 reveal group">
             <a href="product.html?id=4">
-            <div class="aspect-[4/3] overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/20 dark:to-amber-900/10 relative">
+            <div class="aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/20 dark:to-amber-900/10 relative">
               <div class="product-img w-full h-full flex items-center justify-center">
-                <div class="text-center p-6">
-                  <div class="text-6xl mb-3">🧬</div>
-                  <div class="text-xs text-muted dark:text-muted-dark font-medium">50 мл</div>
-                </div>
+                <img src="антивозрастная сыворотка 1.png" class="w-full h-full object-cover object-top" alt="Антивозрастная сыворотка с пептидами">
               </div>
               <div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full">Хит</div>
               <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -1237,10 +1237,12 @@
 
     // ─── Mobile Menu ──────────────────────────────
     const mobileMenu = document.getElementById('mobile-menu');
+    const menuOverlay = document.getElementById('menu-overlay');
     let menuOpen = false;
     function toggleMenu() {
       menuOpen = !menuOpen;
       mobileMenu.style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';
+      menuOverlay.classList.toggle('hidden', !menuOpen);
     }
 
     // ─── Scroll Progress ──────────────────────────
