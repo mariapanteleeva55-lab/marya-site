@@ -192,7 +192,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
     <a href="index.html">
-      <img src="логомарьявеб-nobg.png" alt="Марья" style="height:240px;width:auto;opacity:.7">
+      <img src="лого новый-nobg.png" alt="Марья" style="height:30px;width:auto;">
     </a>
 
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
@@ -226,8 +226,8 @@
           </div>
         </div>
       </div>
-      <a href="index.html#about"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
-      <a href="index.html#quiz"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="brand.html"            class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="quiz.html"             class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
       <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
       <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
     </nav>
@@ -569,7 +569,7 @@
       </p>
       <div class="flex items-center gap-4 text-xs text-muted dark:text-muted-dark">
         <a href="#" class="hover:text-accent transition-colors">Доставка</a>
-        <a href="#" class="hover:text-accent transition-colors">Возврат</a>
+        <a href="#" class="hover:text-accent transition-colors">Гарантия качества</a>
         <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
       </div>
     </div>
@@ -587,7 +587,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
     time: ['morning','evening'], ingredient: [],
     badge: 'Хит', isNew: false, isSale: false, volume: '150 мл',
-    emoji: '🫧', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
+    emoji: '🫧', image: 'Фото пенка для умывания.png', nameColor: '#2A7A6E', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
     desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.'
   },
   {
@@ -597,7 +597,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['moisture','aging'],
     time: ['morning','evening'], ingredient: ['niacinamide'],
     badge: null, isNew: false, isSale: false, volume: '250 мл',
-    emoji: '💦', color: 'from-sky-50 to-blue-100', darkColor: 'from-sky-950/20 to-blue-900/10',
+    emoji: '💦', image: 'тоник 1.png', nameColor: '#3A6E8A', color: 'from-sky-50 to-blue-100', darkColor: 'from-sky-950/20 to-blue-900/10',
     desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу, восстанавливает баланс после умывания. Аминокислоты укрепляют кожный барьер и удерживают влагу, гирудин улучшает микроциркуляцию и придаёт здоровое сияние. Подходит для ежедневного применения утром и вечером.'
   },
   {
@@ -607,7 +607,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
     time: ['morning','evening','anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '250 мл',
-    emoji: '🌊', color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-950/20 to-blue-900/10',
+    emoji: '🌊', image: 'миц вода 1.png', nameColor: '#2A7A6E', color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-950/20 to-blue-900/10',
     desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не требует смывания водой. Мицеллы захватывают и растворяют частицы макияжа и загрязнения, не нарушая защитный барьер кожи. Пантенол и экстракт алоэ успокаивают и увлажняют, а экстракт пиявки улучшает цвет лица.'
   },
   {
@@ -617,7 +617,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
     time: ['morning','evening'], ingredient: ['peptides','hyaluronic'],
     badge: 'Хит', isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🧬', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    emoji: '🧬', nameColor: '#A07830', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
     desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин и повышает упругость кожи. Пептидный комплекс в сочетании с гирудином запускает процессы клеточного обновления и улучшает микроциркуляцию, а гиалуроновая кислота обеспечивает глубокое и длительное увлажнение. Результат заметен уже через 2–4 недели применения.'
   },
   {
@@ -627,7 +627,7 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['morning'], ingredient: ['retinol'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '☀️', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    emoji: '☀️', nameColor: '#C07850', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
     desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и насыщает клетки кожи кислородом и питательными веществами. DMAE подтягивает овал лица, сквалан и масло ши глубоко питают и смягчают, предотвращая потерю влаги. Регулярное применение защищает от преждевременного старения и сохраняет молодость кожи.'
   },
   {
@@ -637,7 +637,7 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['evening'], ingredient: ['ceramides','niacinamide','hyaluronic','retinol','aha'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🌙', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
+    emoji: '🌙', nameColor: '#6A5E8A', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
     desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и активирует ночные процессы восстановления кожи. Церамиды укрепляют защитный барьер, DMAE подтягивает контуры лица, ниацинамид выравнивает тон, а гиалуроновая кислота обеспечивает интенсивное увлажнение в ночное время. Утром кожа выглядит отдохнувшей, гладкой и сияющей.'
   },
   {
@@ -646,7 +646,7 @@ const PRODUCTS = [
     zone: 'face', category: 'eye', categories: ['eye'], skintype: ['normal','dry','sensitive'], concern: ['aging'],
     time: ['morning','evening'], ingredient: ['hyaluronic','peptides'],
     badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
-    emoji: '👁️', color: 'from-rose-50 to-pink-100', darkColor: 'from-rose-950/20 to-pink-900/10',
+    emoji: '👁️', nameColor: '#9A5870', color: 'from-rose-50 to-pink-100', darkColor: 'from-rose-950/20 to-pink-900/10',
     desc: 'Крем для век с экстрактом пиявки активирует микроциркуляцию и уменьшает застойные явления в зоне глаз. Дипептид-2 снижает выраженность отёков, гирудин рассасывает «синяки» под глазами, а гиалуроновая кислота и пептиды разглаживают мимические морщины. Мягкая текстура крема деликатно воздействует на чувствительную кожу вокруг глаз.'
   },
   {
@@ -656,7 +656,7 @@ const PRODUCTS = [
     skintype: ['oily','combo'], concern: ['cleansing','moisture','aging'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '100 мл',
-    emoji: '🪨', color: 'from-stone-50 to-amber-100', darkColor: 'from-stone-950/20 to-stone-900/10',
+    emoji: '🪨', nameColor: '#7A5840', color: 'from-stone-50 to-amber-100', darkColor: 'from-stone-950/20 to-stone-900/10',
     desc: 'Очищающая маска с каолином мягко удаляет загрязнения, избыток кожного сала и омертвевшие клетки, сужает поры и выравнивает текстуру кожи. Экстракт алоэ вера и зелёного чая успокаивают и снимают воспаление, а цинк регулирует работу сальных желёз. Подходит для жирной и комбинированной кожи, склонной к расширенным порам.'
   },
   {
@@ -666,7 +666,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
     time: ['anytime'], ingredient: ['hyaluronic','niacinamide','aha'],
     badge: null, isNew: false, isSale: false, volume: '100 мл',
-    emoji: '✨', color: 'from-yellow-50 to-amber-100', darkColor: 'from-yellow-950/20 to-amber-900/10',
+    emoji: '✨', nameColor: '#8A7030', color: 'from-yellow-50 to-amber-100', darkColor: 'from-yellow-950/20 to-amber-900/10',
     desc: 'Маска мгновенной красоты — экспресс-уход для быстрого восстановления усталой и тусклой кожи. Масла авокадо, ши и виноградной косточки глубоко питают и смягчают, гиалуроновая кислота интенсивно увлажняет, а ниацинамид выравнивает тон и придаёт сияние. Уже после первого применения кожа выглядит ухоженной, гладкой и отдохнувшей.'
   },
   {
@@ -676,7 +676,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['cleansing'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🌰', color: 'from-amber-50 to-warm/30', darkColor: 'from-amber-950/20 to-warm-dark/10',
+    emoji: '🌰', nameColor: '#7A5030', color: 'from-amber-50 to-warm/30', darkColor: 'from-amber-950/20 to-warm-dark/10',
     desc: 'Скраб для лица и тела с порошком скорлупы фундука мягко отшелушивает ороговевшие клетки, выравнивает микрорельеф и улучшает цвет кожи. Кокосовое масло питает и смягчает, экстракт пиявки улучшает микроциркуляцию, а натуральные растительные масла оставляют кожу гладкой и бархатистой. Подходит для регулярного применения на лице и теле.'
   },
   {
@@ -686,7 +686,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['modelling'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🧂', color: 'from-gray-50 to-slate-100', darkColor: 'from-gray-950/20 to-slate-900/10',
+    emoji: '🧂', nameColor: '#5A6A78', color: 'from-gray-50 to-slate-100', darkColor: 'from-gray-950/20 to-slate-900/10',
     desc: 'Нежный солевой скраб с кремовой текстурой бережно отшелушивает ороговевшие клетки и полирует кожу, не вызывая раздражения. Мелкие кристаллы морской соли деликатно шлифуют поверхность, кокосовое масло питает и смягчает, а экстракт зелёного чая тонизирует и защищает от свободных радикалов. Кожа после применения гладкая, шелковистая и сияющая.'
   },
   {
@@ -696,7 +696,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🍍', color: 'from-yellow-50 to-lime-100', darkColor: 'from-yellow-950/20 to-lime-900/10',
+    emoji: '🍍', nameColor: '#4E7A60', color: 'from-yellow-50 to-lime-100', darkColor: 'from-yellow-950/20 to-lime-900/10',
     desc: 'Энзимный скраб для тела — интенсивный, но комфортный уход для обновления и выравнивания кожи. Бромелайн из ананаса и папаин из папайи мягко растворяют ороговевшие клетки на биохимическом уровне, без механического трения. Результат — гладкая, обновлённая и сияющая кожа уже с первого применения, без ощущения стянутости или дискомфорта.'
   },
   {
@@ -706,7 +706,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🌶️', color: 'from-red-50 to-orange-100', darkColor: 'from-red-950/20 to-orange-900/10',
+    emoji: '🌶️', nameColor: '#8A4A4A', color: 'from-red-50 to-orange-100', darkColor: 'from-red-950/20 to-orange-900/10',
     desc: 'Антицеллюлитный солевой скраб направленно работает с проявлениями «апельсиновой корки», улучшает микроциркуляцию и лимфоотток. Экстракт красного перца разогревает кожу и стимулирует расщепление жировых отложений, гирудин активирует микроциркуляцию, а морская соль отшелушивает и минерализует. Регулярное применение делает кожу более упругой и подтянутой.'
   },
   {
@@ -716,7 +716,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['aging'],
     time: ['morning'], ingredient: ['retinol'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🌞', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    emoji: '🌞', nameColor: '#A07830', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
     desc: 'Лёгкий крем SPF 15 с экстрактом пиявки для ежедневной защиты от УФ-излучения и преждевременного старения. Сквалан и витамин Е питают и защищают кожу от окислительного стресса, а лёгкая нежирная текстура идеально подходит в качестве базы под макияж. Подходит для всех типов кожи, включая чувствительную.'
   },
   {
@@ -726,7 +726,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo'], concern: ['aging','moisture'],
     time: ['morning','evening'], ingredient: ['vitaminc','niacinamide','hyaluronic','aha'],
     badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
-    emoji: '🍊', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    emoji: '🍊', nameColor: '#9A5030', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
     desc: 'Антиоксидантная сыворотка с экстрактом пиявки заряжает кожу энергией и защищает от разрушительного воздействия свободных радикалов. Фульвовая кислота выводит токсины и активирует клеточный метаболизм, витамин С выравнивает тон и усиливает синтез коллагена, а ниацинамид сужает поры и улучшает текстуру кожи. Особенно эффективна для городской кожи, подверженной стрессу и загрязнениям.'
   },
   {
@@ -736,7 +736,7 @@ const PRODUCTS = [
     skintype: [], concern: [],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '400 мл',
-    emoji: '💆', color: 'from-emerald-50 to-green-100', darkColor: 'from-emerald-950/20 to-green-900/10',
+    emoji: '💆', nameColor: '#3A7A60', color: 'from-emerald-50 to-green-100', darkColor: 'from-emerald-950/20 to-green-900/10',
     desc: 'Кондиционер для волос «Марья» помогает быстро привести длину в порядок после мытья головы: разглаживает кутикулу, облегчает расчёсывание и придаёт волосам блеск и шелковистость. Кератин и протеины шелка восстанавливают структуру волоса, а экстракт пиявки улучшает кровообращение кожи головы и стимулирует рост волос.'
   },
   {
@@ -746,7 +746,7 @@ const PRODUCTS = [
     skintype: [], concern: [],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '400 мл',
-    emoji: '🚿', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
+    emoji: '🚿', nameColor: '#2A7A6E', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
     desc: 'Шампунь для волос «Марья» обеспечивает качественное очищение кожи головы и волос без пересушивания и раздражения. Мягкие сульфатсодержащие ПАВ эффективно удаляют загрязнения и избыток себума, протеины пшеницы укрепляют структуру волоса и придают объём, а экстракт пиявки улучшает питание волосяных фолликулов. Волосы после мытья чистые, лёгкие и блестящие.'
   },
 ];
@@ -873,7 +873,7 @@ function renderGridCard(p, i) {
     <!-- Image -->
     <a href="product.html?id=${p.id}" class="block">
     <div class="product-img-wrap relative bg-gradient-to-br ${p.color} dark:bg-gradient-to-br dark:${p.darkColor} aspect-square flex items-center justify-center">
-      <span class="product-img text-6xl select-none">${p.emoji}</span>
+      ${p.image ? `<img class="product-img w-full h-full object-cover" src="${p.image}" alt="${p.name}" loading="lazy">` : `<span class="product-img text-6xl select-none">${p.emoji}</span>`}
       <!-- Badge -->
       ${p.badge ? `<div class="absolute top-2 left-2 px-2 py-0.5 ${p.isSale ? 'bg-accent' : p.isNew ? 'bg-sage dark:bg-sage-dark' : 'bg-warm dark:bg-warm-dark'} text-white text-[10px] font-bold rounded-full">${p.badge}</div>` : ''}
       <!-- Wishlist -->
@@ -889,7 +889,7 @@ function renderGridCard(p, i) {
         <span class="text-muted dark:text-muted-dark ml-0.5">(${p.reviews})</span>
       </div>
       <a href="product.html?id=${p.id}" class="block hover:text-accent transition-colors">
-      <h3 class="text-xs sm:text-sm font-semibold text-ink dark:text-ink-dark leading-tight mb-1 line-clamp-2">${p.name}</h3>
+      <h3 class="text-xs sm:text-sm font-semibold leading-tight mb-1 line-clamp-2" style="color:${p.nameColor || 'inherit'}">${p.name}</h3>
       </a>
       <p class="text-[10px] text-muted dark:text-muted-dark mb-3 line-clamp-1">${p.volume}</p>
       <div class="flex items-center justify-between gap-1">
@@ -912,7 +912,7 @@ function renderListCard(p, i) {
   <article class="product-card bg-cream dark:bg-cream-dark border border-sand/50 dark:border-sand-dark/20 rounded-2xl overflow-hidden card-appear flex gap-0" style="animation-delay:${delay}ms" data-id="${p.id}">
     <a href="product.html?id=${p.id}" class="block">
     <div class="product-img-wrap relative bg-gradient-to-br ${p.color} dark:${p.darkColor} w-[130px] sm:w-[180px] flex-shrink-0 flex items-center justify-center">
-      <span class="product-img text-5xl sm:text-6xl select-none">${p.emoji}</span>
+      ${p.image ? `<img class="product-img w-full h-full object-cover" src="${p.image}" alt="${p.name}" loading="lazy">` : `<span class="product-img text-5xl sm:text-6xl select-none">${p.emoji}</span>`}
       ${p.badge ? `<div class="absolute top-2 left-2 px-2 py-0.5 ${p.isSale ? 'bg-accent' : p.isNew ? 'bg-sage dark:bg-sage-dark' : 'bg-warm'} text-white text-[10px] font-bold rounded-full">${p.badge}</div>` : ''}
     </div>
     </a>
@@ -920,7 +920,7 @@ function renderListCard(p, i) {
       <div>
         <div class="flex items-start justify-between gap-2 mb-1">
           <a href="product.html?id=${p.id}" class="hover:text-accent transition-colors flex-1">
-          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark leading-tight">${p.name}</h3>
+          <h3 class="text-sm font-semibold leading-tight" style="color:${p.nameColor || 'inherit'}">${p.name}</h3>
           </a>
           <button onclick="toggleWish(${p.id},this)" class="btn-wish flex-shrink-0 p-1 ${wished ? 'active' : 'text-muted dark:text-muted-dark'}" aria-label="В избранное">
             <svg class="w-4 h-4" fill="${wished ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/></svg>

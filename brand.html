@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>О бренде — Марья</title>
+  <meta name="description" content="История бренда Марья: регенеративная косметика, созданная врачом-технологом. Честные формулы, научный подход, семейный бренд." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const _supabase = window.supabase.createClient(
+      'https://cizdsiqolarjcgmwbafp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+    );
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, sans-serif; }
+    *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 3px; }
+
+    /* Scroll progress */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 2px; z-index: 1000;
+      background: linear-gradient(90deg, #D4956A, #C4A882);
+      transition: width 0.1s linear;
+    }
+
+    /* Night mode toggle */
+    .toggle-thumb { transition: transform 0.3s ease; }
+    .dark .toggle-thumb { transform: translateX(20px); }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* Hero floating orbs */
+    @keyframes floatOrb {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33%  { transform: translate(24px, -32px) scale(1.04); }
+      66%  { transform: translate(-16px, 16px) scale(0.96); }
+    }
+    .orb { animation: floatOrb var(--dur, 18s) ease-in-out infinite; will-change: transform; }
+
+    /* Scroll indicator */
+    @keyframes scrollDrop {
+      0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+      50%       { transform: translateX(-50%) translateY(10px); opacity: 1; }
+    }
+    .scroll-hint { animation: scrollDrop 2.2s ease-in-out infinite; }
+
+    /* Section divider line */
+    @keyframes lineGrow {
+      from { width: 0; opacity: 0; }
+      to   { width: 48px; opacity: 1; }
+    }
+    .label-line { animation: lineGrow 1s ease-out 0.4s both; }
+
+    /* Fade-up on load */
+    @keyframes fadeUpIn {
+      from { opacity: 0; transform: translateY(36px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .hero-text { animation: fadeUpIn 1.2s cubic-bezier(.22,.8,.36,1) 0.15s both; }
+
+    /* Sisters section — dark forest gradient */
+    .sisters-bg {
+      background: linear-gradient(165deg, #1E2B1F 0%, #2C3D2D 55%, #1A2118 100%);
+    }
+    .dark .sisters-bg {
+      background: linear-gradient(165deg, #111710 0%, #1A2118 100%);
+    }
+
+    /* Sister card */
+    .sister-card {
+      border: 1px solid rgba(232,221,208,0.1);
+      transition: border-color 0.35s ease, transform 0.35s ease;
+    }
+    .sister-card:hover {
+      border-color: rgba(212,149,106,0.35);
+      transform: translateY(-3px);
+    }
+
+    /* Credential tag hover */
+    .cred-tag { transition: border-color 0.25s, color 0.25s, background 0.25s; }
+    .cred-tag:hover { border-color: #D4956A; color: #D4956A; background: rgba(212,149,106,0.06); }
+
+    /* Principle card */
+    .principle-card { border-left: 2px solid #E8DDD0; transition: border-color 0.3s, transform 0.3s; }
+    .principle-card:hover { border-left-color: #D4956A; transform: translateX(4px); }
+    .dark .principle-card { border-left-color: #2A2420; }
+    .dark .principle-card:hover { border-left-color: #E8A87A; }
+
+    /* Value tag */
+    .value-tag {
+      font-family: Georgia, serif;
+      border: 1px solid #E8DDD0;
+      transition: background 0.3s, color 0.3s, border-color 0.3s;
+      cursor: default;
+    }
+    .value-tag:hover { background: #2C2018; color: #FDF8F3; border-color: #2C2018; }
+    .dark .value-tag { border-color: #2A2420; }
+    .dark .value-tag:hover { background: #F5EDE4; color: #2C2018; border-color: #F5EDE4; }
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased">
+
+  <!-- Прогресс-бар -->
+  <div id="progress-bar" style="width: 0%"></div>
+
+  <!-- ═══════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════ -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+
+      <a href="index.html" class="flex items-center gap-1.5 text-sm text-muted dark:text-muted-dark hover:text-ink dark:hover:text-ink-dark transition-colors font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke-width="2" stroke-linecap="round"/></svg>
+        Главная
+      </a>
+
+      <!-- Навигация (desktop) -->
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+        <a href="catalog.html"  class="hover:text-ink dark:hover:text-ink-dark transition-colors">Каталог</a>
+        <a href="brand.html"    class="text-ink dark:text-ink-dark">О бренде</a>
+        <a href="quiz.html"     class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+        <a href="index.html#blog"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+        <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+      </nav>
+
+      <!-- Иконки -->
+      <div class="flex items-center gap-3">
+        <button id="auth-nav-btn" onclick="openAuthModal()" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Профиль">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="7" r="4" stroke-width="2"/>
+          </svg>
+        </button>
+        <a href="cart.html" class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+            <path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/>
+          </svg>
+        </a>
+        <button id="night-toggle" onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium">
+          <span class="block dark:hidden">☀️</span>
+          <span class="hidden dark:block">🌙</span>
+          <span class="hidden sm:block">Ночной</span>
+        </button>
+        <button id="menu-btn" onclick="toggleMenu()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
+          <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 translate-y-full transition-transform duration-300">
+      <div class="flex flex-col gap-4 text-base font-medium">
+        <a href="catalog.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+        <a href="brand.html"   onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+        <a href="quiz.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+        <a href="index.html#blog"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+        <a href="index.html#skin-types" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ═══════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════ -->
+  <section class="relative min-h-screen flex items-center justify-center text-center overflow-hidden pt-[60px]"
+           style="background: radial-gradient(ellipse 90% 70% at 50% 40%, #F0E4D4 0%, #FDF8F3 55%, #F5EBE0 100%);">
+    <!-- Тёмный режим фон -->
+    <div class="absolute inset-0 dark:opacity-100 opacity-0 transition-opacity duration-500"
+         style="background: radial-gradient(ellipse 90% 70% at 50% 40%, #2A1F14 0%, #1A1612 55%, #120F0A 100%);"></div>
+
+    <!-- Плавающие орбы -->
+    <div class="orb absolute top-[-8%] right-[-5%] w-[520px] h-[520px] rounded-full pointer-events-none" style="--dur:20s;
+         background: radial-gradient(circle, rgba(212,149,106,0.10) 0%, transparent 65%);"></div>
+    <div class="orb absolute bottom-[-12%] left-[-4%] w-[420px] h-[420px] rounded-full pointer-events-none" style="--dur:26s; animation-direction:reverse;
+         background: radial-gradient(circle, rgba(139,168,136,0.09) 0%, transparent 65%);"></div>
+
+    <div class="relative z-10 max-w-3xl px-6 hero-text">
+      <!-- Надлейбл -->
+      <p class="text-[16px] font-medium tracking-[0.35em] uppercase text-accent mb-8">Регенеративная косметика</p>
+
+      <!-- Лого -->
+      <div class="flex justify-center mb-6">
+        <img src="лого новый-nobg.png" alt="Марья" style="height:140px;width:auto;opacity:.85">
+      </div>
+
+      <!-- Разделитель -->
+      <div class="label-line h-px w-12 bg-accent mx-auto mb-8"></div>
+
+      <!-- Цитата-герой -->
+      <p class="font-serif text-xl sm:text-2xl lg:text-3xl text-ink dark:text-ink-dark leading-relaxed font-light">
+        Мы не маскируем возраст.<br>
+        <em class="not-italic text-muted dark:text-muted-dark">Мы работаем на уровне физиологии, микроциркуляции и регенерации.</em>
+      </p>
+    </div>
+
+    <!-- Скролл-хинт -->
+    <div class="scroll-hint absolute bottom-8 left-1/2 z-10">
+      <div class="w-px h-10 mx-auto" style="background: linear-gradient(to bottom, transparent, #D4956A);"></div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       О БРЕНДЕ
+  ════════════════════════════════════════════ -->
+  <section class="py-24 lg:py-32 px-6 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20">
+    <div class="max-w-3xl mx-auto reveal">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase text-accent mb-5">О бренде</p>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl text-ink dark:text-ink-dark font-light leading-tight mb-8">
+        Косметика, в которой <em class="not-italic text-accent">формула</em><br class="hidden sm:block"> дороже маркетинга
+      </h2>
+      <p class="text-base leading-loose text-muted dark:text-muted-dark mb-5">
+        «Марья»: русский семейный бренд регенеративной косметики нового поколения. Мы создаём средства, которые работают с физиологией кожи: поддерживают микроциркуляцию, тканевую регенерацию и естественный синтез структурных белков.
+      </p>
+      <p class="text-base leading-loose text-muted dark:text-muted-dark mb-5">
+        Мы намеренно не выходим на маркетплейсы и не работаем с посредниками. Это позволяет нам вкладывать каждый рубль в глубину формулы, а не в комиссию площадок. Мы выбрали путь, в котором продукт говорит сам за себя.
+      </p>
+      <p class="text-base leading-loose text-muted dark:text-muted-dark">
+        Наша косметика приближается к аптечной и лечебной: действенные составы, подтверждённые механизмы, безупречные текстуры. Мы создаём средства как для домашнего ухода, так и для профессионального применения, от омоложения и увлажнения до восстановления кожи головы и программ для тела.
+      </p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ОСНОВАТЕЛЬ
+  ════════════════════════════════════════════ -->
+  <section class="py-24 lg:py-32 px-6 bg-sand/30 dark:bg-sand-dark/10">
+    <div class="max-w-5xl mx-auto reveal">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase text-accent mb-5">Основатель</p>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl text-ink dark:text-ink-dark font-light leading-tight mb-10">
+        Мария Эйрих: <em class="not-italic text-accent">врач</em>, технолог,<br class="hidden sm:block"> создатель формул
+      </h2>
+
+      <div class="grid sm:grid-cols-[2fr_3fr] gap-10 items-start">
+
+        <!-- Фото -->
+        <div class="rounded-2xl overflow-hidden" style="box-shadow: 0 8px 32px rgba(44,32,24,0.12);">
+          <img src="фото марии 6.webp" alt="Мария Эйрих, основатель «Марьи»"
+               class="w-full h-auto block" loading="lazy">
+        </div>
+
+        <!-- Текст + теги -->
+        <div>
+          <p class="text-base leading-loose text-muted dark:text-muted-dark mb-5">
+            По образованию Мария — врач-терапевт и химик-технолог-разработчик косметических средств. За её плечами Челябинская государственная медицинская академия, МГУ, обучение во Франции и более 17 лет непрерывной практики на пересечении медицины и биотехнологий.
+          </p>
+          <p class="text-base leading-loose text-muted dark:text-muted-dark mb-5">
+            Её профессиональный путь начался с медицины, затем прошёл через гирудотерапию, где она стала признанным экспертом с сотнями успешных случаев, и привёл к созданию собственного косметического производства. Сегодня Мария лично разрабатывает каждую формулу бренда «Марья» как главный технолог предприятия.
+          </p>
+          <p class="text-base leading-loose text-muted dark:text-muted-dark mb-8">
+            Мария активно применяет в разработке современные ИИ-инструменты для глубокого анализа компонентов, моделирования формул и прогнозирования стабильности составов. Для неё технология не модное слово, а инструмент точности.
+          </p>
+          <div class="flex flex-wrap gap-2">
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">Врач-терапевт</span>
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">Химик-технолог</span>
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">17+ лет в медицине</span>
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">Собственное производство</span>
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">МГУ · Франция</span>
+            <span class="cred-tag text-xs tracking-[0.15em] uppercase px-4 py-2 border border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark rounded-full">ИИ-разработка</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       СЁСТРЫ
+  ════════════════════════════════════════════ -->
+  <section class="sisters-bg py-24 lg:py-32 px-6 relative overflow-hidden">
+    <!-- Декоративная орба -->
+    <div class="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
+         style="background: radial-gradient(ellipse at top right, rgba(212,149,106,0.07) 0%, transparent 60%);"></div>
+
+    <div class="max-w-3xl mx-auto relative z-10 reveal">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase mb-5" style="color: #C4A882;">Семейная сила</p>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl font-light leading-tight mb-6" style="color: #FDF8F3;">
+        Две сестры, <em class="not-italic" style="color: #D4956A;">одна миссия</em>
+      </h2>
+      <p class="text-base leading-loose mb-12" style="color: rgba(253,248,243,0.75);">
+        «Марья» родилась не из маркетинга. Она родилась из союза двух родных сестёр, совершенно разных, и именно поэтому сильных вместе. Одна создаёт формулы. Другая слышит людей. Вместе они строят бренд, в котором наука и душа находятся в равновесии.
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-5">
+        <div class="sister-card rounded-2xl overflow-hidden">
+          <div class="aspect-[3/4] overflow-hidden"><img src="фото марии 5.webp" alt="Мария Эйрих" class="w-full h-full object-cover object-top"></div>
+          <div class="p-8">
+            <h3 class="font-serif text-2xl font-light mb-1" style="color: #FDF8F3;">Мария</h3>
+            <p class="text-[11px] tracking-[0.28em] uppercase mb-5" style="color: #C4A882;">Технолог · Стратег · Исследователь</p>
+            <p class="text-sm leading-relaxed" style="color: rgba(253,248,243,0.65);">
+              Мозг и сердце технологий. Отвечает за формулы, механизмы действия, научную доказательность и каждый компонент в составе.
+            </p>
+          </div>
+        </div>
+        <div class="sister-card rounded-2xl overflow-hidden">
+          <div class="aspect-[3/4] overflow-hidden"><img src="фото татьяна.jpg" alt="Татьяна" class="w-full h-full object-cover object-top"></div>
+          <div class="p-8">
+            <h3 class="font-serif text-2xl font-light mb-1" style="color: #FDF8F3;">Татьяна</h3>
+            <p class="text-[11px] tracking-[0.28em] uppercase mb-5" style="color: #C4A882;">Коммуникатор · Эмпат · Голос бренда</p>
+            <p class="text-sm leading-relaxed" style="color: rgba(253,248,243,0.65);">
+              Душа и живой голос «Марьи». Чувствует реальные потребности людей, строит диалог и привносит в бренд настоящее тепло.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       НАУЧНАЯ ОСНОВА
+  ════════════════════════════════════════════ -->
+  <section class="py-24 lg:py-32 px-6 bg-sand/25 dark:bg-sand-dark/10">
+    <div class="max-w-3xl mx-auto reveal">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase text-accent mb-5">Научная основа</p>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl text-ink dark:text-ink-dark font-light leading-tight mb-8">
+        Доказательная косметология:<br class="hidden sm:block"> не <em class="not-italic text-accent">тренды</em>, а механизмы
+      </h2>
+      <p class="text-base leading-loose text-muted dark:text-muted-dark mb-12">
+        Каждый продукт «Марьи» создаётся на основе клинических исследований и научных публикаций. Мы не внедряем ни один компонент без доказанного механизма действия. Максимально используем российские разработки и сырьё, поддерживая локальную научную базу.
+      </p>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="principle-card bg-cream dark:bg-cream-dark rounded-2xl p-6">
+          <h4 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Микроциркуляция</h4>
+          <p class="text-sm leading-relaxed text-muted dark:text-muted-dark">Работаем с кровоснабжением тканей, основой здоровья и молодости кожи.</p>
+        </div>
+        <div class="principle-card bg-cream dark:bg-cream-dark rounded-2xl p-6">
+          <h4 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Регенерация</h4>
+          <p class="text-sm leading-relaxed text-muted dark:text-muted-dark">Поддерживаем естественные процессы восстановления и обновления клеток.</p>
+        </div>
+        <div class="principle-card bg-cream dark:bg-cream-dark rounded-2xl p-6">
+          <h4 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Биохакинг кожи</h4>
+          <p class="text-sm leading-relaxed text-muted dark:text-muted-dark">Используем передовые методы, чтобы кожа работала на максимуме своих возможностей.</p>
+        </div>
+        <div class="principle-card bg-cream dark:bg-cream-dark rounded-2xl p-6">
+          <h4 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">ИИ-разработка</h4>
+          <p class="text-sm leading-relaxed text-muted dark:text-muted-dark">Моделируем формулы, прогнозируем стабильность и совместимость компонентов.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       ЦЕННОСТИ
+  ════════════════════════════════════════════ -->
+  <section class="py-24 lg:py-32 px-6 bg-cream dark:bg-cream-dark text-center">
+    <div class="max-w-2xl mx-auto reveal">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase text-accent mb-5">Ценности</p>
+      <h2 class="font-serif text-3xl sm:text-4xl lg:text-5xl text-ink dark:text-ink-dark font-light mb-12">
+        То, чему мы <em class="not-italic text-accent">верны</em>
+      </h2>
+      <div class="flex flex-wrap justify-center gap-3">
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Научность</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Доказательность</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Прозрачность</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Независимость</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Семейность</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Российская база</span>
+        <span class="value-tag text-ink dark:text-ink-dark text-base px-6 py-2.5 rounded-full">Технологическое лидерство</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       МИССИЯ
+  ════════════════════════════════════════════ -->
+  <section class="py-28 lg:py-40 px-6 text-center border-t border-sand/40 dark:border-sand-dark/20"
+           style="background: radial-gradient(ellipse 80% 60% at 50% 100%, #F0E4D4 0%, #FDF8F3 65%);">
+    <div class="dark:hidden absolute inset-0 pointer-events-none"></div>
+    <div class="max-w-2xl mx-auto reveal relative z-10">
+      <p class="text-[11px] font-medium tracking-[0.35em] uppercase text-accent mb-8">Миссия</p>
+      <p class="font-serif text-xl sm:text-2xl lg:text-3xl text-ink dark:text-ink-dark font-light leading-relaxed">
+        Создавать эффективную регенеративную косметику, основанную на <em class="not-italic text-accent">физиологии</em> и доказательном подходе, и формировать культуру <em class="not-italic text-accent">осознанного ухода</em> в России: от бессознательной веры в маркетинг к пониманию механизмов.
+      </p>
+      <div class="mt-12">
+        <a href="quiz.html"
+           class="inline-flex items-center gap-2 px-8 py-4 bg-accent hover:bg-warm text-white font-medium rounded-full transition-all hover:shadow-lg hover:shadow-accent/20 text-sm">
+          Подобрать уход под вашу кожу
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-width="2" stroke-linecap="round"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════ -->
+  <footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div>
+          <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+          <p class="text-sm leading-relaxed mb-4">Простой уход, который действительно работает. Персональные рутины, честные составы.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">WA</a>
+          </div>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="catalog.html" class="hover:text-cream transition-colors">Сыворотки</a></li>
+            <li><a href="catalog.html" class="hover:text-cream transition-colors">Увлажнение</a></li>
+            <li><a href="catalog.html" class="hover:text-cream transition-colors">Очищение</a></li>
+            <li><a href="catalog.html" class="hover:text-cream transition-colors">Наборы</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Помощь</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="quiz.html" class="hover:text-cream transition-colors">Подобрать уход</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Доставка и оплата</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">FAQ</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Связаться с нами</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">О бренде</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="brand.html" class="hover:text-cream transition-colors">Наша история</a></li>
+            <li><a href="brand.html#science" class="hover:text-cream transition-colors">Состав и качество</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Обучение</a></li>
+            <li><a href="profile.html" class="hover:text-cream transition-colors">Партнёрство</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+        <div>© 2026 Марья. Все права защищены.</div>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
+          <a href="#" class="hover:text-cream transition-colors">Оферта</a>
+          <a href="#" class="hover:text-cream transition-colors">Cookie</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ═══════ SCRIPTS ═══════ -->
+  <script>
+    // Night Mode
+    const html = document.documentElement;
+    const saved = localStorage.getItem('marya-theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+    }
+    function toggleDark() {
+      html.classList.toggle('dark');
+      localStorage.setItem('marya-theme', html.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // Mobile Menu
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+    function toggleMenu() {
+      menuOpen = !menuOpen;
+      mobileMenu.style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';
+    }
+
+    // Scroll Progress
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const total = document.body.scrollHeight - window.innerHeight;
+      progressBar.style.width = (window.scrollY / total * 100) + '%';
+    }, { passive: true });
+
+    // Header shadow on scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('shadow-md', window.scrollY > 20);
+    }, { passive: true });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.10 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Auth modal placeholder
+    function openAuthModal() { window.location = 'profile.html'; }
+  </script>
+</body>
+</html>

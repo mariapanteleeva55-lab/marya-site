@@ -117,7 +117,7 @@
   <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
       <a href="index.html">
-        <img src="логомарьявеб-nobg.png" alt="Марья" style="height:240px;width:auto;opacity:.7">
+        <img src="лого новый-nobg.png" alt="Марья" style="height:30px;width:auto;">
       </a>
       <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
         <div class="catalog-wrap relative">
@@ -150,8 +150,8 @@
             </div>
           </div>
         </div>
-        <a href="index.html#about"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
-        <a href="index.html#quiz"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+        <a href="brand.html"            class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+        <a href="quiz.html"             class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
         <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
         <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
       </nav>
@@ -179,8 +179,8 @@
     <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 translate-y-full transition-transform duration-300">
       <div class="flex flex-col gap-4 text-base font-medium">
         <a href="catalog.html"          onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
-        <a href="index.html#about"      onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
-        <a href="index.html#quiz"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+        <a href="brand.html"            onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+        <a href="quiz.html"             onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
         <a href="index.html#blog"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
         <a href="index.html#skin-types" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
       </div>
@@ -302,7 +302,7 @@
 
           <div class="grid grid-cols-3 gap-3 pt-2">
             <div class="text-center"><div class="text-2xl mb-1">🚚</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Бесплатная доставка от 3 000 ₽</p></div>
-            <div class="text-center"><div class="text-2xl mb-1">🔄</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Возврат 30 дней</p></div>
+            <div class="text-center"><div class="text-2xl mb-1">🌿</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Гарантия натуральности</p></div>
             <div class="text-center"><div class="text-2xl mb-1">🛡️</div><p class="text-xs text-muted dark:text-muted-dark leading-tight">Гарантия натуральности</p></div>
           </div>
         </div>
@@ -460,7 +460,7 @@
           <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Помощь</p>
           <div class="space-y-2 text-sm text-muted dark:text-muted-dark">
             <a href="#" class="block hover:text-accent transition-colors">Доставка и оплата</a>
-            <a href="#" class="block hover:text-accent transition-colors">Возврат</a>
+            <a href="#" class="block hover:text-accent transition-colors">Гарантия качества</a>
             <a href="index.html#quiz" class="block hover:text-accent transition-colors">Подобрать уход</a>
             <a href="#" class="block hover:text-accent transition-colors">Контакты</a>
           </div>
@@ -496,9 +496,9 @@
 
     // ── PRODUCTS DATA ──────────────────────────────────────────────────────
     const PRODUCTS = [
-      { id: 1,  name: 'Пенка для умывания с пребиотиками', price: 890,  oldPrice: null, rating: 4.8, reviews: 143, category: 'cleanser', badge: 'Хит',    isNew: false, volume: '150 мл', emoji: '🫧', desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.' },
-      { id: 2,  name: 'Тоник увлажняющий с аминокислотами', price: 990,  oldPrice: null, rating: 4.7, reviews: 98,  category: 'toner',    badge: null,     isNew: false, volume: '250 мл', emoji: '💦', desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу. Восстанавливает водный баланс, поддерживает кожный барьер и улучшает тон кожи. Аминокислоты обеспечивают комфорт и увлажнение, а гирудин способствует свежему и ровному цвету лица. Лёгкая текстура быстро впитывается, не оставляя липкости.' },
-      { id: 3,  name: 'Мицеллярная вода',                  price: 790,  oldPrice: null, rating: 4.7, reviews: 212, category: 'cleanser', badge: null,     isNew: false, volume: '250 мл', emoji: '🌊', desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не нарушая защитный барьер кожи. Увлажняющая формула с пантенолом, алоэ вера и экстрактом пиявки поддерживает комфорт, свежесть и ухоженный вид кожи. Не оставляет липкости, подходит для ежедневного применения.' },
+      { id: 1,  name: 'Пенка для умывания с пребиотиками', price: 890,  oldPrice: null, rating: 4.8, reviews: 143, category: 'cleanser', badge: 'Хит',    isNew: false, volume: '150 мл', emoji: '🫧', image: 'Фото пенка для умывания.png', images: ['Фото пенка для умывания.png', 'пенка 2.png', 'пенка 3.jpg', 'пенка 5.png'], desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.' },
+      { id: 2,  name: 'Тоник увлажняющий с аминокислотами', price: 990,  oldPrice: null, rating: 4.7, reviews: 98,  category: 'toner',    badge: null,     isNew: false, volume: '250 мл', emoji: '💦', image: 'тоник 1.png', images: ['тоник 1.png', 'тоник 2.png', 'тоник 3.png', 'тоник 4.png'], desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу. Восстанавливает водный баланс, поддерживает кожный барьер и улучшает тон кожи. Аминокислоты обеспечивают комфорт и увлажнение, а гирудин способствует свежему и ровному цвету лица. Лёгкая текстура быстро впитывается, не оставляя липкости.' },
+      { id: 3,  name: 'Мицеллярная вода',                  price: 790,  oldPrice: null, rating: 4.7, reviews: 212, category: 'cleanser', badge: null,     isNew: false, volume: '250 мл', emoji: '🌊', image: 'миц вода 1.png', images: ['миц вода 1.png', 'миц вода 2.png', 'миц вода 3.png', 'миц вода 4.png'], desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не нарушая защитный барьер кожи. Увлажняющая формула с пантенолом, алоэ вера и экстрактом пиявки поддерживает комфорт, свежесть и ухоженный вид кожи. Не оставляет липкости, подходит для ежедневного применения.' },
       { id: 4,  name: 'Антивозрастная сыворотка с пептидами', price: 2490, oldPrice: null, rating: 4.9, reviews: 187, category: 'serum',   badge: 'Хит',    isNew: false, volume: '50 мл',  emoji: '🧬', desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин. Гирудин улучшает микроциркуляцию, способствует насыщению клеток кислородом и питательными веществами. Кожа становится заметно более свежей, плотной и увлажнённой уже через 2–4 недели регулярного применения. Лёгкая текстура быстро впитывается, идеально подходит в качестве базы под макияж.' },
       { id: 5,  name: 'Крем дневной омолаживающий',         price: 1990, oldPrice: null, rating: 4.8, reviews: 134, category: 'cream',    badge: null,     isNew: false, volume: '50 мл',  emoji: '☀️', desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию, возвращая коже свежесть и заметный тонус. DMAE помогает подтянуть овал лица и визуально разгладить морщины, делая кожу более упругой и плотной. Сквалан и масло ши глубоко питают и смягчают, антиоксиданты защищают от преждевременного старения. Результат — гладкая, подтянутая и сияющая кожа.' },
       { id: 6,  name: 'Крем ночной омолаживающий',          price: 1990, oldPrice: null, rating: 4.8, reviews: 119, category: 'cream',    badge: null,     isNew: false, volume: '50 мл',  emoji: '🌙', desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию, помогая коже выглядеть более свежей и подтянутой к утру. DMAE и ниацинамид повышают упругость, визуально разглаживают кожу и улучшают тон. Церамиды, пантенол и гиалуроновая кислота интенсивно увлажняют и восстанавливают защитный барьер, чтобы утром лицо выглядело более гладким и сияющим.' },
@@ -852,8 +852,8 @@
       const cardsHtml = pairs.map(q => `
         <div class="group rounded-2xl overflow-hidden border border-sand/40 dark:border-sand-dark/20 hover:border-warm/40 transition-colors">
           <a href="product.html?id=${q.id}" class="block">
-            <div class="aspect-square bg-gradient-to-br from-sand/50 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center p-6">
-              <div class="text-6xl">${q.emoji}</div>
+            <div class="aspect-square bg-gradient-to-br from-sand/50 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center p-6 overflow-hidden relative">
+              ${q.image ? `<img src="${q.image}" class="absolute inset-0 w-full h-full object-cover" alt="${q.name}">` : `<div class="text-6xl">${q.emoji}</div>`}
             </div>
             <div class="p-4">
               <p class="text-xs text-accent font-medium mb-0.5">${pairCatLabels[q.category] || q.category}</p>
@@ -952,9 +952,21 @@
       if (p.badge) { badgeEl.textContent = p.badge; badgeEl.classList.remove('hidden'); }
       else { badgeEl.classList.add('hidden'); }
 
-      // Emoji + volume
-      document.getElementById('product-emoji').textContent = p.emoji;
-      document.getElementById('product-volume-img').textContent = p.volume;
+      // Emoji + volume + thumbnails
+      if (p.images && p.images.length > 0) {
+        productImages = p.images;
+        document.getElementById('main-photo').innerHTML = `<img src="${productImages[0]}" class="w-full h-full object-cover object-top" alt="${p.name}">`;
+        const thumbContainer = document.querySelector('.thumb-item').parentElement;
+        thumbContainer.innerHTML = productImages.map((src, i) => `
+          <div class="thumb-item ${i===0?'active':''} flex-1 aspect-square rounded-2xl overflow-hidden cursor-pointer border-2 ${i===0?'border-accent':'border-transparent'} transition-all" onclick="setThumb(${i})">
+            <img src="${src}" class="w-full h-full object-cover object-top" alt="${p.name} фото ${i+1}">
+          </div>`).join('');
+      } else if (p.image) {
+        document.getElementById('main-photo').innerHTML = `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}">`;
+      } else {
+        document.getElementById('product-emoji').textContent = p.emoji;
+        document.getElementById('product-volume-img').textContent = p.volume;
+      }
 
       // Category tag
       document.getElementById('product-category-tag').textContent = cat.label;
@@ -1010,8 +1022,18 @@
     }
 
     // ── UI FUNCTIONS ───────────────────────────────────────────────────────
+    let productImages = [];
     function setThumb(index) {
-      document.querySelectorAll('.thumb-item').forEach((el, i) => el.classList.toggle('active', i === index));
+      document.querySelectorAll('.thumb-item').forEach((el, i) => {
+        el.classList.toggle('active', i === index);
+        el.classList.toggle('border-accent', i === index);
+        el.classList.toggle('border-transparent', i !== index);
+      });
+      if (productImages.length > index) {
+        const mainPhoto = document.getElementById('main-photo');
+        const img = mainPhoto.querySelector('img');
+        if (img) { img.src = productImages[index]; img.className = 'w-full h-full object-cover object-top'; }
+      }
     }
 
     function switchTab(name) {

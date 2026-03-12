@@ -136,7 +136,9 @@
 <header class="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
   style="background:rgba(253,248,243,.93);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
-    <a href="index.html" class="font-serif text-2xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
+    <a href="index.html">
+      <img src="лого новый-nobg.png" alt="Марья" style="height:30px;width:auto;">
+    </a>
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
       <div class="catalog-wrap relative">
         <a href="catalog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors flex items-center gap-1">
@@ -164,9 +166,10 @@
           </div>
         </div>
       </div>
-      <a href="index.html#about" class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
-      <a href="index.html#quiz" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="brand.html"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="quiz.html"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
       <a href="index.html#blog" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+      <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
     </nav>
     <div class="flex items-center gap-2">
       <button onclick="window.location.href='profile.html'" class="p-2 rounded-full bg-sand/60 dark:bg-sand-dark/40 text-accent" aria-label="Профиль">
@@ -235,6 +238,10 @@
       <button class="tab-btn" onclick="switchTab('bonus')" data-tab="bonus">
         <span class="text-base leading-none">◈</span>
         Бонусы
+      </button>
+      <button class="tab-btn" onclick="switchTab('tracker')" data-tab="tracker">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2" stroke-linecap="round"/><path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01" stroke-width="2.5" stroke-linecap="round"/></svg>
+        Трекер
       </button>
       <button class="tab-btn" onclick="switchTab('partner')" data-tab="partner">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" stroke-width="2" stroke-linecap="round"/></svg>
@@ -401,6 +408,64 @@
     <div id="bonus-history-empty" class="hidden text-center py-8 text-sm text-muted dark:text-muted-dark">
       Совершите первую покупку, чтобы начать копить баллы
     </div>
+  </div>
+
+  <!-- ══════ TAB: ТРЕКЕР ══════ -->
+  <div id="tab-tracker" class="tab-panel">
+
+    <!-- Сегодня -->
+    <div class="p-6 rounded-3xl border border-sand dark:border-sand-dark/30 bg-gradient-to-br from-sand/30 to-cream dark:from-sand-dark/20 dark:to-cream-dark mb-5">
+      <div class="flex items-start justify-between mb-5">
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark font-medium uppercase tracking-widest mb-1">Сегодня</p>
+          <p class="font-serif text-lg text-ink dark:text-ink-dark" id="tracker-today-label">—</p>
+        </div>
+        <div class="text-right">
+          <p class="text-xs text-muted dark:text-muted-dark mb-0.5">Серия</p>
+          <p class="font-serif text-4xl text-accent leading-none" id="tracker-streak">0</p>
+          <p class="text-xs text-muted dark:text-muted-dark mt-0.5">дней</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <button id="btn-morning" onclick="toggleHabit('morning')"
+          class="flex items-center gap-3 p-4 rounded-2xl border-2 border-sand dark:border-sand-dark/40 transition-all text-left hover:border-accent/40">
+          <span class="text-2xl flex-shrink-0">🌅</span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-ink dark:text-ink-dark">Утренний уход</p>
+            <p class="text-xs text-muted dark:text-muted-dark truncate">Очищение · Тоник · Крем</p>
+          </div>
+          <span id="check-morning" class="text-xl text-muted dark:text-muted-dark flex-shrink-0">○</span>
+        </button>
+        <button id="btn-evening" onclick="toggleHabit('evening')"
+          class="flex items-center gap-3 p-4 rounded-2xl border-2 border-sand dark:border-sand-dark/40 transition-all text-left hover:border-accent/40">
+          <span class="text-2xl flex-shrink-0">🌙</span>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-ink dark:text-ink-dark">Вечерний уход</p>
+            <p class="text-xs text-muted dark:text-muted-dark truncate">Очищение · Сыворотка · Крем</p>
+          </div>
+          <span id="check-evening" class="text-xl text-muted dark:text-muted-dark flex-shrink-0">○</span>
+        </button>
+      </div>
+      <div id="tracker-save-msg" class="hidden mt-3 text-center text-xs text-accent font-medium">Сохранено ✓</div>
+    </div>
+
+    <!-- Календарь -->
+    <div class="p-6 rounded-3xl border border-sand dark:border-sand-dark/30 mb-5">
+      <h3 class="font-semibold text-sm text-ink dark:text-ink-dark mb-4">Календарь ухода — последние 5 недель</h3>
+      <div id="tracker-calendar" class="grid grid-cols-7 gap-1"></div>
+      <div class="flex flex-wrap items-center gap-4 mt-4 text-xs text-muted dark:text-muted-dark">
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-accent/80 inline-block"></span>Полный уход</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-accent/35 inline-block"></span>Частично</span>
+        <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-sand dark:bg-sand-dark/40 inline-block"></span>Пропущено</span>
+      </div>
+    </div>
+
+    <!-- Достижения -->
+    <div class="p-6 rounded-3xl border border-sand dark:border-sand-dark/30">
+      <h3 class="font-semibold text-sm text-ink dark:text-ink-dark mb-4">Достижения</h3>
+      <div id="tracker-badges" class="grid grid-cols-3 sm:grid-cols-6 gap-3"></div>
+    </div>
+
   </div>
 
   <!-- ══════ TAB: ПАРТНЁРЫ ══════ -->
@@ -640,7 +705,7 @@
     <p>© 2026 Марья · D2C уход за кожей</p>
     <div class="flex gap-4">
       <a href="#" class="hover:text-accent transition-colors">Доставка</a>
-      <a href="#" class="hover:text-accent transition-colors">Возврат</a>
+      <a href="#" class="hover:text-accent transition-colors">Гарантия качества</a>
       <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
     </div>
   </div>
@@ -738,6 +803,7 @@ function switchTab(name){
   if (name === 'orders')   renderOrders();
   if (name === 'wishlist') renderWishlist();
   if (name === 'quiz')     renderQuizTab();
+  if (name === 'tracker')  renderTracker();
   if (name === 'partner')  renderPartner();
 }
 
@@ -814,7 +880,7 @@ async function saveProfile(e){
 const PRODUCTS_MAP = {
   1:  { name:'Пенка для умывания с пребиотиками',       emoji:'🫧', price:890,  volume:'150 мл', color:'from-teal-50 to-cyan-100' },
   2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', price:990,  volume:'250 мл', color:'from-sky-50 to-blue-100' },
-  3:  { name:'Мицеллярная вода',                         emoji:'🌊', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
+  3:  { name:'Мицеллярная вода',                         emoji:'🌊', image:'миц вода 1.png', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
   4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', price:2490, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
   5:  { name:'Крем дневной омолаживающий',               emoji:'☀️', price:1990, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
   6:  { name:'Крем ночной омолаживающий',                emoji:'🌙', price:1990, volume:'50 мл',  color:'from-purple-50 to-violet-100' },
@@ -846,8 +912,8 @@ async function renderWishlist(){
   grid.innerHTML = list.map(p => `
     <div class="flex flex-col rounded-2xl border border-sand dark:border-sand-dark/30 overflow-hidden bg-cream dark:bg-cream-dark hover:shadow-md transition-shadow">
       <a href="product.html?id=${p.id}" class="block">
-        <div class="w-full aspect-square flex items-center justify-center text-5xl bg-gradient-to-br ${p.color||'from-sand/30 to-warm/20'}">
-          ${p.emoji}
+        <div class="w-full aspect-square flex items-center justify-center text-5xl bg-gradient-to-br ${p.color||'from-sand/30 to-warm/20'} overflow-hidden">
+          ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover object-top" alt="${p.name}">` : p.emoji}
         </div>
       </a>
       <div class="p-3 flex-1 flex flex-col">
@@ -1155,7 +1221,7 @@ const RECOMMENDATIONS = {
 const PRODUCTS_MINI = {
   1:  { name:'Пенка для умывания с пребиотиками',      emoji:'🫧', volume:'150 мл', price:890,  category:'cleanser', color:'from-teal-50 to-cyan-100' },
   2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', volume:'250 мл', price:990,  category:'toner',    color:'from-pink-50 to-rose-100'  },
-  3:  { name:'Мицеллярная вода',                        emoji:'🌊', volume:'250 мл', price:790,  category:'cleanser', color:'from-teal-50 to-cyan-100'  },
+  3:  { name:'Мицеллярная вода',                        emoji:'🌊', image:'миц вода 1.png', volume:'250 мл', price:790,  category:'cleanser', color:'from-teal-50 to-cyan-100'  },
   4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', volume:'50 мл',  price:2490, category:'serum',    color:'from-blue-50 to-blue-100'  },
   5:  { name:'Крем дневной омолаживающий',              emoji:'☀️', volume:'50 мл',  price:1990, category:'cream',    color:'from-amber-50 to-orange-100'},
   6:  { name:'Крем ночной омолаживающий',               emoji:'🌙', volume:'50 мл',  price:1990, category:'cream',    color:'from-amber-50 to-orange-100'},
@@ -1165,14 +1231,7 @@ const PRODUCTS_MINI = {
 };
 
 function openQuiz(){
-  quizStep = 1;
-  Object.keys(QUIZ_ANSWERS).forEach(k => delete QUIZ_ANSWERS[k]);
-  CONCERNS.clear();
-  // Reset UI
-  document.querySelectorAll('.qopt').forEach(b => b.classList.remove('selected'));
-  updateQuizProgress();
-  document.getElementById('quiz-overlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
+  window.location = 'quiz.html';
 }
 
 function closeQuiz(){
@@ -1263,10 +1322,29 @@ const SKIN_TYPE_DESC = {
   sensitive:   'Кожа быстро реагирует на внешние раздражители. Приоритет — успокаивающие и гипоаллергенные средства.',
 };
 
-function renderQuizTab(){
-  const quiz = getQuiz();
+async function renderQuizTab(){
   const resultBlock = document.getElementById('quiz-result-block');
   const emptyBlock  = document.getElementById('quiz-empty-block');
+
+  // Пробуем загрузить из Supabase
+  let quiz = null;
+  const { data: { session } } = await _supabase.auth.getSession();
+  if (session) {
+    const { data: sp } = await _supabase.from('skin_profiles')
+      .select('*').eq('user_id', session.user.id).maybeSingle();
+    if (sp) {
+      quiz = {
+        skinType:           sp.skin_type,
+        skinTypeName:       sp.skin_label,
+        concerns:           sp.q3_concerns || [],
+        completedAt:        sp.updated_at,
+        recommendedProducts: sp.product_ids || [],
+      };
+      // Синхронизировать localStorage
+      localStorage.setItem('marya_quiz', JSON.stringify(quiz));
+    }
+  }
+  if (!quiz) quiz = getQuiz(); // fallback localStorage
 
   if (!quiz){ resultBlock.classList.add('hidden'); emptyBlock.classList.remove('hidden'); return; }
 
@@ -1277,7 +1355,7 @@ function renderQuizTab(){
     const p = PRODUCTS_MINI[id];
     if (!p) return '';
     return `<a href="product.html?id=${id}" class="flex items-center gap-3 p-3 rounded-xl border border-sand dark:border-sand-dark/30 hover:border-warm/50 transition-colors group">
-      <div class="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-2xl">${p.emoji}</div>
+      <div class="w-12 h-12 flex-shrink-0 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-2xl overflow-hidden">${p.image ? `<img src="${p.image}" class="w-full h-full object-cover object-top" alt="${p.name}">` : p.emoji}</div>
       <div class="flex-1 min-w-0">
         <p class="text-xs font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors leading-tight">${p.name}</p>
         <p class="text-[11px] text-muted dark:text-muted-dark mt-0.5">${p.volume}</p>
@@ -1428,6 +1506,212 @@ async function doSetNewPassword() {
 
   closeResetModal();
   showToast('Пароль успешно изменён');
+}
+
+// ── ТРЕКЕР ПРИВЫЧЕК ───────────────────────────────────────────────
+const TRACKER_BADGES = [
+  { days: 3,   icon: '🌱', label: '3 дня'   },
+  { days: 7,   icon: '🔥', label: '7 дней'  },
+  { days: 14,  icon: '💎', label: '14 дней' },
+  { days: 30,  icon: '🌟', label: '30 дней' },
+  { days: 60,  icon: '👑', label: '60 дней' },
+  { days: 100, icon: '🏆', label: '100 дней'},
+];
+let _trackerLogs = {};
+let _trackerSession = null;
+
+async function renderTracker() {
+  const { data: { session } } = await _supabase.auth.getSession();
+  _trackerSession = session;
+
+  const today = new Date();
+  // Локальная дата (не UTC), чтобы не было сдвига для российских часовых поясов
+  const todayStr = today.toLocaleDateString('sv');
+  const DAY_NAMES = ['вс','пн','вт','ср','чт','пт','сб'];
+  const MON_NAMES = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+  const lbl = document.getElementById('tracker-today-label');
+  if (lbl) lbl.textContent = `${DAY_NAMES[today.getDay()]}, ${today.getDate()} ${MON_NAMES[today.getMonth()]}`;
+
+  if (!session) {
+    const panel = document.getElementById('tab-tracker');
+    if (panel) panel.innerHTML = `
+      <div class="text-center py-20">
+        <div class="text-6xl mb-4">📅</div>
+        <h2 class="font-serif text-xl text-ink dark:text-ink-dark mb-2">Войдите, чтобы вести трекер</h2>
+        <p class="text-sm text-muted dark:text-muted-dark">Отмечайте уход каждый день и следите за серией</p>
+      </div>`;
+    return;
+  }
+
+  // Загружаем последние 42 дня
+  const fromDate = new Date(today);
+  fromDate.setDate(fromDate.getDate() - 41);
+  const fromStr = fromDate.toISOString().slice(0, 10);
+  const { data: logs } = await _supabase
+    .from('habit_logs')
+    .select('log_date, morning, evening')
+    .eq('user_id', session.user.id)
+    .gte('log_date', fromStr);
+
+  _trackerLogs = {};
+  (logs || []).forEach(l => { _trackerLogs[l.log_date] = l; });
+
+  // Сегодняшнее состояние
+  const t = _trackerLogs[todayStr] || { morning: false, evening: false };
+  _trackerUpdateBtn('morning', t.morning);
+  _trackerUpdateBtn('evening', t.evening);
+
+  const streak = _trackerCalcStreak(todayStr);
+  const streakEl = document.getElementById('tracker-streak');
+  if (streakEl) streakEl.textContent = streak;
+
+  _trackerRenderCalendar(todayStr);
+  _trackerRenderBadges(streak);
+}
+
+function _trackerUpdateBtn(slot, done) {
+  const btn   = document.getElementById('btn-' + slot);
+  const check = document.getElementById('check-' + slot);
+  if (!btn || !check) return;
+  if (done) {
+    btn.classList.add('border-accent', 'bg-accent/5');
+    btn.classList.remove('border-sand', 'dark:border-sand-dark/40');
+    check.textContent = '✓';
+    check.className = 'text-xl text-accent flex-shrink-0';
+  } else {
+    btn.classList.remove('border-accent', 'bg-accent/5');
+    btn.classList.add('border-sand', 'dark:border-sand-dark/40');
+    check.textContent = '○';
+    check.className = 'text-xl text-muted dark:text-muted-dark flex-shrink-0';
+  }
+}
+
+async function toggleHabit(slot) {
+  if (!_trackerSession) { alert('Войдите в аккаунт, чтобы вести трекер'); return; }
+  const todayStr = new Date().toLocaleDateString('sv');
+  const cur = _trackerLogs[todayStr] || { morning: false, evening: false };
+  const updated = { morning: cur.morning, evening: cur.evening, [slot]: !cur[slot], log_date: todayStr, user_id: _trackerSession.user.id };
+
+  const { error } = await _supabase.from('habit_logs').upsert(updated, { onConflict: 'user_id,log_date' });
+  if (error) {
+    console.error('habit_logs upsert error:', error);
+    const msg = document.getElementById('tracker-save-msg');
+    if (msg) { msg.textContent = 'Ошибка: ' + (error.message || error.code); msg.classList.remove('hidden', 'text-accent'); msg.classList.add('text-red-500'); clearTimeout(msg._t); msg._t = setTimeout(() => { msg.classList.add('hidden'); msg.textContent = 'Сохранено ✓'; msg.classList.remove('text-red-500'); msg.classList.add('text-accent'); }, 4000); }
+    return;
+  }
+
+  _trackerLogs[todayStr] = { morning: updated.morning, evening: updated.evening };
+  _trackerUpdateBtn(slot, updated[slot]);
+
+  const streak = _trackerCalcStreak(todayStr);
+  const el = document.getElementById('tracker-streak');
+  if (el) el.textContent = streak;
+  _trackerRenderCalendar(todayStr);
+  _trackerRenderBadges(streak);
+
+  // Мигающее «Сохранено»
+  const msg = document.getElementById('tracker-save-msg');
+  if (msg) { msg.classList.remove('hidden'); clearTimeout(msg._t); msg._t = setTimeout(() => msg.classList.add('hidden'), 1800); }
+}
+
+function _trackerCalcStreak(todayStr) {
+  let streak = 0;
+  const d = new Date(todayStr + 'T12:00:00');
+  for (let i = 0; i < 365; i++) {
+    const ds = d.toLocaleDateString('sv');
+    const log = _trackerLogs[ds];
+    const complete = log && log.morning && log.evening;
+    if (complete) {
+      streak++;
+      d.setDate(d.getDate() - 1);
+    } else if (i === 0) {
+      // Сегодня ещё не завершён — проверяем вчера
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
+function _trackerRenderCalendar(todayStr) {
+  const cal = document.getElementById('tracker-calendar');
+  if (!cal) return;
+  cal.innerHTML = '';
+
+  // Заголовки дней
+  ['Пн','Вт','Ср','Чт','Пт','Сб','Вс'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'text-center text-[10px] font-medium text-muted dark:text-muted-dark pb-1';
+    el.textContent = d;
+    cal.appendChild(el);
+  });
+
+  const today = new Date(todayStr + 'T12:00:00');
+
+  // startDate = 34 дня назад
+  const startDate = new Date(today);
+  startDate.setDate(startDate.getDate() - 34);
+  const startStr = startDate.toLocaleDateString('sv');
+
+  // Начало сетки — ближайший понедельник ≤ startDate
+  let gridStart = new Date(startDate);
+  const dow = gridStart.getDay(); // 0=Вс..6=Сб
+  const toMon = (dow === 0) ? -6 : 1 - dow;
+  gridStart.setDate(gridStart.getDate() + toMon);
+
+  // Конец сетки — ближайшее воскресенье ≥ today
+  let gridEnd = new Date(today);
+  const dowEnd = gridEnd.getDay();
+  if (dowEnd !== 0) gridEnd.setDate(gridEnd.getDate() + (7 - dowEnd));
+  const endStr = gridEnd.toLocaleDateString('sv');
+
+  let d = new Date(gridStart);
+  while (true) {
+    const ds = d.toLocaleDateString('sv');
+    if (ds > endStr) break;
+
+    const log = _trackerLogs[ds];
+    const isToday = ds === todayStr;
+    const outOfRange = ds < startStr || ds > todayStr;
+
+    let bg = 'bg-sand/50 dark:bg-sand-dark/20';
+    let numColor = 'text-muted dark:text-muted-dark';
+    if (outOfRange) {
+      bg = 'bg-transparent';
+      numColor = 'opacity-0';
+    } else if (log && log.morning && log.evening) {
+      bg = 'bg-accent/80';
+      numColor = 'text-white';
+    } else if (log && (log.morning || log.evening)) {
+      bg = 'bg-accent/35';
+      numColor = 'text-ink dark:text-ink-dark';
+    }
+
+    const el = document.createElement('div');
+    el.className = `w-full aspect-square rounded-lg ${bg} flex items-center justify-center${isToday ? ' ring-2 ring-accent ring-offset-1' : ''}`;
+    el.innerHTML = `<span class="text-[10px] font-semibold ${numColor}">${d.getDate()}</span>`;
+    el.title = ds;
+    cal.appendChild(el);
+
+    d.setDate(d.getDate() + 1);
+  }
+}
+
+function _trackerRenderBadges(streak) {
+  const el = document.getElementById('tracker-badges');
+  if (!el) return;
+  el.innerHTML = TRACKER_BADGES.map(b => {
+    const earned = streak >= b.days;
+    return `<div class="text-center p-3 rounded-2xl transition-all ${earned
+      ? 'bg-accent/10 border border-accent/30'
+      : 'bg-sand/30 dark:bg-sand-dark/20 opacity-40'}" title="${earned ? 'Получено!' : `Ещё ${b.days - streak} дней`}">
+      <div class="text-3xl mb-1">${b.icon}</div>
+      <p class="text-xs font-semibold ${earned ? 'text-ink dark:text-ink-dark' : 'text-muted dark:text-muted-dark'}">${b.label}</p>
+      ${earned ? '<p class="text-[9px] text-accent mt-0.5">Получено</p>' : ''}
+    </div>`;
+  }).join('');
 }
 
 async function logout(){
