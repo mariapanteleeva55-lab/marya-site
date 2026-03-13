@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Контакты — Марья</title>
+  <meta name="description" content="Контакты бренда Марья. Адрес производства, телефон, форма обратной связи." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const _supabase = window.supabase.createClient(
+      'https://cizdsiqolarjcgmwbafp.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+    );
+  </script>
+  <style>
+    * { box-sizing: border-box; }
+    html { font-family: 'Inter', system-ui, sans-serif; }
+    *, *::before, *::after { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #C4A882; border-radius: 3px; }
+    #progress-bar { position: fixed; top: 0; left: 0; height: 2px; z-index: 1000; background: linear-gradient(90deg, #D4956A, #C4A882); transition: width 0.1s linear; }
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased">
+
+  <div id="progress-bar" style="width: 0%"></div>
+
+  <!-- HEADER -->
+  <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-1.5 text-sm text-muted dark:text-muted-dark hover:text-ink dark:hover:text-ink-dark transition-colors font-medium">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke-width="2" stroke-linecap="round"/></svg>
+        Главная
+      </a>
+      <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+        <a href="catalog.html"  class="hover:text-ink dark:hover:text-ink-dark transition-colors">Каталог</a>
+        <a href="brand.html"    class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+        <a href="quiz.html"     class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+        <a href="contacts.html" class="text-ink dark:text-ink-dark">Контакты</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <button id="auth-nav-btn" onclick="openAuthModal()" class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Профиль">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="12" cy="7" r="4" stroke-width="2"/>
+          </svg>
+        </button>
+        <a href="cart.html" class="relative p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Корзина">
+          <svg class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/>
+            <line x1="3" y1="6" x2="21" y2="6" stroke-width="2"/>
+            <path d="M16 10a4 4 0 0 1-8 0" stroke-width="2"/>
+          </svg>
+        </a>
+        <button onclick="toggleDark()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sand/60 dark:bg-sand-dark/40 hover:bg-sand dark:hover:bg-sand-dark/60 transition-colors text-xs text-muted dark:text-muted-dark font-medium">
+          <span class="block dark:hidden">☀️</span>
+          <span class="hidden dark:block">🌙</span>
+          <span class="hidden sm:block">Ночной</span>
+        </button>
+        <button onclick="toggleMenu()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
+          <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-50 translate-y-full transition-transform duration-300">
+      <div class="flex flex-col gap-4 text-base font-medium">
+        <a href="catalog.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+        <a href="brand.html"   onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+        <a href="quiz.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+        <a href="contacts.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Контакты</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="pt-[60px]">
+
+    <!-- HERO: Фото основателя + приветствие -->
+    <section class="py-20 bg-cream dark:bg-cream-dark">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+          <!-- Фото -->
+          <div class="w-full lg:w-[380px] flex-shrink-0 reveal">
+            <div class="rounded-3xl overflow-hidden" style="aspect-ratio: 3/4;">
+              <img src="фото марии 6.webp" alt="Мария Эйрих, основатель «Марьи»" class="w-full h-full object-cover object-top">
+            </div>
+          </div>
+          <!-- Текст -->
+          <div class="flex-1 reveal">
+            <p class="text-sm font-medium text-accent uppercase tracking-widest mb-4">Основатель</p>
+            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-serif text-ink dark:text-ink-dark mb-6 leading-tight">
+              Рада каждому,<br>кто с нами.
+            </h1>
+            <p class="text-base text-muted dark:text-muted-dark leading-relaxed mb-6">
+              Марья — это не просто бренд, это диалог. Я создавала его с желанием быть честной с каждым, кто доверяет нам. Если у вас есть вопросы, идеи, желание сотрудничать или просто сказать что-то важное — я искренне жду вашего обращения.
+            </p>
+            <p class="text-base text-muted dark:text-muted-dark leading-relaxed mb-8">
+              Очень надеюсь на взаимодействие и сотрудничество — будь то партнёрство, обратная связь или совместные проекты. Каждое сообщение читаю лично.
+            </p>
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 bg-warm/20">
+                <img src="фото марии 6.webp" alt="Мария" class="w-full h-full object-cover object-top">
+              </div>
+              <div>
+                <p class="text-sm font-semibold text-ink dark:text-ink-dark">Мария Эйрих</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Основатель и технолог «Марьи»</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- КОНТАКТНЫЕ ДАННЫЕ -->
+    <section class="py-20 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="max-w-5xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-14 reveal">
+          <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">Реквизиты</p>
+          <h2 class="text-3xl sm:text-4xl font-serif text-ink dark:text-ink-dark">Контактная информация</h2>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+          <!-- Изготовитель -->
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-7 border border-sand/40 dark:border-sand-dark/20 reveal">
+            <div class="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center mb-5">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="2" y="8" width="16" height="10" rx="1.5" stroke="#D4956A" stroke-width="1.4"/><path d="M6 8V6a4 4 0 018 0v2" stroke="#D4956A" stroke-width="1.4" stroke-linecap="round"/><circle cx="10" cy="13" r="1.5" fill="#D4956A"/></svg>
+            </div>
+            <h3 class="font-semibold text-ink dark:text-ink-dark mb-3">Изготовитель</h3>
+            <p class="text-sm text-muted dark:text-muted-dark leading-relaxed">
+              ООО «СТАНДАРТ ПЛЮС»<br>
+              454087, Россия,<br>
+              Челябинская обл.,<br>
+              г. Челябинск, ул. Блюхера, 59А
+            </p>
+          </div>
+
+          <!-- Телефон -->
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-7 border border-sand/40 dark:border-sand-dark/20 reveal" style="animation-delay: 0.1s">
+            <div class="w-10 h-10 rounded-xl bg-sage/10 flex items-center justify-center mb-5">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 3h3l1.5 4-2 1.5a10 10 0 004 4L12 10.5l4 1.5v3a1 1 0 01-1 1A15 15 0 013 4a1 1 0 011-1z" stroke="#8BA888" stroke-width="1.4" stroke-linejoin="round"/></svg>
+            </div>
+            <h3 class="font-semibold text-ink dark:text-ink-dark mb-3">Телефон</h3>
+            <a href="tel:88005502601" class="text-sm text-accent hover:text-warm transition-colors font-medium">8 800 550-26-01</a>
+            <p class="text-xs text-muted dark:text-muted-dark mt-2">Бесплатно по России</p>
+          </div>
+
+          <!-- Соцсети -->
+          <div class="bg-cream dark:bg-cream-dark rounded-2xl p-7 border border-sand/40 dark:border-sand-dark/20 reveal" style="animation-delay: 0.2s">
+            <div class="w-10 h-10 rounded-xl bg-warm/10 flex items-center justify-center mb-5">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7.5" stroke="#C4A882" stroke-width="1.4"/><path d="M10 6v4l3 2" stroke="#C4A882" stroke-width="1.4" stroke-linecap="round"/></svg>
+            </div>
+            <h3 class="font-semibold text-ink dark:text-ink-dark mb-3">Мы в соцсетях</h3>
+            <div class="flex flex-col gap-2 text-sm">
+              <a href="#" class="text-muted dark:text-muted-dark hover:text-accent transition-colors">Telegram</a>
+              <a href="#" class="text-muted dark:text-muted-dark hover:text-accent transition-colors">ВКонтакте</a>
+              <a href="#" class="text-muted dark:text-muted-dark hover:text-accent transition-colors">WhatsApp</a>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ФОРМА ОБРАТНОЙ СВЯЗИ -->
+    <section class="py-20 bg-cream dark:bg-cream-dark">
+      <div class="max-w-2xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-12 reveal">
+          <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">Написать нам</p>
+          <h2 class="text-3xl font-serif text-ink dark:text-ink-dark mb-3">Форма обратной связи</h2>
+          <p class="text-muted dark:text-muted-dark text-sm">Ответим в течение 24 часов</p>
+        </div>
+
+        <form id="contact-form" class="space-y-5 reveal" onsubmit="submitContact(event)">
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="block text-xs font-medium text-muted dark:text-muted-dark mb-1.5 uppercase tracking-wide">Имя</label>
+              <input type="text" id="cf-name" placeholder="Ваше имя" required
+                class="w-full px-4 py-3 bg-sand/30 dark:bg-sand-dark/20 border border-sand dark:border-sand-dark/40 rounded-xl text-ink dark:text-ink-dark placeholder-muted/40 dark:placeholder-muted-dark/40 focus:outline-none focus:border-accent transition-colors text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-muted dark:text-muted-dark mb-1.5 uppercase tracking-wide">Email</label>
+              <input type="email" id="cf-email" placeholder="ваш@email.ru" required
+                class="w-full px-4 py-3 bg-sand/30 dark:bg-sand-dark/20 border border-sand dark:border-sand-dark/40 rounded-xl text-ink dark:text-ink-dark placeholder-muted/40 dark:placeholder-muted-dark/40 focus:outline-none focus:border-accent transition-colors text-sm">
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-muted dark:text-muted-dark mb-1.5 uppercase tracking-wide">Тема</label>
+            <select id="cf-subject"
+              class="w-full px-4 py-3 bg-sand/30 dark:bg-sand-dark/20 border border-sand dark:border-sand-dark/40 rounded-xl text-ink dark:text-ink-dark focus:outline-none focus:border-accent transition-colors text-sm">
+              <option value="general">Общий вопрос</option>
+              <option value="order">Вопрос по заказу</option>
+              <option value="partner">Сотрудничество</option>
+              <option value="product">Вопрос о продукте</option>
+              <option value="other">Другое</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-muted dark:text-muted-dark mb-1.5 uppercase tracking-wide">Сообщение</label>
+            <textarea id="cf-message" rows="5" placeholder="Напишите ваш вопрос или предложение..." required
+              class="w-full px-4 py-3 bg-sand/30 dark:bg-sand-dark/20 border border-sand dark:border-sand-dark/40 rounded-xl text-ink dark:text-ink-dark placeholder-muted/40 dark:placeholder-muted-dark/40 focus:outline-none focus:border-accent transition-colors text-sm resize-none"></textarea>
+          </div>
+          <button type="submit"
+            class="w-full py-4 bg-accent hover:bg-warm text-white font-semibold rounded-full transition-colors text-sm">
+            Отправить сообщение
+          </button>
+          <div id="cf-success" class="hidden text-center text-sm text-sage dark:text-sage-dark font-medium py-2">
+            ✓ Сообщение отправлено! Мы ответим в течение 24 часов.
+          </div>
+          <div id="cf-error" class="hidden text-center text-sm text-red-500 py-2"></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="py-20 bg-sand/20 dark:bg-sand-dark/10">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6">
+        <div class="text-center mb-12 reveal">
+          <p class="text-sm font-medium text-accent uppercase tracking-widest mb-3">FAQ</p>
+          <h2 class="text-3xl font-serif text-ink dark:text-ink-dark">Часто задаваемые вопросы</h2>
+        </div>
+        <div class="space-y-4">
+          <details class="bg-cream dark:bg-cream-dark rounded-2xl border border-sand/40 dark:border-sand-dark/20 overflow-hidden reveal group">
+            <summary class="px-6 py-5 cursor-pointer flex justify-between items-center text-sm font-medium text-ink dark:text-ink-dark list-none">
+              Как подобрать уход под мой тип кожи?
+              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+            </summary>
+            <p class="px-6 pb-5 text-sm text-muted dark:text-muted-dark leading-relaxed">Пройдите наш квиз — за 60 секунд получите персональную рекомендацию, учитывающую тип кожи, возраст и задачи ухода. <a href="quiz.html" class="text-accent hover:underline">Перейти к квизу →</a></p>
+          </details>
+          <details class="bg-cream dark:bg-cream-dark rounded-2xl border border-sand/40 dark:border-sand-dark/20 overflow-hidden reveal group">
+            <summary class="px-6 py-5 cursor-pointer flex justify-between items-center text-sm font-medium text-ink dark:text-ink-dark list-none">
+              Где производится косметика Марья?
+              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+            </summary>
+            <p class="px-6 pb-5 text-sm text-muted dark:text-muted-dark leading-relaxed">Вся продукция производится в России на сертифицированном предприятии ООО «СТАНДАРТ ПЛЮС» в г. Челябинск.</p>
+          </details>
+          <details class="bg-cream dark:bg-cream-dark rounded-2xl border border-sand/40 dark:border-sand-dark/20 overflow-hidden reveal group">
+            <summary class="px-6 py-5 cursor-pointer flex justify-between items-center text-sm font-medium text-ink dark:text-ink-dark list-none">
+              Как стать партнёром бренда?
+              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+            </summary>
+            <p class="px-6 pb-5 text-sm text-muted dark:text-muted-dark leading-relaxed">Напишите нам через форму выше, выбрав тему «Сотрудничество». Мы рассматриваем все предложения и отвечаем лично.</p>
+          </details>
+          <details class="bg-cream dark:bg-cream-dark rounded-2xl border border-sand/40 dark:border-sand-dark/20 overflow-hidden reveal group">
+            <summary class="px-6 py-5 cursor-pointer flex justify-between items-center text-sm font-medium text-ink dark:text-ink-dark list-none">
+              Можно ли протестировать продукцию перед покупкой?
+              <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-width="2" stroke-linecap="round"/></svg>
+            </summary>
+            <p class="px-6 pb-5 text-sm text-muted dark:text-muted-dark leading-relaxed">Следите за нашими соцсетями — мы периодически проводим акции с тестовыми образцами. Также можно связаться с нами напрямую.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+        <div>
+          <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+          <p class="text-sm leading-relaxed mb-4">Простой уход, который действительно работает. Персональные рутины, честные составы.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">WA</a>
+          </div>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="catalog.html" class="hover:text-cream transition-colors">Все продукты</a></li>
+            <li><a href="catalog.html?cat=serum" class="hover:text-cream transition-colors">Сыворотки</a></li>
+            <li><a href="catalog.html?cat=cream" class="hover:text-cream transition-colors">Кремы</a></li>
+            <li><a href="catalog.html?cat=clean" class="hover:text-cream transition-colors">Очищение</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Помощь</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="quiz.html" class="hover:text-cream transition-colors">Подобрать уход</a></li>
+            <li><a href="contacts.html#faq" class="hover:text-cream transition-colors">FAQ</a></li>
+            <li><a href="contacts.html" class="hover:text-cream transition-colors">Связаться с нами</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">О бренде</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="brand.html" class="hover:text-cream transition-colors">Наша история</a></li>
+            <li><a href="brand.html#quality" class="hover:text-cream transition-colors">Состав и качество</a></li>
+            <li><a href="contacts.html" class="hover:text-cream transition-colors">Контакты</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+        <div>© 2026 Марья. Все права защищены.</div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
+          <a href="#" class="hover:text-cream transition-colors">Оферта</a>
+          <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center gap-2 text-sm text-cream/60 hover:text-cream transition-colors">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1.2" opacity="0.4"/><path d="M14 19V9M9 14l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Наверх
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Night Mode
+    const html = document.documentElement;
+    const saved = localStorage.getItem('marya-theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      html.classList.add('dark');
+    }
+    function toggleDark() {
+      html.classList.toggle('dark');
+      localStorage.setItem('marya-theme', html.classList.contains('dark') ? 'dark' : 'light');
+    }
+
+    // Mobile Menu
+    const mobileMenu = document.getElementById('mobile-menu');
+    let menuOpen = false;
+    function toggleMenu() {
+      menuOpen = !menuOpen;
+      mobileMenu.style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';
+    }
+
+    // Scroll Progress
+    const progressBar = document.getElementById('progress-bar');
+    window.addEventListener('scroll', () => {
+      const total = document.body.scrollHeight - window.innerHeight;
+      progressBar.style.width = (window.scrollY / total * 100) + '%';
+    }, { passive: true });
+
+    // Header shadow on scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('shadow-md', window.scrollY > 20);
+    }, { passive: true });
+
+    // Reveal on scroll
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.10 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Auth
+    function openAuthModal() { window.location = 'profile.html'; }
+
+    // Contact form
+    async function submitContact(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('button[type="submit"]');
+      const success = document.getElementById('cf-success');
+      const error = document.getElementById('cf-error');
+      btn.disabled = true;
+      btn.textContent = 'Отправляем...';
+      try {
+        const { error: err } = await _supabase.from('contact_messages').insert({
+          name: document.getElementById('cf-name').value,
+          email: document.getElementById('cf-email').value,
+          subject: document.getElementById('cf-subject').value,
+          message: document.getElementById('cf-message').value,
+        });
+        if (err) throw err;
+        success.classList.remove('hidden');
+        e.target.reset();
+      } catch (err) {
+        error.textContent = 'Ошибка при отправке. Напишите нам напрямую по телефону.';
+        error.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Отправить сообщение';
+      }
+    }
+  </script>
+</body>
+</html>
