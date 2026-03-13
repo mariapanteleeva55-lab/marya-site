@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Подарочный сертификат Марья</title>
+  <meta name="robots" content="noindex, nofollow"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia','Cambria','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    *{box-sizing:border-box}
+    html{font-family:'Inter',system-ui,sans-serif}
+    *,*::before,*::after{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#C4A882;border-radius:3px}
+
+    /* Дизайны сертификата */
+    .cert-design-1{background:linear-gradient(135deg,#fdf0e8 0%,#f8e0cc 50%,#f0d4ba 100%)}
+    .cert-design-2{background:linear-gradient(135deg,#1a2a3a 0%,#2d4a5c 40%,#1e3d4f 70%,#142533 100%)}
+    .cert-design-3{background:linear-gradient(135deg,#fff0f5 0%,#ffe4ec 50%,#ffd6e7 100%)}
+    .cert-design-4{background:linear-gradient(135deg,#1c1206 0%,#2c1e0a 40%,#3d2c12 70%,#1c1206 100%)}
+    .cert-design-5{background:linear-gradient(135deg,#f5f0ff 0%,#ede5ff 50%,#e2d4ff 100%)}
+    .cert-design-6{background:linear-gradient(135deg,#edfaf4 0%,#d8f5e8 50%,#c5eedd 100%)}
+
+    .cert-card{
+      width:100%;max-width:560px;margin:0 auto;
+      aspect-ratio:1.586/1;border-radius:20px;overflow:hidden;
+      position:relative;box-shadow:0 24px 80px rgba(44,32,24,.25);
+    }
+
+    .fade-in{animation:fadeUp .5s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    .shimmer{
+      position:absolute;inset:0;
+      background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.06) 50%,transparent 100%);
+      animation:shimmer 2.5s infinite;
+    }
+    @keyframes shimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+
+    /* Статус-бейдж */
+    .badge-active{background:rgba(139,168,136,.15);color:#5a8a57;border:1px solid rgba(139,168,136,.3)}
+    .badge-used{background:rgba(122,106,90,.1);color:#7A6A5A;border:1px solid rgba(122,106,90,.2)}
+    .badge-expired{background:rgba(224,82,82,.1);color:#e05252;border:1px solid rgba(224,82,82,.2)}
+    .badge-partial{background:rgba(212,149,106,.12);color:#D4956A;border:1px solid rgba(212,149,106,.25)}
+    .badge-pending{background:rgba(122,106,90,.1);color:#7A6A5A;border:1px solid rgba(122,106,90,.2)}
+
+    #pdf-template{position:fixed;left:-9999px;top:0;z-index:-1;width:800px;height:504px}
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
+
+<!-- Header -->
+<header class="h-[60px] flex items-center border-b border-sand/50 dark:border-sand-dark/30 px-6">
+  <a href="index.html" class="flex items-center gap-2">
+    <img src="лого новый-nobg.png" alt="Марья" style="height:28px;width:auto;">
+  </a>
+</header>
+
+<!-- Состояние: загрузка -->
+<div id="state-loading" class="flex items-center justify-center min-h-[60vh]">
+  <div class="text-center">
+    <div class="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+    <p class="text-sm text-muted dark:text-muted-dark">Загрузка сертификата...</p>
+  </div>
+</div>
+
+<!-- Состояние: не найден -->
+<div id="state-not-found" class="hidden flex items-center justify-center min-h-[60vh] px-4">
+  <div class="text-center max-w-sm">
+    <div class="text-5xl mb-4">🎁</div>
+    <h1 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Сертификат не найден</h1>
+    <p class="text-sm text-muted dark:text-muted-dark mb-6">Проверьте правильность кода или обратитесь в службу заботы.</p>
+    <a href="index.html" class="inline-block px-6 py-3 bg-accent text-white rounded-full text-sm font-semibold hover:bg-accent/90 transition-colors">
+      На главную
+    </a>
+  </div>
+</div>
+
+<!-- Состояние: сертификат найден -->
+<div id="state-cert" class="hidden">
+  <main class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+
+    <!-- Шапка -->
+    <div class="text-center mb-8 fade-in">
+      <p class="text-xs font-semibold tracking-[.2em] text-muted dark:text-muted-dark uppercase mb-2">Марья · Подарочный сертификат</p>
+      <h1 class="font-serif text-2xl sm:text-3xl text-ink dark:text-ink-dark">
+        Для вас — <span id="cert-recipient-name">...</span>
+      </h1>
+    </div>
+
+    <!-- Карточка сертификата -->
+    <div class="cert-card mb-6 fade-in" id="cert-card-box">
+      <!-- Заполняется JS -->
+    </div>
+
+    <!-- Сообщение от дарителя -->
+    <div id="cert-message-box" class="hidden mb-6 fade-in">
+      <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 text-center">
+        <p class="text-xl mb-2">💌</p>
+        <p class="text-sm italic text-ink dark:text-ink-dark leading-relaxed" id="cert-message-text"></p>
+        <p class="text-xs text-muted dark:text-muted-dark mt-3">— <span id="cert-sender-name">...</span></p>
+      </div>
+    </div>
+
+    <!-- Детали сертификата -->
+    <div class="grid sm:grid-cols-2 gap-4 mb-6 fade-in">
+
+      <!-- Баланс -->
+      <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-cream dark:bg-cream-dark">
+        <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-2">Баланс сертификата</p>
+        <div class="flex items-end gap-2">
+          <p class="font-serif text-3xl text-ink dark:text-ink-dark" id="cert-balance">—</p>
+          <p class="text-sm text-muted dark:text-muted-dark mb-1" id="cert-nominal-hint"></p>
+        </div>
+        <!-- Прогресс-бар использования -->
+        <div class="mt-3 h-1.5 bg-sand dark:bg-sand-dark/40 rounded-full overflow-hidden">
+          <div class="h-full bg-accent rounded-full transition-all duration-500" id="cert-balance-bar" style="width:100%"></div>
+        </div>
+        <div class="mt-1 flex justify-between text-[10px] text-muted dark:text-muted-dark">
+          <span>0 ₽</span>
+          <span id="cert-nominal-label">—</span>
+        </div>
+      </div>
+
+      <!-- Инфо -->
+      <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-cream dark:bg-cream-dark space-y-3">
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark">Статус</p>
+          <span class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold" id="cert-status-badge">—</span>
+        </div>
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark">Код</p>
+          <p class="text-sm font-semibold font-mono tracking-wider text-ink dark:text-ink-dark mt-0.5" id="cert-code-display">—</p>
+        </div>
+        <div>
+          <p class="text-xs text-muted dark:text-muted-dark">Действителен до</p>
+          <p class="text-sm font-semibold text-ink dark:text-ink-dark mt-0.5" id="cert-expires">—</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- История использования -->
+    <div id="cert-history-box" class="hidden mb-6 fade-in">
+      <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40">
+        <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">История использования</p>
+        <div id="cert-history-list" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div class="flex flex-col sm:flex-row gap-3 fade-in">
+      <a href="catalog.html" id="btn-use-cert"
+        class="flex-1 py-4 bg-accent hover:bg-accent/90 text-white font-bold rounded-full text-center text-sm shadow-lg shadow-accent/25 transition-all hover:-translate-y-0.5">
+        Потратить в каталоге →
+      </a>
+      <button onclick="downloadPDF()" id="btn-pdf"
+        class="flex-1 py-4 border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold rounded-full text-sm transition-all">
+        Скачать PDF
+      </button>
+    </div>
+
+    <!-- Инструкция -->
+    <div class="mt-8 p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 fade-in">
+      <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">Как использовать</p>
+      <ol class="space-y-2 text-sm text-muted dark:text-muted-dark">
+        <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs flex-shrink-0 mt-0.5">1</span>Выберите товары в каталоге и добавьте в корзину</li>
+        <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs flex-shrink-0 mt-0.5">2</span>При оформлении заказа найдите поле «Подарочный сертификат»</li>
+        <li class="flex items-start gap-2"><span class="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-xs flex-shrink-0 mt-0.5">3</span>Введите код <strong id="cert-code-hint" class="text-ink dark:text-ink-dark">—</strong> и нажмите «Применить»</li>
+      </ol>
+    </div>
+
+  </main>
+</div>
+
+<!-- PDF шаблон -->
+<div id="pdf-template"></div>
+
+<!-- ══════════════════════ JS ══════════════════════ -->
+<script>
+const _supabase = window.supabase.createClient(
+  'https://cizdsiqolarjcgmwbafp.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+);
+
+const DESIGNS = {
+  1: { name: 'Ботанический',    cls: 'cert-design-1', textColor: '#2C2018',  mutedColor: '#7A6A5A' },
+  2: { name: 'Северная ночь',   cls: 'cert-design-2', textColor: '#FFFFFF',  mutedColor: 'rgba(255,255,255,.6)' },
+  3: { name: 'Сакура',          cls: 'cert-design-3', textColor: '#831843',  mutedColor: 'rgba(131,24,67,.6)' },
+  4: { name: 'Золотая роскошь', cls: 'cert-design-4', textColor: '#FEF08A',  mutedColor: 'rgba(254,240,138,.6)' },
+  5: { name: 'Лаванда',         cls: 'cert-design-5', textColor: '#4C1D95',  mutedColor: 'rgba(76,29,149,.6)' },
+  6: { name: 'Свежесть',        cls: 'cert-design-6', textColor: '#14532D',  mutedColor: 'rgba(20,83,45,.6)' },
+};
+
+let certData = null;
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function formatDate(d){
+  if (!d) return '—';
+  const dt = typeof d === 'string' ? d.split('T')[0] : d;
+  const [y,m,da] = dt.split('-');
+  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  return `${parseInt(da)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+function buildCertCardHTML(cert, forPDF){
+  const d = DESIGNS[cert.design_id] || DESIGNS[1];
+  const size = forPDF ? 'width:800px;height:504px;' : 'width:100%;height:100%;';
+  const fBase  = forPDF ? '18px' : 'clamp(12px,2.2vw,18px)';
+  const fSmall = forPDF ? '13px' : 'clamp(9px,1.5vw,13px)';
+  const fNom   = forPDF ? '38px' : 'clamp(22px,5vw,38px)';
+  const fRecip = forPDF ? '24px' : 'clamp(14px,3vw,22px)';
+  const expDate = cert.expires_at ? formatDate(cert.expires_at.split('T')[0]) : '—';
+
+  return `
+  <div class="${d.cls}" style="position:relative;${size}border-radius:${forPDF?'20px':'0'};overflow:hidden;font-family:'Georgia',serif;">
+    <div class="shimmer"></div>
+    <div style="position:absolute;inset:0;opacity:.06;">
+      <svg width="100%" height="100%" viewBox="0 0 400 252" preserveAspectRatio="xMidYMid slice">
+        <pattern id="pp${d.cls}" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="1" fill="${d.textColor}"/>
+        </pattern>
+        <rect width="400" height="252" fill="url(#pp${d.cls})"/>
+      </svg>
+    </div>
+    <div style="position:absolute;inset:12px;border:1px solid ${d.textColor};opacity:.15;border-radius:12px;"></div>
+    <div style="position:absolute;left:28px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px 0;">
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};letter-spacing:.25em;text-transform:uppercase;color:${d.mutedColor};margin-bottom:4px;">МАРЬЯ</p>
+        <p style="font-family:'Georgia',serif;font-size:${fBase};color:${d.textColor};margin:0;">Подарочный</p>
+        <p style="font-family:'Georgia',serif;font-size:${fBase};color:${d.textColor};margin:0;">сертификат</p>
+      </div>
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-bottom:2px;">Для</p>
+        <p style="font-family:'Georgia',serif;font-size:${fRecip};color:${d.textColor};margin:0;">${escHtml(cert.recipient_name)}</p>
+        ${cert.message ? `<p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-top:4px;max-width:180px;line-height:1.4;">"${escHtml(cert.message.substring(0,60))}${cert.message.length>60?'…':''}"</p>` : ''}
+      </div>
+    </div>
+    <div style="position:absolute;right:28px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px 0;text-align:right;">
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};letter-spacing:.2em;text-transform:uppercase;color:${d.mutedColor};">Номинал</p>
+        <p style="font-family:'Georgia',serif;font-size:${fNom};color:${d.textColor};margin:0;line-height:1.1;">${cert.nominal.toLocaleString('ru-RU')} ₽</p>
+        ${cert.balance < cert.nominal ? `<p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-top:2px;">Остаток: ${cert.balance.toLocaleString('ru-RU')} ₽</p>` : ''}
+      </div>
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-bottom:2px;">Код сертификата</p>
+        <p style="font-family:'Inter',sans-serif;font-size:${forPDF?'16px':'clamp(10px,1.8vw,14px)'};font-weight:600;letter-spacing:.12em;color:${d.textColor};">${cert.code}</p>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-top:4px;">До ${expDate}</p>
+      </div>
+    </div>
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);opacity:.04;">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="48" stroke="${d.textColor}" stroke-width="2"/>
+        <circle cx="50" cy="50" r="36" stroke="${d.textColor}" stroke-width="1"/>
+        <path d="M50 14 L50 86 M14 50 L86 50" stroke="${d.textColor}" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function getStatusInfo(cert){
+  const now = new Date();
+  const exp = cert.expires_at ? new Date(cert.expires_at) : null;
+  if (exp && exp < now) return { label: 'Истёк', cls: 'badge-expired' };
+  switch(cert.status){
+    case 'active':          return { label: 'Активен',               cls: 'badge-active' };
+    case 'partially_used':  return { label: 'Частично использован',  cls: 'badge-partial' };
+    case 'used':            return { label: 'Использован полностью', cls: 'badge-used' };
+    case 'scheduled':       return { label: 'Ожидает отправки',      cls: 'badge-pending' };
+    case 'pending_payment': return { label: 'Ожидает оплаты',        cls: 'badge-pending' };
+    default:                return { label: cert.status,              cls: 'badge-pending' };
+  }
+}
+
+function renderCert(cert){
+  certData = cert;
+  const d = DESIGNS[cert.design_id] || DESIGNS[1];
+
+  // Карточка
+  document.getElementById('cert-card-box').innerHTML = buildCertCardHTML(cert, false);
+
+  // Имя получателя
+  document.getElementById('cert-recipient-name').textContent = cert.recipient_name;
+
+  // Сообщение
+  if (cert.message) {
+    document.getElementById('cert-message-box').classList.remove('hidden');
+    document.getElementById('cert-message-text').textContent = cert.message;
+    document.getElementById('cert-sender-name').textContent  = cert.sender_name;
+  }
+
+  // Баланс
+  document.getElementById('cert-balance').textContent = cert.balance.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('cert-nominal-hint').textContent = 'из ' + cert.nominal.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('cert-nominal-label').textContent = cert.nominal.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('cert-balance-bar').style.width = (cert.balance / cert.nominal * 100) + '%';
+
+  // Инфо
+  const statusInfo = getStatusInfo(cert);
+  const badge = document.getElementById('cert-status-badge');
+  badge.textContent = statusInfo.label;
+  badge.className = 'inline-block mt-1 px-2.5 py-0.5 rounded-full text-xs font-semibold ' + statusInfo.cls;
+
+  document.getElementById('cert-code-display').textContent = cert.code;
+  document.getElementById('cert-code-hint').textContent    = cert.code;
+  document.getElementById('cert-expires').textContent      = formatDate(cert.expires_at ? cert.expires_at.split('T')[0] : null);
+
+  // История использования
+  if (cert.used_in_orders && cert.used_in_orders.length > 0) {
+    document.getElementById('cert-history-box').classList.remove('hidden');
+    document.getElementById('cert-history-list').innerHTML = cert.used_in_orders.map(op => `
+      <div class="flex justify-between items-center text-sm py-1.5 border-b border-sand/50 dark:border-sand-dark/20 last:border-0">
+        <span class="text-muted dark:text-muted-dark">Заказ #${escHtml(op.order_id || '—')}</span>
+        <span class="font-semibold text-ink dark:text-ink-dark">−${Number(op.amount || 0).toLocaleString('ru-RU')} ₽</span>
+      </div>
+    `).join('');
+  }
+
+  // Отключить кнопку если нельзя использовать
+  if (['used','expired','pending_payment','scheduled'].includes(cert.status)){
+    const btn = document.getElementById('btn-use-cert');
+    btn.className = btn.className.replace('bg-accent hover:bg-accent/90','bg-sand dark:bg-sand-dark/40').replace('text-white','text-muted dark:text-muted-dark');
+    btn.textContent = cert.status === 'used' ? 'Сертификат использован' : 'Сертификат неактивен';
+    btn.removeAttribute('href');
+  }
+
+  // Показать
+  document.getElementById('state-loading').classList.add('hidden');
+  document.getElementById('state-cert').classList.remove('hidden');
+}
+
+async function loadCert(){
+  const code = new URLSearchParams(location.search).get('code');
+
+  if (!code) {
+    document.getElementById('state-loading').classList.add('hidden');
+    document.getElementById('state-not-found').classList.remove('hidden');
+    return;
+  }
+
+  try {
+    const { data, error } = await _supabase
+      .from('gift_certificates')
+      .select('*')
+      .eq('code', code.toUpperCase())
+      .single();
+
+    if (error || !data) {
+      document.getElementById('state-loading').classList.add('hidden');
+      document.getElementById('state-not-found').classList.remove('hidden');
+      return;
+    }
+
+    renderCert(data);
+  } catch(e){
+    document.getElementById('state-loading').classList.add('hidden');
+    document.getElementById('state-not-found').classList.remove('hidden');
+  }
+}
+
+async function downloadPDF(){
+  if (!certData) return;
+  const btn = document.getElementById('btn-pdf');
+  btn.textContent = 'Генерация...';
+  btn.disabled = true;
+
+  try {
+    const tpl = document.getElementById('pdf-template');
+    tpl.innerHTML = buildCertCardHTML(certData, true);
+
+    await new Promise(r => setTimeout(r, 200));
+
+    const canvas = await html2canvas(tpl.firstChild, {
+      scale: 2, useCORS: true,
+      backgroundColor: null,
+      width: 800, height: 504,
+    });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [210, 132.5] });
+    pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 132.5);
+    pdf.save(`Сертификат-Марья-${certData.code}.pdf`);
+    tpl.innerHTML = '';
+  } finally {
+    btn.textContent = 'Скачать PDF';
+    btn.disabled = false;
+  }
+}
+
+// Dark mode
+if (localStorage.getItem('marya_dark') === '1') document.documentElement.classList.add('dark');
+
+document.addEventListener('DOMContentLoaded', loadCert);
+</script>
+</body>
+</html>

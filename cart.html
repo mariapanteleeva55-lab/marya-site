@@ -29,6 +29,10 @@
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box}
@@ -226,10 +230,10 @@
           </div>
         </div>
       </div>
-      <a href="brand.html"            class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
-      <a href="quiz.html"             class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
-      <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
-      <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+      <a href="brand.html"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="quiz.html"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+      <a href="blog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+      <a href="contacts.html"   class="hover:text-ink dark:hover:text-ink-dark transition-colors">Контакты</a>
     </nav>
     <div class="flex items-center gap-3">
       <a href="catalog.html" class="hidden sm:flex p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors">
@@ -248,9 +252,22 @@
         <span class="hidden dark:block">🌙</span>
         <span class="hidden sm:block">Ночной</span>
       </button>
+      <button onclick="toggleMenu()" class="lg:hidden p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Меню">
+        <svg class="w-5 h-5 text-ink dark:text-ink-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
     </div>
   </div>
 </header>
+<div id="mobile-menu" class="lg:hidden fixed inset-x-0 bottom-0 bg-cream dark:bg-cream-dark border-t border-sand/40 dark:border-sand-dark/20 rounded-t-2xl p-6 z-[60] transition-transform duration-300" style="transform:translateY(100%)">
+  <div class="flex flex-col gap-4 text-base font-medium">
+    <a href="catalog.html"  onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
+    <a href="brand.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
+    <a href="quiz.html"     onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
+    <a href="blog.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+    <a href="contacts.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Контакты</a>
+  </div>
+</div>
+<div id="menu-overlay" class="lg:hidden fixed inset-0 z-[55] bg-ink/30 backdrop-blur-sm hidden" onclick="toggleMenu()"></div>
 
 <main class="pt-[60px]">
 
@@ -350,13 +367,16 @@
             </div>
 
             <!-- Loyalty points -->
-            <div class="flex items-center justify-between p-3 rounded-xl bg-sand/30 dark:bg-sand-dark/15 mb-4">
-              <div class="flex items-center gap-2 text-sm">
-                <span class="text-warm dark:text-warm-dark">◈</span>
-                <span id="bonus-balance-text" class="text-ink dark:text-ink-dark font-medium">0 баллов</span>
-                <span id="bonus-tier-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-sand dark:bg-sand-dark/40 text-muted dark:text-muted-dark font-medium">Старт</span>
+            <div class="p-3 rounded-xl bg-sand/30 dark:bg-sand-dark/15 mb-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm">
+                  <span class="text-warm dark:text-warm-dark">◈</span>
+                  <span id="bonus-balance-text" class="text-ink dark:text-ink-dark font-medium">0 баллов</span>
+                  <span id="bonus-tier-badge" class="text-[10px] px-1.5 py-0.5 rounded-full bg-sand dark:bg-sand-dark/40 text-muted dark:text-muted-dark font-medium">Старт</span>
+                </div>
+                <button id="points-btn" onclick="togglePoints()" class="text-xs text-accent dark:text-accent-dark font-semibold hover:opacity-80 transition-opacity">Применить</button>
               </div>
-              <button id="points-btn" onclick="togglePoints()" class="text-xs text-accent dark:text-accent-dark font-semibold hover:opacity-80 transition-opacity">Применить</button>
+              <p class="mt-1.5 text-[10px] text-muted dark:text-muted-dark">1 балл = 1 ₽ · можно оплатить до 30% стоимости заказа</p>
             </div>
 
             <!-- Totals -->
@@ -370,8 +390,12 @@
                 <span id="sum-discount">−437 ₽</span>
               </div>
               <div id="row-points" class="flex justify-between text-warm dark:text-warm-dark hidden">
-                <span>Баллы лояльности</span>
-                <span>−34 ₽</span>
+                <span>Баллы (до 30% заказа)</span>
+                <span id="sum-points">—</span>
+              </div>
+              <div id="row-cert" class="flex justify-between text-accent hidden">
+                <span>Сертификат</span>
+                <span id="sum-cert">—</span>
               </div>
               <div class="flex justify-between text-muted dark:text-muted-dark">
                 <span>Доставка</span>
@@ -656,6 +680,38 @@
             <p class="text-xs text-muted dark:text-muted-dark">или откройте приложение банка и выберите «Оплата по СБП»</p>
           </div>
 
+          <!-- Подарочный сертификат -->
+          <div class="mb-6">
+            <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest mb-3">Подарочный сертификат</p>
+            <div id="cert-input-wrap" class="flex gap-2">
+              <input id="cert-code-input" type="text" placeholder="MARYA-XXXX-XXXX"
+                class="flex-1 px-4 py-2.5 border-1.5 border border-sand dark:border-sand-dark/50 rounded-xl bg-cream dark:bg-[#211A14] text-sm font-mono tracking-wider text-ink dark:text-ink-dark outline-none focus:border-accent transition-colors placeholder:text-muted dark:placeholder:text-muted-dark uppercase"
+                oninput="this.value=this.value.toUpperCase()" maxlength="16">
+              <button onclick="applyCert()" id="btn-apply-cert"
+                class="px-4 py-2.5 bg-accent hover:bg-accent/90 text-white text-sm font-semibold rounded-xl transition-colors whitespace-nowrap">
+                Применить
+              </button>
+            </div>
+            <!-- Результат проверки -->
+            <div id="cert-error" class="hidden mt-2 text-xs text-red-500 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 8v4M12 16h.01" stroke-width="2" stroke-linecap="round"/></svg>
+              <span id="cert-error-text">—</span>
+            </div>
+            <!-- Применённый сертификат -->
+            <div id="cert-applied" class="hidden mt-2 p-3 rounded-xl border border-sage/30 dark:border-sage-dark/30 bg-sage/5 dark:bg-sage-dark/5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                  <svg class="w-4 h-4 text-sage dark:text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg>
+                  <div>
+                    <p class="text-xs font-semibold text-ink dark:text-ink-dark" id="cert-applied-code">—</p>
+                    <p class="text-[11px] text-muted dark:text-muted-dark" id="cert-applied-balance">—</p>
+                  </div>
+                </div>
+                <button onclick="removeCert()" class="text-xs text-muted dark:text-muted-dark hover:text-red-400 transition-colors">Удалить</button>
+              </div>
+            </div>
+          </div>
+
           <!-- Subscription toggle -->
           <div class="flex items-start gap-3 p-4 rounded-2xl border border-sage/20 dark:border-sage-dark/20 bg-sage/5 dark:bg-sage-dark/5 mb-8">
             <div class="sub-toggle mt-0.5" id="sub-toggle" onclick="toggleSubscription()">
@@ -833,14 +889,70 @@
 </main>
 
 <!-- Footer -->
-<footer class="border-t border-sand/40 dark:border-sand-dark/20 bg-sand/10 dark:bg-sand-dark/5 py-8 mt-8">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted dark:text-muted-dark">
-    <a href="index.html" class="font-serif text-xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
-    <p>© 2026 Марья · D2C уход за кожей</p>
-    <div class="flex gap-4">
-      <a href="#" class="hover:text-accent transition-colors">Доставка</a>
-      <a href="#" class="hover:text-accent transition-colors">Гарантия качества</a>
-      <a href="#" class="hover:text-accent transition-colors">Конфиденциальность</a>
+<footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-12">
+      <div class="sm:col-span-2 lg:col-span-1">
+        <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+        <p class="text-sm leading-relaxed mb-4">Регенеративная косметика. Честные формулы, научный подход.</p>
+        <div class="flex gap-3">
+          <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
+          <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
+          <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">WA</a>
+        </div>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="catalog.html?zone=face" class="hover:text-cream transition-colors">Лицо</a></li>
+          <li><a href="catalog.html?zone=hair" class="hover:text-cream transition-colors">Волосы</a></li>
+          <li><a href="catalog.html?zone=body" class="hover:text-cream transition-colors">Тело</a></li>
+          <li><a href="catalog.html?zone=hands" class="hover:text-cream transition-colors">Руки/ноги</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Клиентам</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="quiz.html" class="hover:text-cream transition-colors">Онлайн-подбор ухода</a></li>
+          <li><a href="gift-certificate.html" class="hover:text-cream transition-colors">Подарочные сертификаты</a></li>
+          <li><a href="profile.html#bonus" class="hover:text-cream transition-colors">Бонусная программа</a></li>
+          <li><a href="blog.html" class="hover:text-cream transition-colors">Блог и новости</a></li>
+          <li><a href="sales.html" class="hover:text-cream transition-colors">Акции</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Онлайн-покупки</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="#" class="hover:text-cream transition-colors">Вопросы и ответы</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Договор оферты</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Оплата и доставка</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Возврат</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Конфиденциальность</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Алгоритм рекомендаций</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Правила публикации</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Пользовательское соглашение</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Связаться с нами</div>
+        <ul class="space-y-2 text-sm">
+          <li><a href="contacts.html" class="hover:text-cream transition-colors">Служба заботы ♡</a></li>
+          <li><a href="#" class="hover:text-cream transition-colors">Бот в Telegram</a></li>
+          <li><a href="tel:+78007771739" class="hover:text-cream transition-colors">8 (800) 777-17-39</a></li>
+          <li><a href="mailto:info@marya-cosmetics.ru" class="hover:text-cream transition-colors">info@marya-cosmetics.ru</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+      <div>© 2026 Марья. Все права защищены.</div>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
+        <a href="#" class="hover:text-cream transition-colors">Оферта</a>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center gap-2 text-sm text-cream/60 hover:text-cream transition-colors">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1.2" opacity="0.4"/><path d="M14 19V9M9 14l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Наверх
+        </button>
+      </div>
     </div>
   </div>
 </footer>
@@ -921,6 +1033,7 @@ let state = {
   deliveryCost: 0,
   payMethod: 'card',
   step: 1,
+  cert: null,       // { code, balance, nominal }
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────
@@ -959,12 +1072,63 @@ function pointsDiscount(){
   if (!state.usePoints) return 0;
   const balance = getBonus().balance;
   const orderBase = subtotal() - discount() - subDiscount() + deliveryCost();
-  const maxDiscount = Math.floor(orderBase * 0.5); // не более 50% заказа
+  const maxDiscount = Math.floor(orderBase * 0.3); // не более 30% заказа
   return Math.min(balance, maxDiscount);
 }
 function subDiscount(){ return state.subscription ? Math.round((subtotal()-discount())*0.15) : 0; }
+function certDiscount(){
+  if (!state.cert) return 0;
+  const orderBase = subtotal() - discount() - pointsDiscount() - subDiscount() + deliveryCost();
+  return Math.min(state.cert.balance, Math.max(0, orderBase));
+}
 function total(){
-  return subtotal() - discount() - pointsDiscount() - subDiscount() + deliveryCost();
+  return Math.max(0, subtotal() - discount() - pointsDiscount() - subDiscount() - certDiscount() + deliveryCost());
+}
+
+// ── GIFT CERTIFICATE ──────────────────────────────────────────────
+async function applyCert(){
+  const code = (document.getElementById('cert-code-input').value || '').trim().toUpperCase();
+  if (!code) return;
+
+  const btn = document.getElementById('btn-apply-cert');
+  btn.textContent = '...';
+  btn.disabled = true;
+  document.getElementById('cert-error').classList.add('hidden');
+
+  try {
+    const { data, error } = await _supabase.rpc('check_gift_certificate', { p_code: code });
+    if (error) throw error;
+
+    if (!data.valid) {
+      document.getElementById('cert-error-text').textContent = data.error || 'Сертификат недействителен';
+      document.getElementById('cert-error').classList.remove('hidden');
+      return;
+    }
+
+    state.cert = { code, balance: data.balance, nominal: data.nominal };
+
+    document.getElementById('cert-input-wrap').classList.add('hidden');
+    document.getElementById('cert-applied').classList.remove('hidden');
+    document.getElementById('cert-applied-code').textContent = code;
+    document.getElementById('cert-applied-balance').textContent =
+      'Баланс: ' + data.balance.toLocaleString('ru-RU') + ' ₽';
+    updateSummary();
+  } catch(e){
+    document.getElementById('cert-error-text').textContent = 'Ошибка проверки сертификата';
+    document.getElementById('cert-error').classList.remove('hidden');
+  } finally {
+    btn.textContent = 'Применить';
+    btn.disabled = false;
+  }
+}
+
+function removeCert(){
+  state.cert = null;
+  document.getElementById('cert-code-input').value = '';
+  document.getElementById('cert-input-wrap').classList.remove('hidden');
+  document.getElementById('cert-applied').classList.add('hidden');
+  document.getElementById('cert-error').classList.add('hidden');
+  updateSummary();
 }
 
 // ── RENDER CART ───────────────────────────────────────────────────
@@ -1069,6 +1233,13 @@ function updateSummary(){
     document.getElementById('sum-discount').textContent = '−' + fmt(disc + sub_);
   } else { rowDisc.classList.add('hidden'); }
 
+  // Сертификат
+  const certDisc = certDiscount();
+  const rowCert = document.getElementById('row-cert');
+  if (rowCert) { rowCert.classList.toggle('hidden', certDisc === 0); }
+  const certEl = document.getElementById('sum-cert');
+  if (certEl) certEl.textContent = certDisc > 0 ? '−' + fmt(certDisc) : '—';
+
   document.getElementById('row-points').classList.toggle('hidden', !state.usePoints);
   document.getElementById('sum-delivery').textContent = del === 0 ? 'Бесплатно' : fmt(del);
   document.getElementById('sum-delivery').className   = del === 0 ? 'text-sage dark:text-sage-dark font-medium' : 'text-ink dark:text-ink-dark';
@@ -1087,12 +1258,11 @@ function updateSummary(){
        tier.name === 'Серебро' ? 'bg-slate-100 text-slate-600 dark:bg-slate-800/40 dark:text-slate-400' :
                                  'bg-sand dark:bg-sand-dark/40 text-muted dark:text-muted-dark');
   }
-  // Скрываем кнопку баллов если баланс 0
-  const pointsBlock = document.getElementById('points-btn')?.closest('.flex.items-center.justify-between');
-  if (pointsBlock) pointsBlock.style.display = bonus.balance > 0 ? '' : 'none';
-  if (state.usePoints && pts > 0) {
-    document.getElementById('sum-points') && (document.getElementById('sum-points').textContent = '−' + fmt(pts));
-  }
+  // Скрываем блок баллов если баланс 0
+  const pointsWrap = document.getElementById('points-btn')?.closest('.p-3.rounded-xl');
+  if (pointsWrap) pointsWrap.style.display = bonus.balance > 0 ? '' : 'none';
+  const sumPts = document.getElementById('sum-points');
+  if (sumPts) sumPts.textContent = pts > 0 ? '−' + fmt(pts) : '—';
 }
 
 function updateDeliveryBanner(){
@@ -1372,6 +1542,17 @@ async function placeOrder(){
     await creditPartnerReward(session.user.id, orderId, orderTotal);
   }
 
+  // Списать сертификат (для всех — авторизованных и нет)
+  if (state.cert && certDiscount() > 0) {
+    try {
+      await _supabase.rpc('apply_gift_certificate', {
+        p_code: state.cert.code,
+        p_order_id: orderId,
+        p_amount: certDiscount(),
+      });
+    } catch(e){ console.warn('Ошибка списания сертификата:', e); }
+  }
+
   document.getElementById('success-order-num').textContent    = orderId;
   document.getElementById('success-delivery-date').textContent = dateStr;
   const messengerNames = {telegram:'Telegram',whatsapp:'WhatsApp',vk:'ВКонтакте',push:'Push-уведомление'};
@@ -1470,6 +1651,13 @@ function showToast(msg){
 }
 
 // ── DARK MODE ─────────────────────────────────────────────────────
+function toggleMenu() {
+  const m = document.getElementById('mobile-menu');
+  const o = document.getElementById('menu-overlay');
+  const open = m.style.transform === 'translateY(0%)';
+  m.style.transform = open ? 'translateY(100%)' : 'translateY(0%)';
+  o.classList.toggle('hidden', open);
+}
 function toggleDark(){
   document.documentElement.classList.toggle('dark');
   localStorage.setItem('marya-theme', document.documentElement.classList.contains('dark')?'dark':'light');

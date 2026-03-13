@@ -95,6 +95,10 @@
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
@@ -294,7 +298,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
       <!-- Логотип -->
-      <a href="#"></a>
+      <a href="index.html">
+        <img src="лого новый-nobg.png" alt="Марья" style="height:30px;width:auto;">
+      </a>
 
       <!-- Навигация (desktop) -->
       <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
@@ -348,7 +354,7 @@
         </div>
         <a href="brand.html"   class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
         <a href="quiz.html"    class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
-        <a href="#blog"        class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+        <a href="blog.html"    class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
         <a href="contacts.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Контакты</a>
       </nav>
 
@@ -399,7 +405,7 @@
       <a href="catalog.html"  onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
       <a href="brand.html"    onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
       <a href="quiz.html"     onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
-      <a href="#blog"         onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+      <a href="blog.html"     onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
       <a href="contacts.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Контакты</a>
     </div>
   </div>
@@ -496,7 +502,7 @@
           <div id="hero-img-wrap" class="hero-image-wrap relative w-[260px] h-[320px] sm:w-[340px] sm:h-[410px] lg:w-[400px] lg:h-[480px]">
             <!-- Главный блоб с изображением -->
             <div class="hero-fade-bottom absolute inset-0 rounded-[40%_60%_60%_40%/40%_40%_60%_60%] overflow-hidden bg-gradient-to-br from-sand to-warm/60 dark:from-sand-dark dark:to-warm-dark/40 blob">
-              <img src="девушка мажет на лицо крем.png" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal"/>
+              <img src="девушка мажет на лицо крем.png" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal" fetchpriority="high">
             </div>
           </div>
         </div>
@@ -584,7 +590,7 @@
             <div class="bg-sand/50 dark:bg-sand-dark/30 rounded-3xl p-8 border border-sand dark:border-sand-dark/40">
               <div class="flex items-center gap-4 mb-6">
                 <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-warm/20">
-                  <img src="фото-марии-web.jpg" alt="Мария Эйрих" class="w-full h-full object-cover object-top">
+                  <img src="фото-марии-web.jpg" alt="Мария Эйрих" class="w-full h-full object-cover object-top" loading="lazy">
                 </div>
                 <div>
                   <p class="font-serif text-lg text-ink dark:text-ink-dark">Мария Эйрих</p>
@@ -669,7 +675,7 @@
           <!-- Фото -->
           <div class="w-full lg:w-1/2 reveal">
             <div class="rounded-2xl overflow-hidden" style="aspect-ratio: 4/3;">
-              <img src="российское сырье.png" alt="Российское сырьё" class="w-full h-full object-cover">
+              <img src="российское сырье.png" alt="Российское сырьё" class="w-full h-full object-cover" loading="lazy">
             </div>
           </div>
           <!-- Текст -->
@@ -812,7 +818,7 @@
             <div class="aspect-square bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/20 dark:to-amber-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="сыворотка антивозрастная 1.png" alt="Антивозрастная сыворотка с пептидами">
+                  <img src="сыворотка антивозрастная 1.png" alt="Антивозрастная сыворотка с пептидами" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full z-10">Хит</div>
@@ -842,9 +848,9 @@
             <div class="aspect-square bg-gradient-to-br from-teal-50 to-teal-100/40 dark:from-teal-950/20 dark:to-teal-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="Фото пенка для умывания.png" alt="Пенка для умывания с пребиотиками">
-                  <img src="пенка 2.png" alt="Пенка для умывания — фото 2">
-                  <img src="пенка 3.jpg" alt="Пенка для умывания — фото 3">
+                  <img src="Фото пенка для умывания.png" alt="Пенка для умывания с пребиотиками" loading="lazy">
+                  <img src="пенка 2.png" alt="Пенка для умывания — фото 2" loading="lazy">
+                  <img src="пенка 3.jpg" alt="Пенка для умывания — фото 3" loading="lazy">
                 </div>
                 <button class="slider-btn slider-prev" onclick="slideCard(this,-1,event)">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="#2C2018" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -885,7 +891,7 @@
             <div class="aspect-square bg-gradient-to-br from-amber-50 to-orange-100/40 dark:from-amber-950/20 dark:to-orange-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="крем дневной 1.png" alt="Крем дневной омолаживающий">
+                  <img src="крем дневной 1.png" alt="Крем дневной омолаживающий" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -914,7 +920,7 @@
             <div class="aspect-square bg-gradient-to-br from-purple-50 to-purple-100/40 dark:from-purple-950/20 dark:to-purple-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="крем ночь 1.png" alt="Крем ночной омолаживающий">
+                  <img src="крем ночь 1.png" alt="Крем ночной омолаживающий" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -1273,11 +1279,11 @@
   ════════════════════════════════════════════ -->
   <footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-12">
         <!-- Бренд -->
-        <div>
-          <div class="font-serif text-2xl text-cream dark:text-cream mb-3">Марья</div>
-          <p class="text-sm leading-relaxed mb-4">Простой уход, который действительно работает. Персональные рутины, честные составы.</p>
+        <div class="sm:col-span-2 lg:col-span-1">
+          <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+          <p class="text-sm leading-relaxed mb-4">Регенеративная косметика. Честные формулы, научный подход.</p>
           <div class="flex gap-3">
             <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
             <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
@@ -1288,28 +1294,45 @@
         <div>
           <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
           <ul class="space-y-2 text-sm">
-            <li><a href="catalog.html" class="hover:text-cream transition-colors">Все продукты</a></li>
-            <li><a href="catalog.html?cat=serum" class="hover:text-cream transition-colors">Сыворотки</a></li>
-            <li><a href="catalog.html?cat=cream" class="hover:text-cream transition-colors">Кремы</a></li>
-            <li><a href="catalog.html?cat=clean" class="hover:text-cream transition-colors">Очищение</a></li>
+            <li><a href="catalog.html?zone=face" class="hover:text-cream transition-colors">Лицо</a></li>
+            <li><a href="catalog.html?zone=hair" class="hover:text-cream transition-colors">Волосы</a></li>
+            <li><a href="catalog.html?zone=body" class="hover:text-cream transition-colors">Тело</a></li>
+            <li><a href="catalog.html?zone=hands" class="hover:text-cream transition-colors">Руки/ноги</a></li>
           </ul>
         </div>
-        <!-- Помощь -->
+        <!-- Клиентам -->
         <div>
-          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Помощь</div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Клиентам</div>
           <ul class="space-y-2 text-sm">
-            <li><a href="quiz.html" class="hover:text-cream transition-colors">Подобрать уход</a></li>
-            <li><a href="contacts.html#faq" class="hover:text-cream transition-colors">FAQ</a></li>
-            <li><a href="contacts.html" class="hover:text-cream transition-colors">Связаться с нами</a></li>
+            <li><a href="quiz.html" class="hover:text-cream transition-colors">Онлайн-подбор ухода</a></li>
+            <li><a href="gift-certificate.html" class="hover:text-cream transition-colors">Подарочные сертификаты</a></li>
+            <li><a href="profile.html#bonus" class="hover:text-cream transition-colors">Бонусная программа</a></li>
+            <li><a href="blog.html" class="hover:text-cream transition-colors">Блог и новости</a></li>
+            <li><a href="sales.html" class="hover:text-cream transition-colors">Акции</a></li>
           </ul>
         </div>
-        <!-- О бренде -->
+        <!-- Онлайн-покупки -->
         <div>
-          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">О бренде</div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Онлайн-покупки</div>
           <ul class="space-y-2 text-sm">
-            <li><a href="brand.html" class="hover:text-cream transition-colors">Наша история</a></li>
-            <li><a href="brand.html#quality" class="hover:text-cream transition-colors">Состав и качество</a></li>
-            <li><a href="contacts.html" class="hover:text-cream transition-colors">Контакты</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Вопросы и ответы</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Договор оферты</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Оплата и доставка</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Возврат</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Конфиденциальность</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Алгоритм рекомендаций</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Правила публикации</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Пользовательское соглашение</a></li>
+          </ul>
+        </div>
+        <!-- Связаться с нами -->
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Связаться с нами</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="contacts.html" class="hover:text-cream transition-colors">Служба заботы ♡</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Бот в Telegram</a></li>
+            <li><a href="tel:+78007771739" class="hover:text-cream transition-colors">8 (800) 777-17-39</a></li>
+            <li><a href="mailto:info@marya-cosmetics.ru" class="hover:text-cream transition-colors">info@marya-cosmetics.ru</a></li>
           </ul>
         </div>
       </div>

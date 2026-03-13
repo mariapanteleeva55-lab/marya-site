@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Подарочный сертификат — Марья</title>
+  <meta name="description" content="Подарите заботу о коже. Выберите дизайн, номинал и имя получателя — отправим сертификат по email."/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia','Cambria','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- EmailJS -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <!-- jsPDF + html2canvas для PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *{box-sizing:border-box}
+    html{font-family:'Inter',system-ui,sans-serif}
+    *,*::before,*::after{transition:background-color .3s ease,color .3s ease,border-color .3s ease}
+    ::-webkit-scrollbar{width:5px}
+    ::-webkit-scrollbar-thumb{background:#C4A882;border-radius:3px}
+
+    /* ── Прогресс-шаги ── */
+    .step-item{display:flex;align-items:center;gap:8px;flex:1}
+    .step-num{
+      width:32px;height:32px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:13px;font-weight:600;flex-shrink:0;
+      transition:all .3s ease;
+    }
+    .step-num.done{background:#D4956A;color:#fff}
+    .step-num.active{background:#D4956A;color:#fff;box-shadow:0 0 0 5px rgba(212,149,106,.18)}
+    .step-num.pending{background:#E8DDD0;color:#7A6A5A}
+    .dark .step-num.pending{background:#2A2420;color:#A89880}
+    .step-line{flex:1;height:2px;background:#E8DDD0;transition:background .4s}
+    .dark .step-line{background:#2A2420}
+    .step-line.done{background:#D4956A}
+
+    /* ── Карточки дизайнов ── */
+    .design-card{
+      position:relative;cursor:pointer;border-radius:16px;overflow:hidden;
+      border:2.5px solid transparent;transition:all .25s;
+      aspect-ratio:1.586/1; /* пропорция банковской карты */
+    }
+    .design-card:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(44,32,24,.12)}
+    .design-card.selected{border-color:#D4956A;box-shadow:0 0 0 4px rgba(212,149,106,.18),0 12px 32px rgba(44,32,24,.12);transform:translateY(-3px)}
+    .design-card .check{
+      position:absolute;top:8px;right:8px;width:24px;height:24px;border-radius:50%;
+      background:#D4956A;color:#fff;display:flex;align-items:center;justify-content:center;
+      opacity:0;transform:scale(.6);transition:all .2s;
+    }
+    .design-card.selected .check{opacity:1;transform:scale(1)}
+
+    /* ── Кнопки номинала ── */
+    .nominal-btn{
+      padding:14px 10px;border-radius:14px;text-align:center;cursor:pointer;
+      border:2px solid #E8DDD0;background:#FDF8F3;
+      font-size:15px;font-weight:600;color:#2C2018;
+      transition:all .2s;
+    }
+    .dark .nominal-btn{border-color:#2A2420;background:#211A14;color:#F5EDE4}
+    .nominal-btn:hover{border-color:#C4A882;background:rgba(232,221,208,.3)}
+    .nominal-btn.selected{
+      border-color:#D4956A;background:rgba(212,149,106,.08);color:#D4956A;
+      box-shadow:0 0 0 3px rgba(212,149,106,.12);
+    }
+
+    /* ── Поля формы ── */
+    .form-input{
+      width:100%;padding:11px 14px;
+      border:1.5px solid #E8DDD0;border-radius:12px;
+      background:#FDF8F3;color:#2C2018;font-size:14px;outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    .dark .form-input{background:#211A14;border-color:#2A2420;color:#F5EDE4}
+    .form-input:focus{border-color:#D4956A;box-shadow:0 0 0 3px rgba(212,149,106,.12)}
+    .form-input::placeholder{color:#7A6A5A}
+    .dark .form-input::placeholder{color:#A89880}
+    .form-label{display:block;font-size:12px;font-weight:500;color:#7A6A5A;margin-bottom:5px}
+    .dark .form-label{color:#A89880}
+    .has-error .form-input{border-color:#e05252}
+    .form-error{font-size:11px;color:#e05252;margin-top:3px;display:none}
+    .has-error .form-error{display:block}
+
+    /* ── Превью сертификата ── */
+    .cert-preview{
+      width:100%;max-width:520px;margin:0 auto;
+      aspect-ratio:1.586/1;border-radius:20px;overflow:hidden;
+      position:relative;box-shadow:0 20px 60px rgba(44,32,24,.2);
+    }
+
+    /* ── 6 дизайнов ── */
+    /* 1: Ботанический сад */
+    .cert-design-1{background:linear-gradient(135deg,#fdf0e8 0%,#f8e0cc 50%,#f0d4ba 100%)}
+    /* 2: Северное сияние */
+    .cert-design-2{background:linear-gradient(135deg,#1a2a3a 0%,#2d4a5c 40%,#1e3d4f 70%,#142533 100%)}
+    /* 3: Сакура */
+    .cert-design-3{background:linear-gradient(135deg,#fff0f5 0%,#ffe4ec 50%,#ffd6e7 100%)}
+    /* 4: Золото */
+    .cert-design-4{background:linear-gradient(135deg,#1c1206 0%,#2c1e0a 40%,#3d2c12 70%,#1c1206 100%)}
+    /* 5: Лаванда */
+    .cert-design-5{background:linear-gradient(135deg,#f5f0ff 0%,#ede5ff 50%,#e2d4ff 100%)}
+    /* 6: Свежесть */
+    .cert-design-6{background:linear-gradient(135deg,#edfaf4 0%,#d8f5e8 50%,#c5eedd 100%)}
+
+    /* ── Анимации ── */
+    .step-panel{display:none}
+    .step-panel.active{display:block;animation:fadeUp .4s ease-out}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+    .fade-in{animation:fadeUp .4s ease-out}
+
+    /* ── Тост ── */
+    #toast{
+      position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);
+      background:#2C2018;color:#FDF8F3;padding:12px 22px;border-radius:40px;
+      font-size:13px;font-weight:500;z-index:9999;
+      transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;
+    }
+    #toast.show{transform:translateX(-50%) translateY(0)}
+
+    /* ── Success ── */
+    .success-circle{animation:scaleIn .5s cubic-bezier(.34,1.56,.64,1) forwards}
+    @keyframes scaleIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+    .success-check{stroke-dasharray:50;stroke-dashoffset:50;animation:drawCheck .4s .3s ease forwards}
+    @keyframes drawCheck{to{stroke-dashoffset:0}}
+
+    /* ── Мега-меню ── */
+    .catalog-mega{opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity .18s ease,transform .18s ease;background-color:#FFFFFF}
+    .dark .catalog-mega{background-color:#1D1510}
+    .catalog-wrap:hover .catalog-mega{opacity:1;transform:translateY(0);pointer-events:auto}
+    .catalog-bridge{position:absolute;top:100%;left:-20px;right:-20px;height:12px}
+    .zone-btn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 10px;border-radius:6px;font-size:12px;font-weight:600;letter-spacing:.06em;color:#7A6A5A;cursor:pointer;background:none;border:none;text-align:left;text-decoration:none;transition:background .12s,color .12s}
+    .zone-btn:hover{background:rgba(232,221,208,.6);color:#2C2018}
+    .dark .zone-btn{color:#A89880}
+    .dark .zone-btn:hover{background:rgba(42,36,32,.7);color:#F5EDE4}
+    .cat-link{display:block;padding:6px 0;font-size:14px;color:#7A6A5A;text-decoration:none;transition:color .12s}
+    .cat-link:hover{color:#2C2018}
+    .dark .cat-link{color:#A89880}
+    .dark .cat-link:hover{color:#F5EDE4}
+
+    /* PDF-шаблон (скрытый) */
+    #pdf-template{position:fixed;left:-9999px;top:0;z-index:-1;width:800px;height:504px}
+  </style>
+</head>
+<body class="bg-cream dark:bg-cream-dark text-ink dark:text-ink-dark antialiased min-h-screen">
+
+<!-- ══════════════════════ HEADER ══════════════════════ -->
+<header class="fixed top-0 left-0 right-0 z-50 h-[60px] flex items-center"
+  style="background:rgba(253,248,243,.93);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
+    <a href="index.html">
+      <img src="лого новый-nobg.png" alt="Марья" style="height:30px;width:auto;">
+    </a>
+    <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
+      <div class="catalog-wrap relative">
+        <a href="catalog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Каталог</a>
+        <div class="catalog-bridge"></div>
+        <div class="catalog-mega absolute top-full left-1/2 -translate-x-1/2 mt-3 w-[480px] rounded-2xl shadow-xl border border-sand/50 dark:border-sand-dark/30 p-4 z-50">
+          <div class="grid grid-cols-3 gap-3">
+            <div>
+              <div class="zone-btn mb-1">Лицо</div>
+              <a href="catalog.html" class="cat-link">Сыворотки</a>
+              <a href="catalog.html" class="cat-link">Кремы</a>
+              <a href="catalog.html" class="cat-link">Маски</a>
+              <a href="catalog.html" class="cat-link">Тоники</a>
+            </div>
+            <div>
+              <div class="zone-btn mb-1">Тело</div>
+              <a href="catalog.html" class="cat-link">Скрабы</a>
+              <a href="catalog.html" class="cat-link">Кремы</a>
+              <a href="catalog.html" class="cat-link">Масла</a>
+            </div>
+            <div>
+              <div class="zone-btn mb-1">Волосы</div>
+              <a href="catalog.html" class="cat-link">Шампуни</a>
+              <a href="catalog.html" class="cat-link">Маски</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="brand.html"   class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+      <a href="blog.html"    class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог</a>
+      <a href="contacts.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Контакты</a>
+    </nav>
+    <div class="flex items-center gap-3">
+      <button onclick="toggleDark()" class="w-8 h-8 rounded-full border border-sand dark:border-sand-dark/60 flex items-center justify-center text-muted dark:text-muted-dark hover:border-warm/60 transition-colors" aria-label="Тема">
+        <svg class="w-3.5 h-3.5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" stroke-width="2"/><path d="M12 2v2M12 20v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M2 12h2M20 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg class="w-3.5 h-3.5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+      <a href="cart.html" class="w-8 h-8 rounded-full border border-sand dark:border-sand-dark/60 flex items-center justify-center text-muted dark:text-muted-dark hover:border-warm/60 transition-colors" aria-label="Корзина">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" stroke-width="2" stroke-linecap="round"/><line x1="3" y1="6" x2="21" y2="6" stroke-width="2" stroke-linecap="round"/><path d="M16 10a4 4 0 0 1-8 0" stroke-width="2" stroke-linecap="round"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="pt-[60px]">
+
+<!-- ══════════════════════ HERO ══════════════════════ -->
+<section class="relative overflow-hidden py-14 sm:py-20">
+  <div class="absolute inset-0 bg-gradient-to-br from-cream via-sand/20 to-cream dark:from-cream-dark dark:via-sand-dark/10 dark:to-cream-dark"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 text-center">
+    <p class="text-xs font-semibold tracking-[.2em] text-muted dark:text-muted-dark uppercase mb-3">Подарочные сертификаты</p>
+    <h1 class="font-serif text-3xl sm:text-5xl text-ink dark:text-ink-dark mb-4 leading-tight">
+      Подарите заботу о коже
+    </h1>
+    <p class="text-muted dark:text-muted-dark text-sm sm:text-base max-w-lg mx-auto">
+      Выберите дизайн, номинал и получателя — пришлём красивый сертификат на email в любую дату
+    </p>
+  </div>
+</section>
+
+<!-- ══════════════════════ WIZARD ══════════════════════ -->
+<section class="pb-20">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6">
+
+    <!-- Прогресс-бар шагов -->
+    <div class="flex items-center mb-10" id="steps-bar">
+      <div class="step-item">
+        <div class="step-num active" id="snum-1">1</div>
+        <span class="hidden sm:block text-xs font-medium text-muted dark:text-muted-dark ml-1">Дизайн</span>
+      </div>
+      <div class="step-line" id="sline-1"></div>
+      <div class="step-item">
+        <div class="step-num pending" id="snum-2">2</div>
+        <span class="hidden sm:block text-xs font-medium text-muted dark:text-muted-dark ml-1">Номинал</span>
+      </div>
+      <div class="step-line" id="sline-2"></div>
+      <div class="step-item">
+        <div class="step-num pending" id="snum-3">3</div>
+        <span class="hidden sm:block text-xs font-medium text-muted dark:text-muted-dark ml-1">Детали</span>
+      </div>
+      <div class="step-line" id="sline-3"></div>
+      <div class="step-item">
+        <div class="step-num pending" id="snum-4">4</div>
+        <span class="hidden sm:block text-xs font-medium text-muted dark:text-muted-dark ml-1">Оформление</span>
+      </div>
+    </div>
+
+    <!-- ──────────── ШАГ 1: Дизайн ──────────── -->
+    <div class="step-panel active" id="panel-1">
+      <h2 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Выберите дизайн</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-7">Шесть авторских дизайнов в стиле Марья</p>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
+
+        <!-- Дизайн 1: Ботанический -->
+        <div class="design-card cert-design-1" data-design="1" onclick="selectDesign(1)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Декоративные листья -->
+            <div class="flex gap-1 opacity-30">
+              <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 24 C4 24 10 8 24 4 C24 4 20 18 4 24Z" fill="#8BA888"/></svg>
+              <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 19 C3 19 8 6 19 3 C19 3 16 15 3 19Z" fill="#C4A882"/></svg>
+            </div>
+            <div>
+              <p class="font-serif text-ink/80 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-ink text-base leading-tight">Ботанический</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Дизайн 2: Ночь -->
+        <div class="design-card cert-design-2" data-design="2" onclick="selectDesign(2)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Звёзды -->
+            <div class="flex gap-2 opacity-60">
+              <div class="w-1 h-1 rounded-full bg-white"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-white opacity-80"></div>
+              <div class="w-1 h-1 rounded-full bg-white opacity-60"></div>
+              <div class="w-1.5 h-1.5 rounded-full bg-white"></div>
+              <div class="w-1 h-1 rounded-full bg-white opacity-40"></div>
+            </div>
+            <div>
+              <p class="font-serif text-white/60 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-white text-base leading-tight">Северная ночь</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Дизайн 3: Сакура -->
+        <div class="design-card cert-design-3" data-design="3" onclick="selectDesign(3)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Лепестки -->
+            <div class="opacity-30">
+              <svg width="40" height="30" viewBox="0 0 40 30" fill="none">
+                <ellipse cx="10" cy="15" rx="8" ry="4" fill="#D4956A" transform="rotate(-30 10 15)"/>
+                <ellipse cx="20" cy="8"  rx="8" ry="4" fill="#C4A882" transform="rotate(15 20 8)"/>
+                <ellipse cx="30" cy="18" rx="7" ry="3.5" fill="#D4956A" transform="rotate(-15 30 18)"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-serif text-pink-700/60 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-pink-800 text-base leading-tight">Сакура</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Дизайн 4: Золото -->
+        <div class="design-card cert-design-4" data-design="4" onclick="selectDesign(4)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Орнамент -->
+            <div class="opacity-40">
+              <svg width="48" height="24" viewBox="0 0 48 24" fill="none">
+                <path d="M0 12 Q12 0 24 12 Q36 24 48 12" stroke="#C4A882" stroke-width="1.5" fill="none"/>
+                <path d="M0 12 Q12 24 24 12 Q36 0 48 12" stroke="#C4A882" stroke-width="1" fill="none"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-serif text-yellow-400/60 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-yellow-300 text-base leading-tight">Золотая роскошь</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Дизайн 5: Лаванда -->
+        <div class="design-card cert-design-5" data-design="5" onclick="selectDesign(5)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Круги -->
+            <div class="opacity-20">
+              <div class="w-12 h-12 rounded-full border-2 border-purple-400"></div>
+            </div>
+            <div>
+              <p class="font-serif text-purple-500/60 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-purple-800 text-base leading-tight">Лаванда</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Дизайн 6: Свежесть -->
+        <div class="design-card cert-design-6" data-design="6" onclick="selectDesign(6)">
+          <div class="check"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round"/></svg></div>
+          <div class="absolute inset-0 p-4 flex flex-col justify-between">
+            <!-- Волна -->
+            <div class="opacity-25">
+              <svg width="60" height="20" viewBox="0 0 60 20" fill="none">
+                <path d="M0 10 Q15 0 30 10 Q45 20 60 10" stroke="#8BA888" stroke-width="2" fill="none"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-serif text-emerald-700/60 text-[10px] tracking-widest uppercase">Марья</p>
+              <p class="font-serif text-emerald-800 text-base leading-tight">Свежесть</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <button onclick="goStep(2)" id="btn-step1"
+        class="w-full py-4 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 opacity-50 cursor-not-allowed" disabled>
+        Далее — выбрать номинал →
+      </button>
+    </div>
+
+    <!-- ──────────── ШАГ 2: Номинал ──────────── -->
+    <div class="step-panel" id="panel-2">
+      <h2 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Выберите номинал</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-7">Сертификат действует 1 год с момента активации</p>
+
+      <div class="grid grid-cols-3 gap-3 mb-8">
+        <button class="nominal-btn" onclick="selectNominal(500,this)">500 ₽</button>
+        <button class="nominal-btn" onclick="selectNominal(1000,this)">1 000 ₽</button>
+        <button class="nominal-btn" onclick="selectNominal(2000,this)">2 000 ₽</button>
+        <button class="nominal-btn" onclick="selectNominal(3000,this)">3 000 ₽</button>
+        <button class="nominal-btn" onclick="selectNominal(5000,this)">5 000 ₽</button>
+        <button class="nominal-btn" onclick="selectNominal(10000,this)">10 000 ₽</button>
+      </div>
+
+      <!-- Что входит -->
+      <div class="p-4 rounded-2xl bg-sand/20 dark:bg-sand-dark/10 border border-sand dark:border-sand-dark/40 mb-8 text-sm text-muted dark:text-muted-dark space-y-2">
+        <p class="font-semibold text-ink dark:text-ink-dark text-xs uppercase tracking-widest mb-3">Сертификат включает</p>
+        <p class="flex items-center gap-2"><span class="text-accent">✓</span> Оплата любых товаров из каталога</p>
+        <p class="flex items-center gap-2"><span class="text-accent">✓</span> Можно использовать частями</p>
+        <p class="flex items-center gap-2"><span class="text-accent">✓</span> Действует 1 год с даты активации</p>
+        <p class="flex items-center gap-2"><span class="text-accent">✓</span> Красиво оформленное письмо получателю</p>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="goStep(1)" class="px-5 py-3.5 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-muted dark:text-muted-dark hover:border-warm/50 transition-colors">
+          ← Назад
+        </button>
+        <button onclick="goStep(3)" id="btn-step2"
+          class="flex-1 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5 opacity-50 cursor-not-allowed" disabled>
+          Далее — заполнить данные →
+        </button>
+      </div>
+    </div>
+
+    <!-- ──────────── ШАГ 3: Детали ──────────── -->
+    <div class="step-panel" id="panel-3">
+      <h2 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Данные сертификата</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-7">Кому, от кого и когда отправить</p>
+
+      <div class="space-y-4 mb-8">
+        <!-- От кого -->
+        <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 space-y-3">
+          <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest">Отправитель</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div id="wrap-sender-name">
+              <label class="form-label">Ваше имя *</label>
+              <input class="form-input" id="sender-name" type="text" placeholder="Мария Иванова" oninput="validateField('sender-name')">
+              <p class="form-error">Введите имя</p>
+            </div>
+            <div id="wrap-sender-email">
+              <label class="form-label">Ваш email (для квитанции) *</label>
+              <input class="form-input" id="sender-email" type="email" placeholder="mail@example.com" oninput="validateField('sender-email')">
+              <p class="form-error">Введите корректный email</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Кому -->
+        <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 space-y-3">
+          <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest">Получатель</p>
+          <div class="grid sm:grid-cols-2 gap-3">
+            <div id="wrap-rec-name">
+              <label class="form-label">Имя получателя *</label>
+              <input class="form-input" id="rec-name" type="text" placeholder="Анна Петрова" oninput="validateField('rec-name')">
+              <p class="form-error">Введите имя получателя</p>
+            </div>
+            <div id="wrap-rec-email">
+              <label class="form-label">Email получателя *</label>
+              <input class="form-input" id="rec-email" type="email" placeholder="anna@example.com" oninput="validateField('rec-email')">
+              <p class="form-error">Введите корректный email</p>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Поздравление (необязательно)</label>
+            <textarea class="form-input resize-none h-20" id="cert-message" placeholder="Напишите тёплые слова получателю..."></textarea>
+          </div>
+        </div>
+
+        <!-- Когда -->
+        <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 space-y-3">
+          <p class="text-xs font-semibold text-muted dark:text-muted-dark uppercase tracking-widest">Дата отправки</p>
+          <div class="flex gap-3">
+            <button class="flex-1 py-3 rounded-xl border-2 border-accent bg-accent/8 text-sm font-semibold text-accent transition-all" id="btn-send-now" onclick="setSendWhen('now')">
+              Отправить сразу
+            </button>
+            <button class="flex-1 py-3 rounded-xl border-2 border-sand dark:border-sand-dark/50 text-sm font-semibold text-muted dark:text-muted-dark transition-all hover:border-warm/50" id="btn-send-later" onclick="setSendWhen('later')">
+              Выбрать дату
+            </button>
+          </div>
+          <div id="date-picker-wrap" class="hidden">
+            <label class="form-label">Дата отправки</label>
+            <input class="form-input" id="send-date" type="date" min="">
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="goStep(2)" class="px-5 py-3.5 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-muted dark:text-muted-dark hover:border-warm/50 transition-colors">
+          ← Назад
+        </button>
+        <button onclick="goStep(4)" class="flex-1 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5">
+          Далее — предпросмотр →
+        </button>
+      </div>
+    </div>
+
+    <!-- ──────────── ШАГ 4: Превью + оплата ──────────── -->
+    <div class="step-panel" id="panel-4">
+      <h2 class="font-serif text-2xl text-ink dark:text-ink-dark mb-2">Ваш сертификат</h2>
+      <p class="text-sm text-muted dark:text-muted-dark mb-7">Так получатель увидит сертификат</p>
+
+      <!-- Превью сертификата -->
+      <div class="cert-preview mb-6" id="cert-preview-box">
+        <!-- Заполняется JS -->
+      </div>
+
+      <!-- Итог -->
+      <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 space-y-2.5 text-sm">
+        <div class="flex justify-between text-muted dark:text-muted-dark">
+          <span>Дизайн</span><span id="summary-design">—</span>
+        </div>
+        <div class="flex justify-between text-muted dark:text-muted-dark">
+          <span>Получатель</span><span id="summary-rec">—</span>
+        </div>
+        <div class="flex justify-between text-muted dark:text-muted-dark">
+          <span>Отправка</span><span id="summary-date">—</span>
+        </div>
+        <div class="border-t border-sand dark:border-sand-dark/40 pt-2.5 flex justify-between font-bold text-base text-ink dark:text-ink-dark">
+          <span>К оплате</span><span id="summary-total">—</span>
+        </div>
+      </div>
+
+      <button onclick="purchaseCert()" id="btn-purchase"
+        class="w-full py-4 bg-accent hover:bg-accent/90 text-white font-bold rounded-full text-base shadow-lg shadow-accent/25 transition-all hover:-translate-y-0.5 mb-3">
+        Оплатить сертификат
+      </button>
+
+      <p class="text-center text-xs text-muted dark:text-muted-dark mb-6">
+        🔒 Защищённая оплата · Тинькофф Касса · SSL
+      </p>
+
+      <div class="flex justify-start">
+        <button onclick="goStep(3)" class="text-sm text-muted dark:text-muted-dark hover:text-accent transition-colors flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+          Назад к данным
+        </button>
+      </div>
+    </div>
+
+    <!-- ──────────── ШАГ 5: Успех ──────────── -->
+    <div class="step-panel" id="panel-success">
+      <div class="text-center py-8">
+        <div class="success-circle w-20 h-20 bg-sage/15 dark:bg-sage-dark/15 rounded-full flex items-center justify-center mx-auto mb-6 border-2 border-sage/30 dark:border-sage-dark/30">
+          <svg class="w-10 h-10" viewBox="0 0 40 40" fill="none">
+            <path class="success-check" d="M10 20 L17 27 L30 14" stroke="#8BA888" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <h2 class="font-serif text-2xl sm:text-3xl text-ink dark:text-ink-dark mb-2">Сертификат оформлен!</h2>
+        <p class="text-3xl font-serif text-accent mb-6" id="success-cert-code">MARYA-XXXX-XXXX</p>
+
+        <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 text-left space-y-3 mb-6 max-w-md mx-auto">
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">📧</span>
+            <p class="text-sm text-ink dark:text-ink-dark">Квитанция отправлена на <span class="font-semibold" id="success-sender-email">—</span></p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">🎁</span>
+            <p class="text-sm text-ink dark:text-ink-dark" id="success-delivery-text">Сертификат отправлен получателю</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="text-lg mt-0.5">📅</span>
+            <p class="text-sm text-ink dark:text-ink-dark">Действителен до <span class="font-semibold" id="success-expires">—</span></p>
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+          <button onclick="downloadPDF()" id="btn-download-pdf"
+            class="flex-1 py-3.5 border-2 border-accent text-accent hover:bg-accent hover:text-white font-semibold rounded-full text-sm transition-all">
+            Скачать PDF
+          </button>
+          <a href="catalog.html"
+            class="flex-1 py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm transition-all text-center">
+            Перейти в каталог
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════ FAQ ══════════════════════ -->
+<section class="py-16 bg-sand/20 dark:bg-sand-dark/10">
+  <div class="max-w-2xl mx-auto px-4 sm:px-6">
+    <h2 class="font-serif text-2xl text-ink dark:text-ink-dark text-center mb-8">Частые вопросы</h2>
+    <div class="space-y-3">
+      <details class="group border border-sand dark:border-sand-dark/40 rounded-2xl">
+        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-semibold text-ink dark:text-ink-dark list-none">
+          Как использовать сертификат при покупке?
+          <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <p class="px-4 pb-4 text-sm text-muted dark:text-muted-dark">В корзине при оформлении заказа есть поле «Подарочный сертификат» — введите код и нажмите «Применить». Сумма автоматически спишется с баланса сертификата.</p>
+      </details>
+      <details class="group border border-sand dark:border-sand-dark/40 rounded-2xl">
+        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-semibold text-ink dark:text-ink-dark list-none">
+          Можно ли использовать сертификат частями?
+          <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <p class="px-4 pb-4 text-sm text-muted dark:text-muted-dark">Да! Если сумма заказа меньше номинала — остаток сохраняется на сертификате. Сертификат можно применять многократно до полного использования.</p>
+      </details>
+      <details class="group border border-sand dark:border-sand-dark/40 rounded-2xl">
+        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-semibold text-ink dark:text-ink-dark list-none">
+          Сколько действует сертификат?
+          <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <p class="px-4 pb-4 text-sm text-muted dark:text-muted-dark">1 год с даты активации (с даты отправки получателю). По истечении срока неиспользованный остаток сгорает.</p>
+      </details>
+      <details class="group border border-sand dark:border-sand-dark/40 rounded-2xl">
+        <summary class="flex items-center justify-between p-4 cursor-pointer text-sm font-semibold text-ink dark:text-ink-dark list-none">
+          Можно ли вернуть сертификат?
+          <svg class="w-4 h-4 text-muted transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-width="2" stroke-linecap="round"/></svg>
+        </summary>
+        <p class="px-4 pb-4 text-sm text-muted dark:text-muted-dark">Неактивированный сертификат можно вернуть в течение 14 дней с момента покупки. Напишите нам на info@marya-cosmetics.ru.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ══════════════════════ FOOTER ══════════════════════ -->
+<footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-12">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm">
+    <div class="font-serif text-cream text-xl">Марья</div>
+    <div>© 2026 Марья. Все права защищены.</div>
+    <a href="contacts.html" class="hover:text-cream transition-colors">Служба заботы</a>
+  </div>
+</footer>
+
+<!-- Тост -->
+<div id="toast"></div>
+
+<!-- PDF-шаблон (невидимый, для генерации) -->
+<div id="pdf-template"></div>
+
+<!-- ══════════════════════ JS ══════════════════════ -->
+<script>
+// ── ИНИЦИАЛИЗАЦИЯ ──────────────────────────────────────────────
+const _supabase = window.supabase.createClient(
+  'https://cizdsiqolarjcgmwbafp.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNpemRzaXFvbGFyamNnbXdiYWZwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MDEyMDIsImV4cCI6MjA4ODM3NzIwMn0.t9bEOTaTBmtzC2X4pA_elQomCwgZjEeuZCFdPAxdnK8'
+);
+
+// ── EmailJS ────────────────────────────────────────────────────
+// TODO: замените на ваши ID из emailjs.com
+const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_RECIPIENT = 'YOUR_TEMPLATE_RECIPIENT_ID'; // шаблон для получателя
+const EMAILJS_TEMPLATE_SENDER    = 'YOUR_TEMPLATE_SENDER_ID';    // шаблон-квитанция
+const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+// ── ДИЗАЙНЫ ────────────────────────────────────────────────────
+const DESIGNS = {
+  1: { name: 'Ботанический',    cls: 'cert-design-1', textColor: '#2C2018',  mutedColor: '#7A6A5A' },
+  2: { name: 'Северная ночь',   cls: 'cert-design-2', textColor: '#FFFFFF',  mutedColor: 'rgba(255,255,255,.6)' },
+  3: { name: 'Сакура',          cls: 'cert-design-3', textColor: '#831843',  mutedColor: 'rgba(131,24,67,.6)' },
+  4: { name: 'Золотая роскошь', cls: 'cert-design-4', textColor: '#FEF08A',  mutedColor: 'rgba(254,240,138,.6)' },
+  5: { name: 'Лаванда',         cls: 'cert-design-5', textColor: '#4C1D95',  mutedColor: 'rgba(76,29,149,.6)' },
+  6: { name: 'Свежесть',        cls: 'cert-design-6', textColor: '#14532D',  mutedColor: 'rgba(20,83,45,.6)' },
+};
+
+// ── СОСТОЯНИЕ ──────────────────────────────────────────────────
+let cert = {
+  design:   null,
+  nominal:  null,
+  senderName:  '',
+  senderEmail: '',
+  recName:  '',
+  recEmail: '',
+  message:  '',
+  sendNow:  true,
+  sendDate: null,
+  code:     null,
+};
+let currentStep = 1;
+
+// ── ТЕМА ───────────────────────────────────────────────────────
+function toggleDark(){
+  document.documentElement.classList.toggle('dark');
+  localStorage.setItem('marya_dark', document.documentElement.classList.contains('dark') ? '1' : '0');
+}
+if (localStorage.getItem('marya_dark') === '1') document.documentElement.classList.add('dark');
+
+// ── ШАГ: НАВИГАЦИЯ ─────────────────────────────────────────────
+function goStep(n){
+  if (n === 3 && cert.nominal === null) return;
+  if (n === 4) {
+    if (!validateStep3()) return;
+    buildPreview();
+    buildSummary();
+  }
+
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + n).classList.add('active');
+
+  // Обновить индикатор
+  [1,2,3,4].forEach(i => {
+    const num  = document.getElementById('snum-' + i);
+    const line = document.getElementById('sline-' + i);
+    if (i < n)       { num.className  = 'step-num done'; num.innerHTML = '✓'; if (line) line.className = 'step-line done'; }
+    else if (i === n){ num.className  = 'step-num active'; num.textContent = i; }
+    else             { num.className  = 'step-num pending'; num.textContent = i; if (line && i > 1) { const pl = document.getElementById('sline-'+(i-1)); if(pl) pl.className = i-1 < n ? 'step-line done' : 'step-line'; } }
+  });
+  // Починить линии
+  [1,2,3].forEach(i => {
+    const line = document.getElementById('sline-' + i);
+    if (line) line.className = i < n ? 'step-line done' : 'step-line';
+  });
+
+  currentStep = n;
+  window.scrollTo({ top: 120, behavior: 'smooth' });
+}
+
+// ── ВЫБОР ДИЗАЙНА ──────────────────────────────────────────────
+function selectDesign(id){
+  cert.design = id;
+  document.querySelectorAll('.design-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`.design-card[data-design="${id}"]`).classList.add('selected');
+  const btn = document.getElementById('btn-step1');
+  btn.disabled = false;
+  btn.classList.remove('opacity-50','cursor-not-allowed');
+}
+
+// ── ВЫБОР НОМИНАЛА ─────────────────────────────────────────────
+function selectNominal(n, el){
+  cert.nominal = n;
+  document.querySelectorAll('.nominal-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  const btn = document.getElementById('btn-step2');
+  btn.disabled = false;
+  btn.classList.remove('opacity-50','cursor-not-allowed');
+}
+
+// ── КОГДА ОТПРАВИТЬ ────────────────────────────────────────────
+function setSendWhen(when){
+  cert.sendNow = when === 'now';
+  document.getElementById('btn-send-now').className =
+    cert.sendNow
+      ? 'flex-1 py-3 rounded-xl border-2 border-accent text-accent font-semibold text-sm bg-accent/8 transition-all'
+      : 'flex-1 py-3 rounded-xl border-2 border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark font-semibold text-sm transition-all hover:border-warm/50';
+  document.getElementById('btn-send-later').className =
+    !cert.sendNow
+      ? 'flex-1 py-3 rounded-xl border-2 border-accent text-accent font-semibold text-sm bg-accent/8 transition-all'
+      : 'flex-1 py-3 rounded-xl border-2 border-sand dark:border-sand-dark/50 text-muted dark:text-muted-dark font-semibold text-sm transition-all hover:border-warm/50';
+  document.getElementById('date-picker-wrap').classList.toggle('hidden', cert.sendNow);
+}
+
+// ── ВАЛИДАЦИЯ ──────────────────────────────────────────────────
+function validateField(id){
+  const wrap  = document.getElementById('wrap-' + id);
+  const input = document.getElementById(id);
+  if (!wrap || !input) return true;
+  let valid = true;
+  if (id === 'sender-email' || id === 'rec-email') {
+    valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value.trim());
+  } else {
+    valid = input.value.trim().length >= 2;
+  }
+  wrap.classList.toggle('has-error', !valid);
+  return valid;
+}
+
+function validateStep3(){
+  const fields = ['sender-name','sender-email','rec-name','rec-email'];
+  let ok = true;
+  fields.forEach(f => { if(!validateField(f)) ok = false; });
+  if (!ok) { showToast('Пожалуйста, заполните все обязательные поля'); return false; }
+  if (!cert.sendNow) {
+    const d = document.getElementById('send-date').value;
+    if (!d) { showToast('Выберите дату отправки'); return false; }
+    cert.sendDate = d;
+  } else {
+    cert.sendDate = new Date().toISOString().split('T')[0];
+  }
+  cert.senderName  = document.getElementById('sender-name').value.trim();
+  cert.senderEmail = document.getElementById('sender-email').value.trim();
+  cert.recName     = document.getElementById('rec-name').value.trim();
+  cert.recEmail    = document.getElementById('rec-email').value.trim();
+  cert.message     = document.getElementById('cert-message').value.trim();
+  return true;
+}
+
+// ── ПРЕВЬЮ ─────────────────────────────────────────────────────
+function buildPreview(){
+  const d = DESIGNS[cert.design];
+  const box = document.getElementById('cert-preview-box');
+  box.innerHTML = buildCertHTML(d, cert, false);
+}
+
+function buildCertHTML(d, data, forPDF){
+  const size = forPDF ? 'width:800px;height:504px;' : 'width:100%;height:100%;';
+  const fBase = forPDF ? '18px' : 'clamp(10px,2vw,16px)';
+  const fSmall = forPDF ? '14px' : 'clamp(8px,1.5vw,12px)';
+  const fNom  = forPDF ? '36px' : 'clamp(18px,4vw,32px)';
+  return `
+  <div class="${d.cls}" style="position:relative;${size}border-radius:${forPDF?'20px':'0'};overflow:hidden;font-family:'Georgia',serif;">
+    <!-- Фоновый узор -->
+    <div style="position:absolute;inset:0;opacity:.06;">
+      <svg width="100%" height="100%" viewBox="0 0 400 252" preserveAspectRatio="xMidYMid slice">
+        <pattern id="p${d.cls}" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+          <circle cx="20" cy="20" r="1" fill="${d.textColor}"/>
+        </pattern>
+        <rect width="400" height="252" fill="url(#p${d.cls})"/>
+      </svg>
+    </div>
+    <!-- Рамка -->
+    <div style="position:absolute;inset:12px;border:1px solid ${d.textColor};opacity:.15;border-radius:12px;"></div>
+
+    <!-- Левый блок -->
+    <div style="position:absolute;left:28px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px 0;">
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};letter-spacing:.25em;text-transform:uppercase;color:${d.mutedColor};margin-bottom:4px;">МАРЬЯ</p>
+        <p style="font-family:'Georgia',serif;font-size:${fBase};color:${d.textColor};font-weight:normal;margin:0;">Подарочный</p>
+        <p style="font-family:'Georgia',serif;font-size:${fBase};color:${d.textColor};font-weight:normal;margin:0;">сертификат</p>
+      </div>
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-bottom:2px;">Для</p>
+        <p style="font-family:'Georgia',serif;font-size:${forPDF?'22px':'clamp(12px,2.5vw,20px)'};color:${d.textColor};margin:0;">${escHtml(data.recName || 'Получатель')}</p>
+        ${data.message ? `<p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-top:4px;max-width:180px;line-height:1.4;">"${escHtml(data.message.substring(0,60))}${data.message.length>60?'…':''}"</p>` : ''}
+      </div>
+    </div>
+
+    <!-- Правый блок: номинал + код -->
+    <div style="position:absolute;right:28px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:space-between;padding:24px 0;text-align:right;">
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};letter-spacing:.2em;text-transform:uppercase;color:${d.mutedColor};">Номинал</p>
+        <p style="font-family:'Georgia',serif;font-size:${fNom};color:${d.textColor};margin:0;line-height:1.1;">${(data.nominal||0).toLocaleString('ru-RU')} ₽</p>
+      </div>
+      <div>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-bottom:2px;">Код сертификата</p>
+        <p style="font-family:'Inter',sans-serif;font-size:${forPDF?'16px':'clamp(9px,1.8vw,14px)'};font-weight:600;letter-spacing:.12em;color:${d.textColor};">${data.code || 'MARYA-XXXX-XXXX'}</p>
+        <p style="font-family:'Inter',sans-serif;font-size:${fSmall};color:${d.mutedColor};margin-top:4px;">Действителен до ${data.expiresAt || '...'}</p>
+      </div>
+    </div>
+
+    <!-- Декоративный элемент по центру -->
+    <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);opacity:.04;">
+      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
+        <circle cx="50" cy="50" r="48" stroke="${d.textColor}" stroke-width="2"/>
+        <circle cx="50" cy="50" r="36" stroke="${d.textColor}" stroke-width="1"/>
+        <path d="M50 14 L50 86 M14 50 L86 50" stroke="${d.textColor}" stroke-width="1"/>
+      </svg>
+    </div>
+  </div>`;
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── ИТОГОВЫЕ ДАННЫЕ ────────────────────────────────────────────
+function buildSummary(){
+  const d = DESIGNS[cert.design];
+  document.getElementById('summary-design').textContent = d.name;
+  document.getElementById('summary-rec').textContent    = cert.recName + ' · ' + cert.recEmail;
+  document.getElementById('summary-date').textContent   = cert.sendNow ? 'Сразу после оплаты' : formatDate(cert.sendDate);
+  document.getElementById('summary-total').textContent  = cert.nominal.toLocaleString('ru-RU') + ' ₽';
+  document.getElementById('btn-purchase').textContent   = 'Оплатить ' + cert.nominal.toLocaleString('ru-RU') + ' ₽';
+}
+
+function formatDate(d){
+  if (!d) return '—';
+  const [y,m,da] = d.split('-');
+  const months = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+  return `${parseInt(da)} ${months[parseInt(m)-1]} ${y}`;
+}
+
+// ── ПОКУПКА ────────────────────────────────────────────────────
+async function purchaseCert(){
+  const btn = document.getElementById('btn-purchase');
+  btn.textContent = 'Обработка...';
+  btn.disabled = true;
+
+  try {
+    // Сохранить в Supabase
+    const { data, error } = await _supabase
+      .from('gift_certificates')
+      .insert({
+        design_id:      cert.design,
+        nominal:        cert.nominal,
+        balance:        cert.nominal,
+        sender_name:    cert.senderName,
+        sender_email:   cert.senderEmail,
+        recipient_name: cert.recName,
+        recipient_email: cert.recEmail,
+        message:        cert.message,
+        send_date:      cert.sendDate,
+        send_now:       cert.sendNow,
+        status:         'active', // TODO: сменить на 'pending_payment' при реальном эквайринге
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    cert.code = data.code;
+
+    // Дата истечения
+    const expDate = new Date(data.expires_at || cert.sendDate);
+    cert.expiresAt = formatDate(data.expires_at
+      ? data.expires_at
+      : new Date(new Date(cert.sendDate).setFullYear(new Date(cert.sendDate).getFullYear() + 1)).toISOString().split('T')[0]);
+
+    // Отправить email
+    await sendEmails(data);
+
+    // Показать успех
+    showSuccess(data);
+
+  } catch (err) {
+    console.error(err);
+    showToast('Ошибка при оформлении. Попробуйте ещё раз.');
+    btn.textContent = 'Оплатить сертификат';
+    btn.disabled = false;
+  }
+}
+
+// ── ОТПРАВКА EMAIL ─────────────────────────────────────────────
+async function sendEmails(data){
+  // Письмо получателю (если отправляем сейчас)
+  const expDate = data.expires_at || '';
+
+  if (cert.sendNow) {
+    try {
+      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_RECIPIENT, {
+        to_email:     cert.recEmail,
+        to_name:      cert.recName,
+        from_name:    cert.senderName,
+        nominal:      cert.nominal.toLocaleString('ru-RU'),
+        cert_code:    cert.code,
+        message:      cert.message || 'Дарю тебе сертификат на косметику Марья!',
+        expires_at:   formatDate(expDate.split('T')[0]),
+        cert_link:    `${location.origin}/certificate-view.html?code=${cert.code}`,
+        design_name:  DESIGNS[cert.design].name,
+      });
+    } catch(e){ console.warn('Email получателю не отправлен:', e); }
+  }
+
+  // Квитанция отправителю
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_SENDER, {
+      to_email:    cert.senderEmail,
+      to_name:     cert.senderName,
+      rec_name:    cert.recName,
+      rec_email:   cert.recEmail,
+      nominal:     cert.nominal.toLocaleString('ru-RU'),
+      cert_code:   cert.code,
+      send_date:   cert.sendNow ? 'Отправлен сразу' : formatDate(cert.sendDate),
+      expires_at:  formatDate(expDate.split('T')[0]),
+      cert_link:   `${location.origin}/certificate-view.html?code=${cert.code}`,
+    });
+  } catch(e){ console.warn('Квитанция не отправлена:', e); }
+}
+
+// ── УСПЕШНОЕ ОФОРМЛЕНИЕ ────────────────────────────────────────
+function showSuccess(data){
+  document.getElementById('success-cert-code').textContent = cert.code;
+  document.getElementById('success-sender-email').textContent = cert.senderEmail;
+  document.getElementById('success-expires').textContent = cert.expiresAt;
+
+  const delText = document.getElementById('success-delivery-text');
+  if (cert.sendNow){
+    delText.innerHTML = `Сертификат отправлен на <strong>${cert.recEmail}</strong>`;
+  } else {
+    delText.innerHTML = `Сертификат будет отправлен <strong>${formatDate(cert.sendDate)}</strong>`;
+  }
+
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-success').classList.add('active');
+
+  // Обновить все степ-нумы как выполненные
+  [1,2,3,4].forEach(i => {
+    const num = document.getElementById('snum-' + i);
+    if (num) { num.className = 'step-num done'; num.innerHTML = '✓'; }
+    const line = document.getElementById('sline-' + i);
+    if (line) line.className = 'step-line done';
+  });
+
+  window.scrollTo({ top: 100, behavior: 'smooth' });
+}
+
+// ── PDF ────────────────────────────────────────────────────────
+async function downloadPDF(){
+  const btn = document.getElementById('btn-download-pdf');
+  btn.textContent = 'Генерация...';
+  btn.disabled = true;
+
+  try {
+    const d = DESIGNS[cert.design];
+    const tpl = document.getElementById('pdf-template');
+    tpl.innerHTML = buildCertHTML(d, { ...cert, expiresAt: cert.expiresAt }, true);
+
+    await new Promise(r => setTimeout(r, 200));
+
+    const canvas = await html2canvas(tpl.firstChild, {
+      scale: 2, useCORS: true,
+      backgroundColor: null,
+      width: 800, height: 504,
+    });
+
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [210, 132.5] });
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 0, 0, 210, 132.5);
+    pdf.save(`Сертификат-Марья-${cert.code}.pdf`);
+
+    tpl.innerHTML = '';
+  } catch(e){
+    console.error(e);
+    showToast('Ошибка генерации PDF');
+  } finally {
+    btn.textContent = 'Скачать PDF';
+    btn.disabled = false;
+  }
+}
+
+// ── ТОСТ ───────────────────────────────────────────────────────
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ── ИНИЦИАЛИЗАЦИЯ ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Минимальная дата — сегодня
+  const today = new Date().toISOString().split('T')[0];
+  const datePicker = document.getElementById('send-date');
+  if (datePicker) datePicker.min = today;
+
+  // Реферальный трекинг
+  const ref = new URLSearchParams(location.search).get('ref');
+  if (ref) localStorage.setItem('marya_ref', JSON.stringify({ code: ref, ts: Date.now() }));
+});
+</script>
+</body>
+</html>

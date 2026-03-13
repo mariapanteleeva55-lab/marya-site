@@ -52,6 +52,10 @@
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
@@ -150,10 +154,10 @@
             </div>
           </div>
         </div>
-        <a href="brand.html"            class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
-        <a href="quiz.html"             class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
-        <a href="index.html#blog"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
-        <a href="index.html#skin-types" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Решения для разных типов кожи</a>
+        <a href="brand.html"      class="hover:text-ink dark:hover:text-ink-dark transition-colors">О бренде</a>
+        <a href="quiz.html"       class="hover:text-ink dark:hover:text-ink-dark transition-colors">Подобрать уход</a>
+        <a href="blog.html" class="hover:text-ink dark:hover:text-ink-dark transition-colors">Блог о красоте</a>
+        <a href="contacts.html"   class="hover:text-ink dark:hover:text-ink-dark transition-colors">Контакты</a>
       </nav>
       <div class="flex items-center gap-3">
         <button class="p-2 rounded-full hover:bg-sand/50 dark:hover:bg-sand-dark/30 transition-colors" aria-label="Поиск">
@@ -184,8 +188,8 @@
       <a href="catalog.html"          onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Каталог</a>
       <a href="brand.html"            onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">О бренде</a>
       <a href="quiz.html"             onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Подобрать уход</a>
-      <a href="index.html#blog"       onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
-      <a href="index.html#skin-types" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Решения для разных типов кожи</a>
+      <a href="blog.html" onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2 border-b border-sand/30 dark:border-sand-dark/20">Блог о красоте</a>
+      <a href="contacts.html"   onclick="toggleMenu()" class="text-ink dark:text-ink-dark py-2">Контакты</a>
     </div>
   </div>
   <div id="menu-overlay" class="lg:hidden fixed inset-0 z-[55] bg-ink/30 backdrop-blur-sm hidden" onclick="toggleMenu()"></div>
@@ -211,12 +215,19 @@
 
         <!-- Gallery -->
         <div class="space-y-4">
-          <div class="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-sand/40 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center">
+          <div class="relative aspect-square rounded-3xl overflow-hidden bg-gradient-to-br from-sand/40 to-warm/20 dark:from-sand-dark/30 dark:to-warm-dark/20 flex items-center justify-center group/gallery">
             <div id="product-badge" class="hidden absolute top-4 left-4 px-3 py-1 bg-accent text-white text-xs font-semibold rounded-full shadow-md shadow-accent/30">Хит</div>
-            <button id="wishlist-btn" onclick="toggleWishlist()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-cream/80 dark:bg-cream-dark/80 backdrop-blur-sm flex items-center justify-center hover:bg-cream dark:hover:bg-cream-dark transition-colors shadow-sm" aria-label="В избранное">
+            <button id="wishlist-btn" onclick="toggleWishlist()" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-cream/80 dark:bg-cream-dark/80 backdrop-blur-sm flex items-center justify-center hover:bg-cream dark:hover:bg-cream-dark transition-colors shadow-sm z-10" aria-label="В избранное">
               <svg id="heart-icon" class="w-5 h-5 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke-width="2" stroke-linecap="round"/>
               </svg>
+            </button>
+            <!-- Slider arrows -->
+            <button id="gallery-prev" onclick="slideMainPhoto(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-ink/80 border border-sand/40 flex items-center justify-center shadow-md opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-ink" aria-label="Предыдущее фото">
+              <svg class="w-5 h-5 text-ink dark:text-cream" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button id="gallery-next" onclick="slideMainPhoto(1)" class="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/90 dark:bg-ink/80 border border-sand/40 flex items-center justify-center shadow-md opacity-0 group-hover/gallery:opacity-100 transition-opacity duration-200 hover:bg-white dark:hover:bg-ink" aria-label="Следующее фото">
+              <svg class="w-5 h-5 text-ink dark:text-cream" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </button>
             <div id="main-photo" class="w-full h-full flex items-center justify-center">
               <div class="text-center space-y-3">
@@ -443,37 +454,69 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="footer-gradient border-t border-sand/40 dark:border-sand-dark/20 mt-8 pb-24 lg:pb-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-12">
-      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-        <div class="lg:col-span-2">
-          <a href="index.html" class="font-serif text-2xl text-ink dark:text-ink-dark hover:text-accent transition-colors">Марья</a>
-          <p class="text-sm text-muted dark:text-muted-dark mt-3 max-w-xs leading-relaxed">Простой уход, который действительно работает. Без латинских терминов, без страха ошибиться.</p>
-        </div>
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Каталог</p>
-          <div class="space-y-2 text-sm text-muted dark:text-muted-dark">
-            <a href="catalog.html" class="block hover:text-accent transition-colors">Все средства</a>
-            <a href="catalog.html?cat=serum" class="block hover:text-accent transition-colors">Сыворотки</a>
-            <a href="catalog.html?cat=cream" class="block hover:text-accent transition-colors">Кремы</a>
-            <a href="catalog.html?cat=cleanser" class="block hover:text-accent transition-colors">Очищение</a>
+  <footer class="bg-ink dark:bg-[#0D0A07] text-cream/70 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-12">
+        <div class="sm:col-span-2 lg:col-span-1">
+          <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+          <p class="text-sm leading-relaxed mb-4">Регенеративная косметика. Честные формулы, научный подход.</p>
+          <div class="flex gap-3">
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">VK</a>
+            <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">WA</a>
           </div>
         </div>
         <div>
-          <p class="text-xs font-semibold uppercase tracking-widest text-accent mb-4">Помощь</p>
-          <div class="space-y-2 text-sm text-muted dark:text-muted-dark">
-            <a href="#" class="block hover:text-accent transition-colors">Доставка и оплата</a>
-            <a href="#" class="block hover:text-accent transition-colors">Гарантия качества</a>
-            <a href="index.html#quiz" class="block hover:text-accent transition-colors">Подобрать уход</a>
-            <a href="#" class="block hover:text-accent transition-colors">Контакты</a>
-          </div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Каталог</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="catalog.html?zone=face" class="hover:text-cream transition-colors">Лицо</a></li>
+            <li><a href="catalog.html?zone=hair" class="hover:text-cream transition-colors">Волосы</a></li>
+            <li><a href="catalog.html?zone=body" class="hover:text-cream transition-colors">Тело</a></li>
+            <li><a href="catalog.html?zone=hands" class="hover:text-cream transition-colors">Руки/ноги</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Клиентам</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="quiz.html" class="hover:text-cream transition-colors">Онлайн-подбор ухода</a></li>
+            <li><a href="gift-certificate.html" class="hover:text-cream transition-colors">Подарочные сертификаты</a></li>
+            <li><a href="profile.html#bonus" class="hover:text-cream transition-colors">Бонусная программа</a></li>
+            <li><a href="blog.html" class="hover:text-cream transition-colors">Блог и новости</a></li>
+            <li><a href="sales.html" class="hover:text-cream transition-colors">Акции</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Онлайн-покупки</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#" class="hover:text-cream transition-colors">Вопросы и ответы</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Договор оферты</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Оплата и доставка</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Возврат</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Конфиденциальность</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Алгоритм рекомендаций</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Правила публикации</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Пользовательское соглашение</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="text-sm font-semibold text-cream mb-4 uppercase tracking-widest">Связаться с нами</div>
+          <ul class="space-y-2 text-sm">
+            <li><a href="contacts.html" class="hover:text-cream transition-colors">Служба заботы ♡</a></li>
+            <li><a href="#" class="hover:text-cream transition-colors">Бот в Telegram</a></li>
+            <li><a href="tel:+78007771739" class="hover:text-cream transition-colors">8 (800) 777-17-39</a></li>
+            <li><a href="mailto:info@marya-cosmetics.ru" class="hover:text-cream transition-colors">info@marya-cosmetics.ru</a></li>
+          </ul>
         </div>
       </div>
-      <div class="border-t border-sand/40 dark:border-sand-dark/20 pt-6 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <p class="text-xs text-muted dark:text-muted-dark">© 2026 Марья. Все права защищены.</p>
-        <div class="flex gap-4 text-xs text-muted dark:text-muted-dark">
-          <a href="#" class="hover:text-accent transition-colors">Политика конфиденциальности</a>
-          <a href="#" class="hover:text-accent transition-colors">Оферта</a>
+      <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
+        <div>© 2026 Марья. Все права защищены.</div>
+        <div class="flex items-center gap-6">
+          <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
+          <a href="#" class="hover:text-cream transition-colors">Оферта</a>
+          <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="flex items-center gap-2 text-sm text-cream/60 hover:text-cream transition-colors">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="13" stroke="currentColor" stroke-width="1.2" opacity="0.4"/><path d="M14 19V9M9 14l5-5 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Наверх
+          </button>
         </div>
       </div>
     </div>
@@ -959,8 +1002,12 @@
       else { badgeEl.classList.add('hidden'); }
 
       // Emoji + volume + thumbnails
+      const showArrows = p.images && p.images.length > 1;
+      document.getElementById('gallery-prev').style.display = showArrows ? '' : 'none';
+      document.getElementById('gallery-next').style.display = showArrows ? '' : 'none';
       if (p.images && p.images.length > 0) {
         productImages = p.images;
+        currentThumbIndex = 0;
         document.getElementById('main-photo').innerHTML = `<img src="${productImages[0]}" class="w-full h-full object-cover object-top" alt="${p.name}">`;
         const thumbContainer = document.querySelector('.thumb-item').parentElement;
         thumbContainer.innerHTML = productImages.map((src, i) => `
@@ -1029,7 +1076,10 @@
 
     // ── UI FUNCTIONS ───────────────────────────────────────────────────────
     let productImages = [];
+    let currentThumbIndex = 0;
     function setThumb(index) {
+      if (productImages.length > 0) index = (index + productImages.length) % productImages.length;
+      currentThumbIndex = index;
       document.querySelectorAll('.thumb-item').forEach((el, i) => {
         el.classList.toggle('active', i === index);
         el.classList.toggle('border-accent', i === index);
@@ -1040,6 +1090,10 @@
         const img = mainPhoto.querySelector('img');
         if (img) { img.src = productImages[index]; img.className = 'w-full h-full object-cover object-top'; }
       }
+    }
+    function slideMainPhoto(dir) {
+      if (productImages.length < 2) return;
+      setThumb(currentThumbIndex + dir);
     }
 
     function switchTab(name) {
