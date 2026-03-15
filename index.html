@@ -1359,6 +1359,7 @@
     const mobileMenu = document.getElementById('mobile-menu');
     const menuOverlay = document.getElementById('menu-overlay');
     let menuOpen = false;
+    window.addEventListener('pageshow', () => { document.getElementById('mobile-menu').style.transform = 'translateY(100%)'; menuOpen = false; });
     function toggleMenu() {
       menuOpen = !menuOpen;
       mobileMenu.style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';

@@ -537,6 +537,7 @@
     }
 
     let menuOpen = false;
+    window.addEventListener('pageshow', () => { document.getElementById('mobile-menu').style.transform = 'translateY(100%)'; menuOpen = false; });
     function toggleMenu() {
       menuOpen = !menuOpen;
       document.getElementById('mobile-menu').style.transform = menuOpen ? 'translateY(0)' : 'translateY(100%)';
