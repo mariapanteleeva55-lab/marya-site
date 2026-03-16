@@ -181,7 +181,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
-  <link rel="stylesheet" href="https://cdn.cdek.ru/widget/latest/cdek-widget.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@cdek-it/widget@latest/dist/cdek-widget.css">
   <script>
     const _supabase = window.supabase.createClient(
       'https://cizdsiqolarjcgmwbafp.supabase.co',
@@ -2002,7 +2002,7 @@ async function linkReferral(userId) {
   </div>
 </div>
 
-<script src="https://cdn.cdek.ru/widget/latest/cdek-widget.umd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@cdek-it/widget@latest/dist/cdek-widget.umd.js"></script>
 <script>
 // ── CDEK WIDGET ───────────────────────────────────────────────────
 let cdekWidget = null;
@@ -2044,7 +2044,7 @@ function openCdekModal() {
       } catch(e) {
         console.error('CDEK widget error:', e);
         document.getElementById('cdek-widget-root').innerHTML =
-          '<div class="flex items-center justify-center h-full text-muted text-sm p-8 text-center">Не удалось загрузить карту СДЭК.<br>Укажите адрес доставки вручную или выберите другой способ.</div>';
+          '<div class="flex items-center justify-center h-full text-muted text-sm p-8 text-center">Ошибка: ' + (e?.message || e) + '</div>';
       }
     }, 100);
   }
