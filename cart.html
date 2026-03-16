@@ -181,6 +181,7 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
+  <link rel="stylesheet" href="https://cdn.cdek.ru/widget/latest/cdek-widget.css">
   <script>
     const _supabase = window.supabase.createClient(
       'https://cizdsiqolarjcgmwbafp.supabase.co',
@@ -566,7 +567,27 @@
                 <p class="text-sm font-medium text-ink dark:text-ink-dark">Пункт выдачи СДЭК</p>
                 <p class="text-xs text-muted dark:text-muted-dark">2–3 дня · По всей России</p>
               </div>
-              <span class="text-sm font-semibold text-ink dark:text-ink-dark">100 ₽</span>
+              <span class="text-sm font-semibold text-ink dark:text-ink-dark" id="cdek-price-label">от 100 ₽</span>
+            </div>
+            <!-- CDEK pickup selector -->
+            <div id="cdek-pvz-block" class="hidden mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+              <div id="cdek-pvz-empty">
+                <p class="text-sm text-muted dark:text-muted-dark mb-3">Выберите удобный пункт выдачи</p>
+                <button onclick="openCdekModal()" class="w-full py-2.5 border border-accent text-accent text-sm font-medium rounded-full hover:bg-accent/5 transition-colors">
+                  Показать карту СДЭК →
+                </button>
+              </div>
+              <div id="cdek-pvz-selected" class="hidden">
+                <div class="flex items-start gap-3">
+                  <svg class="w-4 h-4 text-sage dark:text-sage-dark mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-width="2" stroke-linecap="round"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-width="2"/></svg>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium text-ink dark:text-ink-dark" id="cdek-pvz-name">ПВЗ</p>
+                    <p class="text-xs text-muted dark:text-muted-dark mt-0.5" id="cdek-pvz-address"></p>
+                    <p class="text-xs text-sage dark:text-sage-dark font-semibold mt-1" id="cdek-pvz-cost"></p>
+                  </div>
+                  <button onclick="openCdekModal()" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">Изменить</button>
+                </div>
+              </div>
             </div>
             <div class="radio-card" data-group="delivery" data-val="post" data-price="80" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
@@ -969,6 +990,7 @@ let state = {
   payMethod: 'card',
   step: 1,
   cert: null,       // { code, balance, nominal }
+  cdekPoint: null,  // выбранный ПВЗ СДЭК
 };
 
 // ── HELPERS ───────────────────────────────────────────────────────
@@ -1330,7 +1352,13 @@ function selectRadio(el){
 
 function selectDelivery(el){
   selectRadio(el);
-  state.deliveryCost = parseInt(el.dataset.price) || 0;
+  const isCdek = el.dataset.val === 'pickup';
+  document.getElementById('cdek-pvz-block').classList.toggle('hidden', !isCdek);
+  if (isCdek) {
+    state.deliveryCost = state.cdekPoint?.tariff?.delivery_sum || parseInt(el.dataset.price) || 100;
+  } else {
+    state.deliveryCost = parseInt(el.dataset.price) || 0;
+  }
   updateSummary();
   updateDeliveryBanner();
 }
@@ -1430,11 +1458,13 @@ async function placeOrder(){
   const bonusEarned = calcBonusEarn(orderBase);
   const certUsed    = certDiscount();
   const deliveryEl  = document.querySelector('[data-group="delivery"].selected');
-  const addrParts   = [
-    document.getElementById('f-city')?.value,
-    document.getElementById('f-addr')?.value,
-    document.getElementById('f-apt')?.value,
-  ].filter(Boolean).join(', ');
+  const addrParts = deliveryEl?.dataset.val === 'pickup' && state.cdekPoint
+    ? (state.cdekPoint.address?.address || state.cdekPoint.address?.name || '')
+    : [
+        document.getElementById('f-city')?.value,
+        document.getElementById('f-addr')?.value,
+        document.getElementById('f-apt')?.value,
+      ].filter(Boolean).join(', ');
 
   const { data: { session } } = await _supabase.auth.getSession();
 
@@ -1953,6 +1983,76 @@ async function linkReferral(userId) {
     } catch(e) {}
   });
 })();
+</script>
+
+<!-- ═══ CDEK WIDGET MODAL ═══════════════════════════════════════ -->
+<div id="cdek-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center hidden">
+  <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCdekModal()"></div>
+  <div class="relative bg-cream dark:bg-[#1A1612] rounded-t-2xl sm:rounded-2xl w-full max-w-3xl h-[90vh] sm:h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-sand dark:border-sand-dark/40 shrink-0">
+      <div class="flex items-center gap-2">
+        <img src="https://cdn.cdek.ru/widget/latest/img/cdek-logo.svg" alt="CDEK" class="h-5" onerror="this.style.display='none'">
+        <h3 class="font-semibold text-ink dark:text-ink-dark">Выбрать пункт выдачи</h3>
+      </div>
+      <button onclick="closeCdekModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-sand/30 dark:hover:bg-sand-dark/20 transition-colors">
+        <svg class="w-4 h-4 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div id="cdek-widget-root" class="flex-1 min-h-0"></div>
+  </div>
+</div>
+
+<script src="https://cdn.cdek.ru/widget/latest/cdek-widget.umd.js"></script>
+<script>
+// ── CDEK WIDGET ───────────────────────────────────────────────────
+let cdekWidget = null;
+
+function openCdekModal() {
+  document.getElementById('cdek-modal').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+  if (!cdekWidget) {
+    setTimeout(() => {
+      try {
+        cdekWidget = new CDEKWidget({
+          from:            { country_code: 'RU', city: 'Москва' },
+          root:            'cdek-widget-root',
+          apiKey:          'uejYeTXuvgJfQhzbb5cGnU5PZMt1EIah',
+          defaultLocation: 'Москва',
+          lang:            'rus',
+          currency:        'RUB',
+          goods:           [{ width: 10, height: 10, length: 10, weight: 0.5 }],
+          tariffs:         { office: [136, 138], door: [137, 139] },
+          onReady() { console.log('CDEK widget ready'); },
+          onCalculate(tariffs) { console.log('tariffs', tariffs); },
+          onChoose(type, tariff, address) {
+            const cost = tariff?.delivery_sum || 0;
+            state.deliveryCost = cost;
+            state.cdekPoint    = { type, tariff, address };
+
+            document.getElementById('cdek-pvz-name').textContent    = address?.name || 'Пункт СДЭК';
+            document.getElementById('cdek-pvz-address').textContent = address?.address || address?.city || '';
+            document.getElementById('cdek-pvz-cost').textContent    = cost > 0 ? cost + ' ₽' : 'Бесплатно';
+            document.getElementById('cdek-price-label').textContent = cost > 0 ? cost + ' ₽' : 'Бесплатно';
+
+            document.getElementById('cdek-pvz-empty').classList.add('hidden');
+            document.getElementById('cdek-pvz-selected').classList.remove('hidden');
+            updateSummary();
+            closeCdekModal();
+          },
+        });
+      } catch(e) {
+        console.error('CDEK widget error:', e);
+        document.getElementById('cdek-widget-root').innerHTML =
+          '<div class="flex items-center justify-center h-full text-muted text-sm p-8 text-center">Не удалось загрузить карту СДЭК.<br>Укажите адрес доставки вручную или выберите другой способ.</div>';
+      }
+    }, 100);
+  }
+}
+
+function closeCdekModal() {
+  document.getElementById('cdek-modal').classList.add('hidden');
+  document.body.style.overflow = '';
+}
 </script>
 </body>
 </html>
