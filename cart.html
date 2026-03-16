@@ -1998,7 +1998,7 @@ async function linkReferral(userId) {
         <svg class="w-4 h-4 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </div>
-    <div id="cdek-widget-root" class="flex-1 min-h-0"></div>
+    <div id="cdek-widget-root" style="height:560px;width:100%;"></div>
   </div>
 </div>
 
@@ -2010,44 +2010,42 @@ let cdekWidget = null;
 function openCdekModal() {
   document.getElementById('cdek-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  if (!cdekWidget) {
-    setTimeout(() => {
-      try {
-        cdekWidget = new CDEKWidget({
-          from:            { country_code: 'RU', city: 'Москва' },
-          root:            'cdek-widget-root',
-          apiKey:          'uejYeTXuvgJfQhzbb5cGnU5PZMt1EIah',
-          servicePath:     'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token',
-          defaultLocation: 'Москва',
-          lang:            'rus',
-          currency:        'RUB',
-          goods:           [{ width: 10, height: 10, length: 10, weight: 0.5 }],
-          tariffs:         { office: [136, 138], door: [137, 139] },
-          onReady() { console.log('CDEK widget ready'); },
-          onCalculate(tariffs) { console.log('tariffs', tariffs); },
-          onChoose(type, tariff, address) {
-            const cost = tariff?.delivery_sum || 0;
-            state.deliveryCost = cost;
-            state.cdekPoint    = { type, tariff, address };
-
-            document.getElementById('cdek-pvz-name').textContent    = address?.name || 'Пункт СДЭК';
-            document.getElementById('cdek-pvz-address').textContent = address?.address || address?.city || '';
-            document.getElementById('cdek-pvz-cost').textContent    = cost > 0 ? cost + ' ₽' : 'Бесплатно';
-            document.getElementById('cdek-price-label').textContent = cost > 0 ? cost + ' ₽' : 'Бесплатно';
-
-            document.getElementById('cdek-pvz-empty').classList.add('hidden');
-            document.getElementById('cdek-pvz-selected').classList.remove('hidden');
-            updateSummary();
-            closeCdekModal();
-          },
-        });
-      } catch(e) {
-        console.error('CDEK widget error:', e);
-        document.getElementById('cdek-widget-root').innerHTML =
-          '<div class="flex items-center justify-center h-full text-muted text-sm p-8 text-center">Ошибка: ' + (e?.message || e) + '</div>';
-      }
-    }, 100);
-  }
+  cdekWidget = null;
+  document.getElementById('cdek-widget-root').innerHTML = '';
+  setTimeout(() => {
+    try {
+      cdekWidget = new CDEKWidget({
+        from:            { country_code: 'RU', city: 'Москва' },
+        root:            'cdek-widget-root',
+        apiKey:          'uejYeTXuvgJfQhzbb5cGnU5PZMt1EIah',
+        servicePath:     'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token',
+        defaultLocation: 'Москва',
+        lang:            'rus',
+        currency:        'RUB',
+        goods:           [{ width: 10, height: 10, length: 10, weight: 0.5 }],
+        tariffs:         { office: [136, 138], door: [137, 139] },
+        onReady() { console.log('CDEK widget ready'); },
+        onCalculate(tariffs) { console.log('tariffs', tariffs); },
+        onChoose(type, tariff, address) {
+          const cost = tariff?.delivery_sum || 0;
+          state.deliveryCost = cost;
+          state.cdekPoint    = { type, tariff, address };
+          document.getElementById('cdek-pvz-name').textContent    = address?.name || 'Пункт СДЭК';
+          document.getElementById('cdek-pvz-address').textContent = address?.address || address?.city || '';
+          document.getElementById('cdek-pvz-cost').textContent    = cost > 0 ? cost + ' ₽' : 'Бесплатно';
+          document.getElementById('cdek-price-label').textContent = cost > 0 ? cost + ' ₽' : 'Бесплатно';
+          document.getElementById('cdek-pvz-empty').classList.add('hidden');
+          document.getElementById('cdek-pvz-selected').classList.remove('hidden');
+          updateSummary();
+          closeCdekModal();
+        },
+      });
+    } catch(e) {
+      console.error('CDEK widget error:', e);
+      document.getElementById('cdek-widget-root').innerHTML =
+        '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center;color:#888;font-size:14px;">Ошибка: ' + (e?.message || e) + '</div>';
+    }
+  }, 400);
 }
 
 function closeCdekModal() {
