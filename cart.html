@@ -620,65 +620,10 @@
             </button>
           </div>
 
-          <!-- Card form (shown when card selected) -->
-          <div id="card-form" class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 space-y-3">
-            <p class="text-xs text-muted dark:text-muted-dark flex items-center gap-1.5 mb-3">
-              <svg class="w-3.5 h-3.5 text-sage dark:text-sage-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round"/></svg>
-              Защищено Тинькофф Кассой · PCI DSS
-            </p>
-            <div>
-              <label class="form-label">Номер карты</label>
-              <div class="card-field text-muted dark:text-muted-dark text-sm select-none">•••• •••• •••• ••••</div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="form-label">Срок действия</label>
-                <div class="card-field text-muted dark:text-muted-dark text-sm select-none">ММ / ГГ</div>
-              </div>
-              <div>
-                <label class="form-label">CVV</label>
-                <div class="card-field text-muted dark:text-muted-dark text-sm select-none">•••</div>
-              </div>
-            </div>
-            <label class="flex items-center gap-2.5 cursor-pointer mt-1">
-              <input type="checkbox" class="w-3.5 h-3.5 rounded accent-[#D4956A]" checked>
-              <span class="text-xs text-muted dark:text-muted-dark">Сохранить карту для следующего раза</span>
-            </label>
-          </div>
-
-          <!-- SBP info -->
-          <div id="sbp-form" class="hidden p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 text-center">
-            <div class="w-24 h-24 mx-auto bg-white dark:bg-sand-dark/20 rounded-xl border border-sand dark:border-sand-dark/40 flex items-center justify-center mb-3">
-              <div class="grid grid-cols-5 gap-0.5 p-1">
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-                <div class="w-1.5 h-1.5 bg-ink dark:bg-ink-dark rounded-sm"></div>
-              </div>
-            </div>
-            <p class="text-sm font-medium text-ink dark:text-ink-dark mb-1">Отсканируйте QR-код</p>
-            <p class="text-xs text-muted dark:text-muted-dark">или откройте приложение банка и выберите «Оплата по СБП»</p>
+          <!-- Подсказка: оплата через CloudPayments -->
+          <div class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 mb-6 flex items-start gap-3">
+            <svg class="w-4 h-4 text-sage dark:text-sage-dark mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke-width="2" stroke-linecap="round"/></svg>
+            <p class="text-xs text-muted dark:text-muted-dark leading-relaxed">Данные карты вводятся в защищённом окне CloudPayments — мы их не видим и не храним.</p>
           </div>
 
           <!-- Подарочный сертификат -->
@@ -785,7 +730,7 @@
 
           <!-- Trust -->
           <div class="mt-4 flex items-center justify-center gap-4 text-xs text-muted dark:text-muted-dark">
-            <span class="flex items-center gap-1">🔒 Тинькофф Касса</span>
+            <span class="flex items-center gap-1">🔒 CloudPayments</span>
             <span>·</span>
             <span class="flex items-center gap-1">🛡 SSL</span>
           </div>
