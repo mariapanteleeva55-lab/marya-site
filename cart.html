@@ -2015,17 +2015,12 @@ function openCdekModal() {
   setTimeout(() => {
     try {
       cdekWidget = new CDEKWidget({
-        from:            { country_code: 'RU', city: 'Москва' },
         root:            'cdek-widget-root',
         apiKey:          'uejYeTXuvgJfQhzbb5cGnU5PZMt1EIah',
         servicePath:     'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token',
         defaultLocation: 'Москва',
         lang:            'rus',
         currency:        'RUB',
-        goods:           [{ width: 10, height: 10, length: 10, weight: 0.5 }],
-        tariffs:         { office: [136, 138], door: [137, 139] },
-        onReady() { console.log('CDEK widget ready'); },
-        onCalculate(tariffs) { console.log('tariffs', tariffs); },
         onChoose(type, tariff, address) {
           const cost = tariff?.delivery_sum || 0;
           state.deliveryCost = cost;
