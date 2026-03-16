@@ -2021,6 +2021,7 @@ function openCdekModal() {
         defaultLocation: 'Москва',
         lang:            'rus',
         currency:        'RUB',
+        yandexApiKey:    'e7538d9b-a07a-4e9c-855d-f9b3dfc3be11',
         onChoose(type, tariff, address) {
           const cost = tariff?.delivery_sum || 0;
           state.deliveryCost = cost;
