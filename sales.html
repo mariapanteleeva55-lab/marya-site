@@ -18,7 +18,29 @@
   <meta name="twitter:title" content="Акции — Марья" />
   <meta name="twitter:description" content="Эксклюзивные предложения для наших покупателей." />
 
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -87,7 +109,7 @@
   <header id="header" class="fixed top-0 left-0 right-0 z-50 bg-cream/90 dark:bg-cream-dark/90 backdrop-blur-md border-b border-sand/40 dark:border-sand-dark/20 h-[60px] flex items-center">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
       <a href="index.html">
-        <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+        <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
       </a>
       <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
         <div class="catalog-wrap relative">
@@ -190,7 +212,7 @@
         <div class="reveal promo-card bg-white dark:bg-[#1E1510] rounded-3xl overflow-hidden border border-sand dark:border-sand-dark/30 flex flex-col">
           <!-- Верхняя часть — фото -->
           <div class="relative overflow-hidden" style="min-height:280px;">
-            <img src="Happy birthday promotion.webp"
+            <img src="Happy birthday promotion.png"
                  alt="Скидка 25% в день рождения — Марья"
                  class="w-full h-full object-cover absolute inset-0"
                  style="min-height:280px;"
@@ -242,7 +264,7 @@
         <div class="reveal promo-card bg-white dark:bg-[#1E1510] rounded-3xl overflow-hidden border border-sand dark:border-sand-dark/30 flex flex-col" style="transition-delay:0.15s">
           <!-- Верхняя часть — фото -->
           <div class="relative overflow-hidden" style="min-height:280px;">
-            <img src="photo of the gift.webp"
+            <img src="photo of the gift.png"
                  alt="Подарок при первом заказе — Марья"
                  class="w-full h-full object-cover absolute inset-0"
                  style="min-height:280px;"

@@ -4,7 +4,29 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Модерация отзывов — Марья</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia', 'Cambria', 'serif'],
+            sans:  ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -62,7 +84,7 @@
       <div class="max-w-5xl mx-auto w-full flex items-center justify-between">
         <div class="flex items-center gap-3">
           <a href="index.html">
-            <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+            <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
           </a>
           <span class="text-muted dark:text-muted-dark opacity-30">/</span>
           <span class="text-sm font-medium text-muted dark:text-muted-dark">Отзывы</span>

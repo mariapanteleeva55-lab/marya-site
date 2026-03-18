@@ -47,10 +47,57 @@
     ]
   }
   </script>
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:   { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:    { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:    { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent:  { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:    { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:     { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:   { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif:  ['Georgia', 'Cambria', 'serif'],
+            sans:   ['Inter', 'system-ui', 'sans-serif'],
+          },
+          animation: {
+            'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+            'fade-up':    'fadeUp 0.6s ease-out forwards',
+            'float':      'float 6s ease-in-out infinite',
+            'marquee':    'marquee 30s linear infinite',
+          },
+          keyframes: {
+            pulseSoft: {
+              '0%, 100%': { transform: 'scale(1)' },
+              '50%':      { transform: 'scale(1.03)' },
+            },
+            fadeUp: {
+              from: { opacity: '0', transform: 'translateY(24px)' },
+              to:   { opacity: '1', transform: 'translateY(0)' },
+            },
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%':      { transform: 'translateY(-12px)' },
+            },
+            marquee: {
+              from: { transform: 'translateX(0)' },
+              to:   { transform: 'translateX(-50%)' },
+            },
+          },
+        },
+      },
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -252,7 +299,7 @@
 
       <!-- Логотип -->
       <a href="index.html">
-        <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+        <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
       </a>
 
       <!-- Навигация (desktop) -->
@@ -448,7 +495,7 @@
           <div id="hero-img-wrap" class="hero-image-wrap relative w-[260px] h-[320px] sm:w-[340px] sm:h-[410px] lg:w-[400px] lg:h-[480px]">
             <!-- Главный блоб с изображением -->
             <div class="hero-fade-bottom absolute inset-0 rounded-[40%_60%_60%_40%/40%_40%_60%_60%] overflow-hidden bg-gradient-to-br from-sand to-warm/60 dark:from-sand-dark dark:to-warm-dark/40 blob">
-              <img src="девушка мажет на лицо крем.webp" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal" fetchpriority="high">
+              <img src="девушка мажет на лицо крем.png" alt="Уход за кожей" class="w-full h-full object-cover opacity-90 dark:opacity-70 mix-blend-multiply dark:mix-blend-normal" fetchpriority="high">
             </div>
           </div>
         </div>
@@ -536,7 +583,7 @@
             <div class="bg-sand/50 dark:bg-sand-dark/30 rounded-3xl p-8 border border-sand dark:border-sand-dark/40">
               <div class="flex items-center gap-4 mb-6">
                 <div class="w-14 h-14 rounded-full overflow-hidden flex-shrink-0 bg-warm/20">
-                  <img src="фото-марии-web.webp" alt="Мария Эйрих" class="w-full h-full object-cover object-top" loading="lazy">
+                  <img src="фото-марии-web.jpg" alt="Мария Эйрих" class="w-full h-full object-cover object-top" loading="lazy">
                 </div>
                 <div>
                   <p class="font-serif text-lg text-ink dark:text-ink-dark">Мария Эйрих</p>
@@ -621,7 +668,7 @@
           <!-- Фото -->
           <div class="w-full lg:w-1/2 reveal">
             <div class="rounded-2xl overflow-hidden" style="aspect-ratio: 4/3;">
-              <img src="российское сырье.webp" alt="Российское сырьё" class="w-full h-full object-cover" loading="lazy">
+              <img src="российское сырье.png" alt="Российское сырьё" class="w-full h-full object-cover" loading="lazy">
             </div>
           </div>
           <!-- Текст -->
@@ -764,7 +811,7 @@
             <div class="aspect-square bg-gradient-to-br from-amber-50 to-amber-100/60 dark:from-amber-950/20 dark:to-amber-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="сыворотка антивозрастная 1.webp" alt="Антивозрастная сыворотка с пептидами" loading="lazy">
+                  <img src="сыворотка антивозрастная 1.png" alt="Антивозрастная сыворотка с пептидами" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 left-3 px-2 py-1 bg-accent text-white text-xs font-bold rounded-full z-10">Хит</div>
@@ -794,9 +841,9 @@
             <div class="aspect-square bg-gradient-to-br from-teal-50 to-teal-100/40 dark:from-teal-950/20 dark:to-teal-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="Фото пенка для умывания.webp" alt="Пенка для умывания с пребиотиками" loading="lazy">
-                  <img src="пенка 2.webp" alt="Пенка для умывания — фото 2" loading="lazy">
-                  <img src="пенка 3.webp" alt="Пенка для умывания — фото 3" loading="lazy">
+                  <img src="Фото пенка для умывания.png" alt="Пенка для умывания с пребиотиками" loading="lazy">
+                  <img src="пенка 2.png" alt="Пенка для умывания — фото 2" loading="lazy">
+                  <img src="пенка 3.jpg" alt="Пенка для умывания — фото 3" loading="lazy">
                 </div>
                 <button class="slider-btn slider-prev" onclick="slideCard(this,-1,event)">
                   <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M6.5 2L3.5 5l3 3" stroke="#2C2018" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -837,7 +884,7 @@
             <div class="aspect-square bg-gradient-to-br from-amber-50 to-orange-100/40 dark:from-amber-950/20 dark:to-orange-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="крем дневной 1.webp" alt="Крем дневной омолаживающий" loading="lazy">
+                  <img src="крем дневной 1.png" alt="Крем дневной омолаживающий" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -866,7 +913,7 @@
             <div class="aspect-square bg-gradient-to-br from-purple-50 to-purple-100/40 dark:from-purple-950/20 dark:to-purple-900/10 relative">
               <div class="card-slider w-full h-full" data-current="0">
                 <div class="card-slides">
-                  <img src="крем ночь 1.webp" alt="Крем ночной омолаживающий" loading="lazy">
+                  <img src="крем ночь 1.png" alt="Крем ночной омолаживающий" loading="lazy">
                 </div>
               </div>
               <div class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">

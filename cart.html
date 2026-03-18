@@ -5,10 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Корзина — Марья</title>
   <meta name="robots" content="noindex, nofollow" />
-  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
+            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
+            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
+            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
+            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
+            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
+            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
+          },
+          fontFamily: {
+            serif: ['Georgia','Cambria','serif'],
+            sans:  ['Inter','system-ui','sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
+  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -529,21 +552,28 @@
           <!-- Delivery method -->
           <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Способ доставки</h3>
           <div class="space-y-2 mb-8">
-
-            <!-- СДЭК ПВЗ -->
-            <div class="radio-card selected" data-group="delivery" data-val="pickup" onclick="selectDelivery(this)">
+            <div class="radio-card selected" data-group="delivery" data-val="courier" data-price="0" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер до двери</p>
+                <p class="text-xs text-muted dark:text-muted-dark">1–2 дня · Москва и МО</p>
+              </div>
+              <span class="text-sm font-semibold text-sage dark:text-sage-dark">Бесплатно</span>
+            </div>
+            <div class="radio-card" data-group="delivery" data-val="pickup" data-price="100" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div class="flex-1">
                 <p class="text-sm font-medium text-ink dark:text-ink-dark">Пункт выдачи СДЭК</p>
-                <p class="text-xs text-muted dark:text-muted-dark">2–5 дней · По всей России</p>
+                <p class="text-xs text-muted dark:text-muted-dark">2–3 дня · По всей России</p>
               </div>
-              <span class="text-sm font-semibold text-ink dark:text-ink-dark" id="cdek-pvz-price-label">Рассчитывается</span>
+              <span class="text-sm font-semibold text-ink dark:text-ink-dark" id="cdek-price-label">от 100 ₽</span>
             </div>
-            <div id="cdek-pvz-block" class="p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+            <!-- CDEK pickup selector -->
+            <div id="cdek-pvz-block" class="hidden mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
               <div id="cdek-pvz-empty">
-                <p class="text-sm text-muted dark:text-muted-dark mb-3">Выберите пункт выдачи</p>
-                <button onclick="openCdekModal('pvz')" class="w-full py-2.5 border border-accent text-accent text-sm font-medium rounded-full hover:bg-accent/5 transition-colors">
-                  Найти пункт выдачи →
+                <p class="text-sm text-muted dark:text-muted-dark mb-3">Выберите удобный пункт выдачи</p>
+                <button onclick="openCdekModal()" class="w-full py-2.5 border border-accent text-accent text-sm font-medium rounded-full hover:bg-accent/5 transition-colors">
+                  Показать карту СДЭК →
                 </button>
               </div>
               <div id="cdek-pvz-selected" class="hidden">
@@ -554,50 +584,18 @@
                     <p class="text-xs text-muted dark:text-muted-dark mt-0.5" id="cdek-pvz-address"></p>
                     <p class="text-xs text-sage dark:text-sage-dark font-semibold mt-1" id="cdek-pvz-cost"></p>
                   </div>
-                  <button onclick="openCdekModal('pvz')" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">Изменить</button>
+                  <button onclick="openCdekModal()" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">Изменить</button>
                 </div>
               </div>
             </div>
-
-            <!-- СДЭК Курьер -->
-            <div class="radio-card" data-group="delivery" data-val="courier" onclick="selectDelivery(this)">
-              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер СДЭК до двери</p>
-                <p class="text-xs text-muted dark:text-muted-dark">2–5 дней · По всей России</p>
-              </div>
-              <span class="text-sm font-semibold text-ink dark:text-ink-dark" id="cdek-courier-price-label">Рассчитывается</span>
-            </div>
-            <div id="cdek-courier-block" class="hidden p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
-              <div id="cdek-courier-empty">
-                <p class="text-sm text-muted dark:text-muted-dark mb-3">Укажите город для расчёта доставки</p>
-                <button onclick="openCdekModal('courier')" class="w-full py-2.5 border border-accent text-accent text-sm font-medium rounded-full hover:bg-accent/5 transition-colors">
-                  Указать город и адрес →
-                </button>
-              </div>
-              <div id="cdek-courier-selected" class="hidden">
-                <div class="flex items-start gap-3">
-                  <svg class="w-4 h-4 text-sage dark:text-sage-dark mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                  <div class="flex-1">
-                    <p class="text-sm font-medium text-ink dark:text-ink-dark" id="cdek-courier-city">Город</p>
-                    <p class="text-xs text-muted dark:text-muted-dark mt-0.5" id="cdek-courier-address-display"></p>
-                    <p class="text-xs text-sage dark:text-sage-dark font-semibold mt-1" id="cdek-courier-cost"></p>
-                  </div>
-                  <button onclick="openCdekModal('courier')" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">Изменить</button>
-                </div>
-              </div>
-            </div>
-
-            <!-- Почта России -->
             <div class="radio-card" data-group="delivery" data-val="post" data-price="80" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div class="flex-1">
                 <p class="text-sm font-medium text-ink dark:text-ink-dark">Почта России</p>
-                <p class="text-xs text-muted dark:text-muted-dark">5–14 дней</p>
+                <p class="text-xs text-muted dark:text-muted-dark">3–7 дней</p>
               </div>
               <span class="text-sm font-semibold text-ink dark:text-ink-dark">80 ₽</span>
             </div>
-
           </div>
 
           <button onclick="goStep(2)" class="w-full py-3.5 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm shadow-md shadow-accent/20 transition-all hover:-translate-y-0.5">
@@ -2022,24 +2020,10 @@ async function linkReferral(userId) {
 </div>
 
 <script>
-// ── CDEK ─────────────────────────────────────────────────────
-const CDEK_PROXY   = 'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token';
-const CDEK_FROM    = 270; // код Челябинска в СДЭК
-let   cdekModalMode = 'pvz'; // 'pvz' | 'courier'
-let   cdekCurrentCityCode = null;
-let   cdekCurrentCityName = '';
+// ── CDEK — поиск ПВЗ через API ────────────────────────────────
+const CDEK_PROXY = 'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token';
 
-// Считает вес заказа в граммах (объём товаров + 200г упаковка)
-function getCartWeight() {
-  let grams = 200;
-  (state.items || []).forEach(item => {
-    const vol = parseInt((item.volume || '0').replace(/\D/g, '')) || 0;
-    grams += vol * (item.qty || 1);
-  });
-  return Math.max(grams, 300); // минимум 300г
-}
-
-async function cdekGet(endpoint, params = {}) {
+async function cdekApi(endpoint, params = {}) {
   const url = new URL(CDEK_PROXY);
   url.searchParams.set('action', 'api');
   url.searchParams.set('endpoint', endpoint);
@@ -2048,52 +2032,13 @@ async function cdekGet(endpoint, params = {}) {
   return res.json();
 }
 
-async function cdekPost(endpoint, body) {
-  const url = new URL(CDEK_PROXY);
-  url.searchParams.set('action', 'api');
-  url.searchParams.set('endpoint', endpoint);
-  const res = await fetch(url.toString(), {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-  return res.json();
-}
-
-async function calcTariff(cityCode, tariffCode) {
-  try {
-    const weight = getCartWeight();
-    const data = await cdekPost('/v2/calculator/tariff', {
-      tariff_code:   tariffCode,
-      from_location: { code: CDEK_FROM },
-      to_location:   { code: cityCode },
-      packages:      [{ weight, length: 20, width: 20, height: 15 }],
-    });
-    return data?.total_sum || null;
-  } catch { return null; }
-}
-
-function openCdekModal(mode = 'pvz') {
-  cdekModalMode = mode;
+function openCdekModal() {
   document.getElementById('cdek-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  // Заголовок модала
-  document.querySelector('#cdek-modal h3').textContent =
-    mode === 'pvz' ? 'Пункт выдачи СДЭК' : 'Курьер СДЭК — выбор города';
-  // Подсказка
+  document.getElementById('cdek-city-input').value = '';
   document.getElementById('cdek-city-hint').classList.add('hidden');
-  // Если город уже был выбран — восстановим подсказку
-  if (cdekCurrentCityCode) {
-    document.getElementById('cdek-city-input').value = cdekCurrentCityName;
-    document.getElementById('cdek-city-hint').textContent = 'Город: ' + cdekCurrentCityName;
-    document.getElementById('cdek-city-hint').classList.remove('hidden');
-    if (mode === 'pvz') loadCdekOffices(cdekCurrentCityCode, document.getElementById('cdek-offices-list'));
-    else showCourierForm();
-  } else {
-    document.getElementById('cdek-city-input').value = '';
-    document.getElementById('cdek-offices-list').innerHTML =
-      '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Введите город</p>';
-  }
+  document.getElementById('cdek-offices-list').innerHTML =
+    '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Введите город для поиска пунктов выдачи</p>';
   setTimeout(() => document.getElementById('cdek-city-input').focus(), 200);
 }
 
@@ -2105,43 +2050,24 @@ async function searchCdekCity() {
   list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Ищем город...</p>';
   hint.classList.add('hidden');
   try {
-    const cities = await cdekGet('/v2/location/cities', { city: cityName, country_codes: 'RU', size: 5 });
+    const cities = await cdekApi('/v2/location/cities', { city: cityName, country_codes: 'RU', size: 5 });
     if (!cities || !cities.length) {
-      list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Город не найден.</p>';
+      list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Город не найден. Попробуйте другое название.</p>';
       return;
     }
-    cdekCurrentCityCode = cities[0].code;
-    cdekCurrentCityName = cities[0].city;
-    hint.textContent = 'Город: ' + cities[0].city;
+    hint.textContent = 'Пункты выдачи в городе: ' + cities[0].city;
     hint.classList.remove('hidden');
-
-    // Рассчитываем оба тарифа параллельно
-    list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Рассчитываем стоимость...</p>';
-    const [pvzCost, courierCost] = await Promise.all([
-      calcTariff(cities[0].code, 136),
-      calcTariff(cities[0].code, 137),
-    ]);
-    // Обновляем ценники в доставке
-    if (pvzCost) document.getElementById('cdek-pvz-price-label').textContent = pvzCost + ' ₽';
-    if (courierCost) document.getElementById('cdek-courier-price-label').textContent = courierCost + ' ₽';
-    state._cdekPvzCost     = pvzCost || 350;
-    state._cdekCourierCost = courierCost || 450;
-
-    if (cdekModalMode === 'pvz') {
-      await loadCdekOffices(cities[0].code, list);
-    } else {
-      showCourierForm(cities[0].city);
-    }
+    await loadCdekOffices(cities[0].code, list);
   } catch(e) {
-    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка. Проверьте соединение.</p>';
-    console.error('CDEK error:', e);
+    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка загрузки. Проверьте соединение.</p>';
+    console.error('CDEK search error:', e);
   }
 }
 
 async function loadCdekOffices(cityCode, list) {
   list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Загружаем пункты выдачи...</p>';
   try {
-    const offices = await cdekGet('/v2/deliverypoints', { city_code: cityCode, type: 'PVZ', is_handout: 'true', size: 50 });
+    const offices = await cdekApi('/v2/deliverypoints', { city_code: cityCode, type: 'PVZ', is_handout: 'true', size: 50 });
     if (!offices || !offices.length) {
       list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Пункты выдачи не найдены.</p>';
       return;
@@ -2163,56 +2089,19 @@ async function loadCdekOffices(cityCode, list) {
       list.appendChild(btn);
     });
   } catch(e) {
-    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка загрузки.</p>';
+    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка загрузки пунктов.</p>';
+    console.error('CDEK offices error:', e);
   }
 }
 
-function showCourierForm(cityName) {
-  const city = cityName || cdekCurrentCityName;
-  document.getElementById('cdek-offices-list').innerHTML = `
-    <div class="space-y-3 py-2">
-      <p class="text-sm font-medium text-ink dark:text-ink-dark">Адрес доставки в г. ${city}</p>
-      <input id="cdek-street" type="text" placeholder="Улица"
-        class="w-full px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent">
-      <div class="flex gap-2">
-        <input id="cdek-house" type="text" placeholder="Дом"
-          class="w-1/2 px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent">
-        <input id="cdek-flat" type="text" placeholder="Кв./Офис"
-          class="w-1/2 px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent">
-      </div>
-      <button onclick="confirmCourierAddress()" class="w-full py-3 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent/90 transition-colors">
-        Подтвердить адрес
-      </button>
-    </div>`;
-}
-
-function confirmCourierAddress() {
-  const street = document.getElementById('cdek-street')?.value.trim();
-  const house  = document.getElementById('cdek-house')?.value.trim();
-  const flat   = document.getElementById('cdek-flat')?.value.trim();
-  if (!street || !house) { alert('Укажите улицу и номер дома'); return; }
-  const fullAddr = `${cdekCurrentCityName}, ${street}, д. ${house}${flat ? ', кв. ' + flat : ''}`;
-  const cost = state._cdekCourierCost || 450;
-  state.deliveryCost = cost;
-  state.cdekCourier  = { city: cdekCurrentCityName, address: fullAddr };
-  document.getElementById('cdek-courier-city').textContent          = cdekCurrentCityName;
-  document.getElementById('cdek-courier-address-display').textContent = `${street}, д. ${house}${flat ? ', кв. ' + flat : ''}`;
-  document.getElementById('cdek-courier-cost').textContent           = cost + ' ₽';
-  document.getElementById('cdek-courier-price-label').textContent    = cost + ' ₽';
-  document.getElementById('cdek-courier-empty').classList.add('hidden');
-  document.getElementById('cdek-courier-selected').classList.remove('hidden');
-  updateSummary();
-  closeCdekModal();
-}
-
 function selectCdekOffice(office) {
-  const cost = state._cdekPvzCost || 350;
+  const cost = 250;
   state.deliveryCost = cost;
-  state.cdekPoint    = { address: office.location || {}, code: office.code };
+  state.cdekPoint = { address: office.location || {}, code: office.code };
   document.getElementById('cdek-pvz-name').textContent    = office.name || office.code;
   document.getElementById('cdek-pvz-address').textContent = office.location?.address || '';
   document.getElementById('cdek-pvz-cost').textContent    = cost + ' ₽';
-  document.getElementById('cdek-pvz-price-label').textContent = cost + ' ₽';
+  document.getElementById('cdek-price-label').textContent = cost + ' ₽';
   document.getElementById('cdek-pvz-empty').classList.add('hidden');
   document.getElementById('cdek-pvz-selected').classList.remove('hidden');
   updateSummary();
