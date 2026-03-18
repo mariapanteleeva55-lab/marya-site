@@ -181,7 +181,6 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://widget.cloudpayments.ru/bundles/cloudpayments.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@cdek-it/widget@latest/dist/cdek-widget.css">
   <script>
     const _supabase = window.supabase.createClient(
       'https://cizdsiqolarjcgmwbafp.supabase.co',
@@ -199,7 +198,7 @@
   <div class="dark-header-bg" style="display:none"></div>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
     <a href="index.html">
-      <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+      <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
     </a>
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
       <div class="catalog-wrap relative">
@@ -626,7 +625,7 @@
               </div>
             </button>
             <button class="pay-btn" id="pay-sberpay" onclick="selectPay('sberpay',this)">
-              <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%2321A038'/%3E%3Cpath d='M17 8H8.5A3.5 3.5 0 0 0 5 11.5v1A3.5 3.5 0 0 0 8.5 16H17' stroke='%23fff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E" alt="SberPay" class="w-6 h-6">
+              <img loading="lazy" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='11' fill='%2321A038'/%3E%3Cpath d='M17 8H8.5A3.5 3.5 0 0 0 5 11.5v1A3.5 3.5 0 0 0 8.5 16H17' stroke='%23fff' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E" alt="SberPay" class="w-6 h-6">
               <div class="flex-1">
                 <p class="font-medium">SberPay</p>
                 <p class="text-xs text-muted dark:text-muted-dark">Оплата через Сбербанк</p>
@@ -927,12 +926,12 @@ const CART_PRODUCTS = [
 ];
 
 const PRODUCTS_MAP = {
-  1:  { name:'Пенка для умывания с пребиотиками',       emoji:'🫧', image:'Фото пенка для умывания.png', price:890,  volume:'150 мл', color:'from-teal-50 to-cyan-100' },
+  1:  { name:'Пенка для умывания с пребиотиками',       emoji:'🫧', image:'Фото пенка для умывания.webp', price:890,  volume:'150 мл', color:'from-teal-50 to-cyan-100' },
   2:  { name:'Тоник увлажняющий с аминокислотами',      emoji:'💦', price:990,  volume:'250 мл', color:'from-sky-50 to-blue-100' },
-  3:  { name:'Мицеллярная вода',                         emoji:'🌊', image:'миц вода 1.png', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
-  4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', image:'сыворотка антивозрастная 1.png', price:2490, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
-  5:  { name:'Крем дневной омолаживающий',               emoji:'☀️', image:'крем дневной 1.png', price:1990, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
-  6:  { name:'Крем ночной омолаживающий',                emoji:'🌙', image:'крем ночь 1.png', price:1990, volume:'50 мл',  color:'from-purple-50 to-violet-100' },
+  3:  { name:'Мицеллярная вода',                         emoji:'🌊', image:'миц вода 1.webp', price:790,  volume:'250 мл', color:'from-blue-50 to-blue-100' },
+  4:  { name:'Антивозрастная сыворотка с пептидами',    emoji:'🧬', image:'сыворотка антивозрастная 1.webp', price:2490, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  5:  { name:'Крем дневной омолаживающий',               emoji:'☀️', image:'крем дневной 1.webp', price:1990, volume:'50 мл',  color:'from-amber-50 to-orange-100' },
+  6:  { name:'Крем ночной омолаживающий',                emoji:'🌙', image:'крем ночь 1.webp', price:1990, volume:'50 мл',  color:'from-purple-50 to-violet-100' },
   7:  { name:'Крем для век от отёков и тёмных кругов',  emoji:'👁️', price:1490, volume:'30 мл',  color:'from-rose-50 to-pink-100' },
   8:  { name:'Маска очищающая с каолином',               emoji:'🪨', price:990,  volume:'100 мл', color:'from-stone-50 to-amber-100' },
   9:  { name:'Маска мгновенной красоты',                 emoji:'✨', price:1190, volume:'100 мл', color:'from-yellow-50 to-amber-100' },
@@ -1115,7 +1114,7 @@ function renderCartItem(p){
   return `
   <div class="flex gap-4 p-4 bg-cream dark:bg-cream-dark border border-sand/50 dark:border-sand-dark/20 rounded-2xl" data-id="${p.id}">
     <div class="w-[72px] h-[72px] flex-shrink-0 rounded-xl bg-gradient-to-br ${p.color} flex items-center justify-center text-3xl overflow-hidden">
-      ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}">` : p.emoji}
+      ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}" loading="lazy">` : p.emoji}
     </div>
     <div class="flex-1 min-w-0">
       <div class="flex items-start justify-between gap-2">
@@ -1400,7 +1399,7 @@ function buildReviewStep(){
 
   document.getElementById('review-items').innerHTML = cart.map(p => `
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-lg flex-shrink-0 overflow-hidden">${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}">` : p.emoji}</div>
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-lg flex-shrink-0 overflow-hidden">${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}" loading="lazy">` : p.emoji}</div>
       <div class="flex-1 min-w-0">
         <p class="text-sm text-ink dark:text-ink-dark font-medium leading-tight truncate">${p.name}</p>
         <p class="text-xs text-muted dark:text-muted-dark">${p.volume} · ${p.qty} шт.</p>
@@ -1424,7 +1423,7 @@ function renderCheckoutMini(){
   if (!mini) return;
   mini.innerHTML = cart.map(p => `
     <div class="flex items-center gap-2.5">
-      <div class="w-9 h-9 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-base flex-shrink-0 overflow-hidden">${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}">` : p.emoji}</div>
+      <div class="w-9 h-9 rounded-lg bg-gradient-to-br ${p.color} flex items-center justify-center text-base flex-shrink-0 overflow-hidden">${p.image ? `<img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}" loading="lazy">` : p.emoji}</div>
       <div class="flex-1 min-w-0"><p class="text-xs font-medium text-ink dark:text-ink-dark truncate">${p.name}</p><p class="text-[10px] text-muted dark:text-muted-dark">${p.qty} шт.</p></div>
       <span class="text-xs font-semibold text-ink dark:text-ink-dark">${fmt(p.price*p.qty)}</span>
     </div>`).join('');
@@ -1985,62 +1984,128 @@ async function linkReferral(userId) {
 })();
 </script>
 
-<!-- ═══ CDEK WIDGET MODAL ═══════════════════════════════════════ -->
+<!-- ═══ CDEK MODAL — список ПВЗ ════════════════════════════════ -->
 <div id="cdek-modal" class="fixed inset-0 z-[200] flex items-end sm:items-center justify-center hidden">
   <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeCdekModal()"></div>
-  <div class="relative bg-cream dark:bg-[#1A1612] rounded-t-2xl sm:rounded-2xl w-full max-w-3xl h-[90vh] sm:h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+  <div class="relative bg-cream dark:bg-[#1A1612] rounded-t-2xl sm:rounded-2xl w-full max-w-2xl h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+
+    <!-- Заголовок -->
     <div class="flex items-center justify-between px-5 py-4 border-b border-sand dark:border-sand-dark/40 shrink-0">
-      <div class="flex items-center gap-2">
-        <img src="https://cdn.cdek.ru/widget/latest/img/cdek-logo.svg" alt="CDEK" class="h-5" onerror="this.style.display='none'">
-        <h3 class="font-semibold text-ink dark:text-ink-dark">Выбрать пункт выдачи</h3>
-      </div>
+      <h3 class="font-semibold text-ink dark:text-ink-dark">Пункт выдачи СДЭК</h3>
       <button onclick="closeCdekModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-sand/30 dark:hover:bg-sand-dark/20 transition-colors">
         <svg class="w-4 h-4 text-muted dark:text-muted-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
       </button>
     </div>
-    <div id="cdek-widget-root" style="height:560px;width:100%;"></div>
+
+    <!-- Поиск -->
+    <div class="px-5 py-3 border-b border-sand/40 dark:border-sand-dark/20 shrink-0">
+      <div class="flex gap-2">
+        <input id="cdek-city-input" type="text" placeholder="Введите город..."
+          class="flex-1 px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent transition-colors"
+          onkeydown="if(event.key==='Enter') searchCdekCity()">
+        <button onclick="searchCdekCity()"
+          class="px-5 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent/90 transition-colors">
+          Найти
+        </button>
+      </div>
+      <p id="cdek-city-hint" class="text-xs text-muted dark:text-muted-dark mt-1.5 hidden"></p>
+    </div>
+
+    <!-- Список ПВЗ -->
+    <div id="cdek-offices-list" class="flex-1 overflow-y-auto px-5 py-4 space-y-2">
+      <p class="text-sm text-muted dark:text-muted-dark text-center py-10">Введите город для поиска пунктов выдачи</p>
+    </div>
+
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@cdek-it/widget@latest/dist/cdek-widget.umd.js"></script>
 <script>
-// ── CDEK WIDGET ───────────────────────────────────────────────────
-let cdekWidget = null;
+// ── CDEK — поиск ПВЗ через API ────────────────────────────────
+const CDEK_PROXY = 'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token';
+
+async function cdekApi(endpoint, params = {}) {
+  const url = new URL(CDEK_PROXY);
+  url.searchParams.set('action', 'api');
+  url.searchParams.set('endpoint', endpoint);
+  for (const [k, v] of Object.entries(params)) url.searchParams.set(k, v);
+  const res = await fetch(url.toString());
+  return res.json();
+}
 
 function openCdekModal() {
   document.getElementById('cdek-modal').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  cdekWidget = null;
-  document.getElementById('cdek-widget-root').innerHTML = '';
-  setTimeout(() => {
-    try {
-      cdekWidget = new CDEKWidget({
-        root:            'cdek-widget-root',
-        apiKey:          'uejYeTXuvgJfQhzbb5cGnU5PZMt1EIah',
-        servicePath:     'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token',
-        lang:            'rus',
-        currency:        'RUB',
-        yandexApiKey:    'e7538d9b-a07a-4e9c-855d-f9b3dfc3be11',
-        onChoose(type, tariff, address) {
-          const cost = tariff?.delivery_sum || 0;
-          state.deliveryCost = cost;
-          state.cdekPoint    = { type, tariff, address };
-          document.getElementById('cdek-pvz-name').textContent    = address?.name || 'Пункт СДЭК';
-          document.getElementById('cdek-pvz-address').textContent = address?.address || address?.city || '';
-          document.getElementById('cdek-pvz-cost').textContent    = cost > 0 ? cost + ' ₽' : 'Бесплатно';
-          document.getElementById('cdek-price-label').textContent = cost > 0 ? cost + ' ₽' : 'Бесплатно';
-          document.getElementById('cdek-pvz-empty').classList.add('hidden');
-          document.getElementById('cdek-pvz-selected').classList.remove('hidden');
-          updateSummary();
-          closeCdekModal();
-        },
-      });
-    } catch(e) {
-      console.error('CDEK widget error:', e);
-      document.getElementById('cdek-widget-root').innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center;color:#888;font-size:14px;">Ошибка: ' + (e?.message || e) + '</div>';
+  document.getElementById('cdek-city-input').value = '';
+  document.getElementById('cdek-city-hint').classList.add('hidden');
+  document.getElementById('cdek-offices-list').innerHTML =
+    '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Введите город для поиска пунктов выдачи</p>';
+  setTimeout(() => document.getElementById('cdek-city-input').focus(), 200);
+}
+
+async function searchCdekCity() {
+  const cityName = document.getElementById('cdek-city-input').value.trim();
+  if (!cityName) return;
+  const list = document.getElementById('cdek-offices-list');
+  const hint = document.getElementById('cdek-city-hint');
+  list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Ищем город...</p>';
+  hint.classList.add('hidden');
+  try {
+    const cities = await cdekApi('/v2/location/cities', { city: cityName, country_codes: 'RU', size: 5 });
+    if (!cities || !cities.length) {
+      list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Город не найден. Попробуйте другое название.</p>';
+      return;
     }
-  }, 400);
+    hint.textContent = 'Пункты выдачи в городе: ' + cities[0].city;
+    hint.classList.remove('hidden');
+    await loadCdekOffices(cities[0].code, list);
+  } catch(e) {
+    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка загрузки. Проверьте соединение.</p>';
+    console.error('CDEK search error:', e);
+  }
+}
+
+async function loadCdekOffices(cityCode, list) {
+  list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Загружаем пункты выдачи...</p>';
+  try {
+    const offices = await cdekApi('/v2/deliverypoints', { city_code: cityCode, type: 'PVZ', is_handout: 'true', size: 50 });
+    if (!offices || !offices.length) {
+      list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Пункты выдачи не найдены.</p>';
+      return;
+    }
+    list.innerHTML = '';
+    offices.forEach(office => {
+      const btn = document.createElement('button');
+      btn.className = 'w-full text-left p-4 rounded-xl border border-sand dark:border-sand-dark/40 hover:border-accent hover:bg-sand/10 dark:hover:bg-sand-dark/5 transition-all';
+      btn.innerHTML = `
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex-1 min-w-0">
+            <p class="font-medium text-sm text-ink dark:text-ink-dark">${office.name || office.code}</p>
+            <p class="text-xs text-muted dark:text-muted-dark mt-0.5">${office.location?.address || ''}</p>
+            ${office.work_time ? `<p class="text-xs text-sage dark:text-sage-dark mt-1">${office.work_time}</p>` : ''}
+          </div>
+          <span class="text-xs font-semibold text-accent whitespace-nowrap shrink-0">Выбрать</span>
+        </div>`;
+      btn.onclick = () => selectCdekOffice(office);
+      list.appendChild(btn);
+    });
+  } catch(e) {
+    list.innerHTML = '<p class="text-sm text-red-500 text-center py-10">Ошибка загрузки пунктов.</p>';
+    console.error('CDEK offices error:', e);
+  }
+}
+
+function selectCdekOffice(office) {
+  const cost = 250;
+  state.deliveryCost = cost;
+  state.cdekPoint = { address: office.location || {}, code: office.code };
+  document.getElementById('cdek-pvz-name').textContent    = office.name || office.code;
+  document.getElementById('cdek-pvz-address').textContent = office.location?.address || '';
+  document.getElementById('cdek-pvz-cost').textContent    = cost + ' ₽';
+  document.getElementById('cdek-price-label').textContent = cost + ' ₽';
+  document.getElementById('cdek-pvz-empty').classList.add('hidden');
+  document.getElementById('cdek-pvz-selected').classList.remove('hidden');
+  updateSummary();
+  closeCdekModal();
 }
 
 function closeCdekModal() {
