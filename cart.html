@@ -1353,12 +1353,13 @@ function selectRadio(el){
 
 function selectDelivery(el){
   selectRadio(el);
-  const val = el.dataset.val;
-  document.getElementById('cdek-pvz-block').classList.toggle('hidden', val !== 'pickup');
-  document.getElementById('cdek-courier-block').classList.toggle('hidden', val !== 'courier');
-  if (val === 'pickup')  state.deliveryCost = state._cdekPvzCost || 350;
-  else if (val === 'courier') state.deliveryCost = state._cdekCourierCost || 450;
-  else state.deliveryCost = parseInt(el.dataset.price) || 0;
+  const isCdek = el.dataset.val === 'pickup';
+  document.getElementById('cdek-pvz-block').classList.toggle('hidden', !isCdek);
+  if (isCdek) {
+    state.deliveryCost = state.cdekPoint?.tariff?.delivery_sum || parseInt(el.dataset.price) || 100;
+  } else {
+    state.deliveryCost = parseInt(el.dataset.price) || 0;
+  }
   updateSummary();
   updateDeliveryBanner();
 }
