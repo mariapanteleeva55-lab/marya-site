@@ -1142,7 +1142,7 @@ function resetFilters() {
   if (newEl)  newEl.checked  = false;
   document.getElementById('price-min').value = 490;
   document.getElementById('price-max').value = 3500;
-  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:490, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
+  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:0, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
   document.getElementById('price-from-label').textContent = '490 ₽';
   document.getElementById('price-to-label').textContent   = '3 500 ₽';
   const searchInput = document.getElementById('search-input');
