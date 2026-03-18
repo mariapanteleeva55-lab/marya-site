@@ -5,29 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Подарочный сертификат — Марья</title>
   <meta name="description" content="Подарите заботу о коже. Выберите дизайн, номинал и имя получателя — отправим сертификат по email."/>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
-            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
-            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
-            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
-            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
-            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
-            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
-          },
-          fontFamily: {
-            serif: ['Georgia','Cambria','serif'],
-            sans:  ['Inter','system-ui','sans-serif'],
-          },
-        },
-      },
-    }
-  </script>
+  <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- EmailJS -->
@@ -173,7 +151,7 @@
   style="background:rgba(253,248,243,.93);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
     <a href="index.html">
-      <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+      <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
     </a>
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
       <div class="catalog-wrap relative">

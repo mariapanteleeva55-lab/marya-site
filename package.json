@@ -1,0 +1,26 @@
+{
+  "name": "marya",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i input.css -o style.css --minify",
+    "watch:css": "tailwindcss -i input.css -o style.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mariapanteleeva55-lab/marya-site.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mariapanteleeva55-lab/marya-site/issues"
+  },
+  "homepage": "https://github.com/mariapanteleeva55-lab/marya-site#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.2.1",
+    "tailwindcss": "^4.2.1"
+  }
+}

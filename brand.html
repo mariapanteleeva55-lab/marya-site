@@ -5,33 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>О бренде — Марья</title>
   <meta name="description" content="История бренда Марья: регенеративная косметика, созданная врачом-технологом. Честные формулы, научный подход, семейный бренд." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            cream:  { DEFAULT: '#FDF8F3', dark: '#1A1612' },
-            sand:   { DEFAULT: '#E8DDD0', dark: '#2A2420' },
-            warm:   { DEFAULT: '#C4A882', dark: '#8B7355' },
-            accent: { DEFAULT: '#D4956A', dark: '#E8A87A' },
-            sage:   { DEFAULT: '#8BA888', dark: '#6B8A68' },
-            ink:    { DEFAULT: '#2C2018', dark: '#F5EDE4' },
-            muted:  { DEFAULT: '#7A6A5A', dark: '#A89880' },
-          },
-          fontFamily: {
-            serif: ['Georgia', 'Cambria', 'serif'],
-            sans:  ['Inter', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
-    }
-  </script>
+  <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -147,7 +124,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
       <a href="index.html">
-        <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+        <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
       </a>
 
       <!-- Навигация (desktop) -->
@@ -220,7 +197,7 @@
 
       <!-- Лого -->
       <div class="flex justify-center mb-6">
-        <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:140px;width:auto;opacity:.85">
+        <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:140px;width:auto;opacity:.85">
       </div>
 
       <!-- Разделитель -->
@@ -332,7 +309,7 @@
           </div>
         </div>
         <div class="sister-card rounded-2xl overflow-hidden">
-          <div class="aspect-[3/4] overflow-hidden"><img src="фото татьяна.jpg" alt="Татьяна" class="w-full h-full object-cover object-top" loading="lazy"></div>
+          <div class="aspect-[3/4] overflow-hidden"><img src="фото татьяна.webp" alt="Татьяна" class="w-full h-full object-cover object-top" loading="lazy"></div>
           <div class="p-8">
             <h3 class="font-serif text-2xl font-light mb-1" style="color: #FDF8F3;">Татьяна</h3>
             <p class="text-[11px] tracking-[0.28em] uppercase mb-5" style="color: #C4A882;">Коммуникатор · Эмпат · Голос бренда</p>

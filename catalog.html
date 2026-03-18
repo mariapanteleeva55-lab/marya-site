@@ -18,43 +18,10 @@
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Каталог косметики — Марья" />
   <meta name="twitter:image" content="https://mariacosmetics.ru/og.jpg" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            cream:   { DEFAULT: '#FDF8F3', dark: '#1A1612' },
-            sand:    { DEFAULT: '#E8DDD0', dark: '#2A2420' },
-            warm:    { DEFAULT: '#C4A882', dark: '#8B7355' },
-            accent:  { DEFAULT: '#D4956A', dark: '#E8A87A' },
-            sage:    { DEFAULT: '#8BA888', dark: '#6B8A68' },
-            ink:     { DEFAULT: '#2C2018', dark: '#F5EDE4' },
-            muted:   { DEFAULT: '#7A6A5A', dark: '#A89880' },
-          },
-          fontFamily: {
-            serif: ['Georgia', 'Cambria', 'serif'],
-            sans:  ['Inter', 'system-ui', 'sans-serif'],
-          },
-          animation: {
-            'fade-up':   'fadeUp 0.5s ease-out forwards',
-            'slide-in':  'slideIn 0.3s ease-out forwards',
-            'pulse-soft':'pulseSoft 2s ease-in-out infinite',
-          },
-          keyframes: {
-            fadeUp:    { from: { opacity:'0', transform:'translateY(16px)' }, to: { opacity:'1', transform:'translateY(0)' } },
-            slideIn:   { from: { opacity:'0', transform:'translateX(-12px)' }, to: { opacity:'1', transform:'translateX(0)' } },
-            pulseSoft: { '0%,100%': { transform:'scale(1)' }, '50%': { transform:'scale(1.03)' } },
-          },
-        },
-      },
-    }
-  </script>
+  <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://cizdsiqolarjcgmwbafp.supabase.co">
-  <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
   <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -206,7 +173,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
     <a href="index.html">
-      <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+      <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
     </a>
 
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
@@ -666,7 +633,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
     time: ['morning','evening'], ingredient: [],
     badge: 'Хит', isNew: false, isSale: false, volume: '150 мл',
-    emoji: '🫧', image: 'Фото пенка для умывания.png', images: ['Фото пенка для умывания.png','пенка 2.png','пенка 3.jpg','пенка 4.png','пенка 5.png'], nameColor: '#2A7A6E', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
+    emoji: '🫧', image: 'Фото пенка для умывания.webp', images: ['Фото пенка для умывания.webp','пенка 2.webp','пенка 3.webp','пенка 4.webp','пенка 5.webp'], nameColor: '#2A7A6E', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
     desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.'
   },
   {
@@ -676,7 +643,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['moisture','aging'],
     time: ['morning','evening'], ingredient: ['niacinamide'],
     badge: null, isNew: false, isSale: false, volume: '250 мл',
-    emoji: '💦', image: 'тоник 1.png', images: ['тоник 1.png','тоник 2.png','тоник 3.png','тоник 4.png'], nameColor: '#3A6E8A', color: 'from-sky-50 to-blue-100', darkColor: 'from-sky-950/20 to-blue-900/10',
+    emoji: '💦', image: 'тоник 1.webp', images: ['тоник 1.webp','тоник 2.webp','тоник 3.webp','тоник 4.webp'], nameColor: '#3A6E8A', color: 'from-sky-50 to-blue-100', darkColor: 'from-sky-950/20 to-blue-900/10',
     desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу, восстанавливает баланс после умывания. Аминокислоты укрепляют кожный барьер и удерживают влагу, гирудин улучшает микроциркуляцию и придаёт здоровое сияние. Подходит для ежедневного применения утром и вечером.'
   },
   {
@@ -686,7 +653,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
     time: ['morning','evening','anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '250 мл',
-    emoji: '🌊', image: 'миц вода 1.png', images: ['миц вода 1.png','миц вода 2.png','миц вода 3.png','миц вода 4.png'], nameColor: '#2A7A6E', color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-950/20 to-blue-900/10',
+    emoji: '🌊', image: 'миц вода 1.webp', images: ['миц вода 1.webp','миц вода 2.webp','миц вода 3.webp','миц вода 4.webp'], nameColor: '#2A7A6E', color: 'from-blue-50 to-blue-100', darkColor: 'from-blue-950/20 to-blue-900/10',
     desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не требует смывания водой. Мицеллы захватывают и растворяют частицы макияжа и загрязнения, не нарушая защитный барьер кожи. Пантенол и экстракт алоэ успокаивают и увлажняют, а экстракт пиявки улучшает цвет лица.'
   },
   {
@@ -696,7 +663,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
     time: ['morning','evening'], ingredient: ['peptides','hyaluronic'],
     badge: 'Хит', isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🧬', image: 'сыворотка антивозрастная 1.png', nameColor: '#A07830', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    emoji: '🧬', image: 'сыворотка антивозрастная 1.webp', nameColor: '#A07830', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
     desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин и повышает упругость кожи. Пептидный комплекс в сочетании с гирудином запускает процессы клеточного обновления и улучшает микроциркуляцию, а гиалуроновая кислота обеспечивает глубокое и длительное увлажнение. Результат заметен уже через 2–4 недели применения.'
   },
   {
@@ -706,7 +673,7 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['morning'], ingredient: ['retinol'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '☀️', image: 'крем дневной 1.png', nameColor: '#C07850', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    emoji: '☀️', image: 'крем дневной 1.webp', nameColor: '#C07850', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
     desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и насыщает клетки кожи кислородом и питательными веществами. DMAE подтягивает овал лица, сквалан и масло ши глубоко питают и смягчают, предотвращая потерю влаги. Регулярное применение защищает от преждевременного старения и сохраняет молодость кожи.'
   },
   {
@@ -716,7 +683,7 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['evening'], ingredient: ['ceramides','niacinamide','hyaluronic','retinol','aha'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🌙', image: 'крем ночь 1.png', nameColor: '#6A5E8A', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
+    emoji: '🌙', image: 'крем ночь 1.webp', nameColor: '#6A5E8A', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
     desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и активирует ночные процессы восстановления кожи. Церамиды укрепляют защитный барьер, DMAE подтягивает контуры лица, ниацинамид выравнивает тон, а гиалуроновая кислота обеспечивает интенсивное увлажнение в ночное время. Утром кожа выглядит отдохнувшей, гладкой и сияющей.'
   },
   {

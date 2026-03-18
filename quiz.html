@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru" class="scroll-smooth">
 <head>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cizdsiqolarjcgmwbafp.supabase.co" crossorigin>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Марья — Подбор ухода</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     tailwind.config = {
@@ -97,7 +99,7 @@
   <header style="background:rgba(253,248,243,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(232,221,208,.5)" class="sticky top-0 z-50 h-[60px] flex items-center px-4 sm:px-6">
     <div class="max-w-2xl mx-auto w-full flex items-center justify-between">
       <a href="index.html">
-        <img src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+        <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
       </a>
       <a href="javascript:history.back()" class="text-sm text-muted hover:text-accent transition-colors flex items-center gap-1.5">
         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 12H5M12 5l-7 7 7 7" stroke-width="2" stroke-linecap="round"/></svg>
@@ -416,10 +418,10 @@
   const PRODUCTS = [
     { id:1,  name:'Пенка для умывания с пребиотиками',    price:890,  emoji:'🫧', skintype:['normal','dry','oily','combo','sensitive'], concern:['cleansing','moisture','aging'] },
     { id:2,  name:'Тоник увлажняющий с аминокислотами',   price:990,  emoji:'💦', skintype:['normal','dry','oily','combo','sensitive'], concern:['moisture','aging'] },
-    { id:3,  name:'Мицеллярная вода',                     price:790,  emoji:'🌊', image:'миц вода 1.png', skintype:['normal','dry','oily','combo','sensitive'], concern:['cleansing','moisture'] },
-    { id:4,  name:'Антивозрастная сыворотка с пептидами', price:2490, emoji:'🧬', image:'сыворотка антивозрастная 1.png', skintype:['normal','dry','sensitive'],                concern:['moisture','aging'] },
-    { id:5,  name:'Крем дневной омолаживающий',           price:1990, emoji:'☀️', image:'крем дневной 1.png', skintype:['normal','dry'],                           concern:['aging'] },
-    { id:6,  name:'Крем ночной омолаживающий',            price:1990, emoji:'🌙', image:'крем ночь 1.png', skintype:['normal','dry'],                           concern:['aging'] },
+    { id:3,  name:'Мицеллярная вода',                     price:790,  emoji:'🌊', image:'миц вода 1.webp', skintype:['normal','dry','oily','combo','sensitive'], concern:['cleansing','moisture'] },
+    { id:4,  name:'Антивозрастная сыворотка с пептидами', price:2490, emoji:'🧬', image:'сыворотка антивозрастная 1.webp', skintype:['normal','dry','sensitive'],                concern:['moisture','aging'] },
+    { id:5,  name:'Крем дневной омолаживающий',           price:1990, emoji:'☀️', image:'крем дневной 1.webp', skintype:['normal','dry'],                           concern:['aging'] },
+    { id:6,  name:'Крем ночной омолаживающий',            price:1990, emoji:'🌙', image:'крем ночь 1.webp', skintype:['normal','dry'],                           concern:['aging'] },
     { id:7,  name:'Крем для век от отёков и тёмных кругов', price:1490, emoji:'👁️', skintype:['normal','dry','sensitive'],             concern:['aging'] },
     { id:8,  name:'Маска очищающая с каолином',           price:990,  emoji:'🪨', skintype:['oily','combo'],                           concern:['cleansing','moisture'] },
     { id:9,  name:'Маска мгновенной красоты',             price:1190, emoji:'✨', skintype:['normal','dry','sensitive'],                concern:['moisture','aging'] },
@@ -676,7 +678,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
         ${products.map(p => `
           <a href="product.html?id=${p.id}" class="product-card block">
-            ${p.image ? `<div class="aspect-square rounded-xl overflow-hidden mb-3"><img src="${p.image}" class="w-full h-full object-cover object-top" alt="${p.name}"></div>` : `<div class="text-3xl mb-3">${p.emoji}</div>`}
+            ${p.image ? `<div class="aspect-square rounded-xl overflow-hidden mb-3"><img src="${p.image}" class="w-full h-full object-cover object-top" alt="${p.name}" loading="lazy"></div>` : `<div class="text-3xl mb-3">${p.emoji}</div>`}
             <div class="font-medium text-ink text-sm leading-snug mb-2">${p.name}</div>
             <div class="text-accent font-semibold">${p.price} ₽</div>
           </a>
