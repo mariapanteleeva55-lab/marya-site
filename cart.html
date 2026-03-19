@@ -296,7 +296,7 @@
     <div id="delivery-banner" class="mt-4 mb-8 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/20 dark:bg-sand-dark/10">
       <div class="flex items-center justify-between text-sm mb-2">
         <span id="delivery-banner-text" class="text-ink dark:text-ink-dark font-medium">До бесплатной доставки — <span id="delivery-remaining" class="text-accent font-semibold">540 ₽</span></span>
-        <span class="text-muted dark:text-muted-dark text-xs">Бесплатно от 3 000 ₽</span>
+        <span class="text-muted dark:text-muted-dark text-xs" id="delivery-banner-hint">Бесплатно от 1 500 ₽</span>
       </div>
       <div class="h-1.5 bg-sand dark:bg-sand-dark/40 rounded-full overflow-hidden">
         <div id="delivery-bar" class="delivery-bar-fill h-full bg-gradient-to-r from-accent to-warm rounded-full" style="width:73%"></div>
@@ -359,7 +359,7 @@
             <!-- Promo code -->
             <div class="mb-4">
               <div class="flex gap-2">
-                <input id="promo-input" type="text" placeholder="Промокод" class="form-input flex-1" style="padding:9px 12px">
+                <input id="promo-input" type="text" placeholder="Промокод" autocomplete="off" class="form-input flex-1" style="padding:9px 12px">
                 <button onclick="applyPromo()" class="px-4 py-2 border border-sand dark:border-sand-dark/40 rounded-xl text-sm font-medium text-ink dark:text-ink-dark hover:border-warm/50 transition-colors whitespace-nowrap">
                   Применить
                 </button>
@@ -498,67 +498,102 @@
             </div>
           </div>
 
-          <!-- Messenger -->
+          <!-- Email (auto from account) -->
           <div class="mb-6">
-            <label class="form-label mb-3 block">Уведомления о заказе</label>
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <div class="radio-card selected" data-group="messenger" data-val="telegram" onclick="selectRadio(this)">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <span class="text-sm text-ink dark:text-ink-dark">Telegram</span>
-              </div>
-              <div class="radio-card" data-group="messenger" data-val="whatsapp" onclick="selectRadio(this)">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <span class="text-sm text-ink dark:text-ink-dark">WhatsApp</span>
-              </div>
-              <div class="radio-card" data-group="messenger" data-val="vk" onclick="selectRadio(this)">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <span class="text-sm text-ink dark:text-ink-dark">ВКонтакте</span>
-              </div>
-              <div class="radio-card" data-group="messenger" data-val="push" onclick="selectRadio(this)">
-                <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-                <span class="text-sm text-ink dark:text-ink-dark">Push</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Address -->
-          <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Адрес доставки</h3>
-          <div class="grid sm:grid-cols-3 gap-4 mb-4">
-            <div class="sm:col-span-2 field-wrap">
-              <label class="form-label">Город *</label>
-              <input id="f-city" type="text" placeholder="Москва" class="form-input" oninput="clearError(this)">
-              <p class="form-error">Введите город</p>
-            </div>
             <div class="field-wrap">
-              <label class="form-label">Индекс</label>
-              <input id="f-zip" type="text" placeholder="123456" class="form-input">
-            </div>
-          </div>
-          <div class="grid sm:grid-cols-3 gap-4 mb-6">
-            <div class="sm:col-span-2 field-wrap">
-              <label class="form-label">Улица *</label>
-              <input id="f-street" type="text" placeholder="Ленинградский проспект" class="form-input" oninput="clearError(this)">
-              <p class="form-error">Введите улицу</p>
-            </div>
-            <div>
-              <label class="form-label">Дом / кв</label>
-              <div class="grid grid-cols-2 gap-2">
-                <input id="f-house" type="text" placeholder="15А" class="form-input">
-                <input id="f-apt" type="text" placeholder="42" class="form-input">
-              </div>
+              <label class="form-label">Email</label>
+              <input id="f-email" type="email" placeholder="Загрузка..." readonly
+                class="form-input bg-sand/20 dark:bg-sand-dark/10 cursor-default text-muted dark:text-muted-dark">
+              <p class="text-xs text-muted dark:text-muted-dark mt-1.5">Чек и статус заказа придут на этот адрес</p>
             </div>
           </div>
 
           <!-- Delivery method -->
           <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Способ доставки</h3>
           <div class="space-y-2 mb-8">
-            <div class="radio-card selected" data-group="delivery" data-val="courier" data-price="0" onclick="selectDelivery(this)">
+            <div class="radio-card selected" data-group="delivery" data-val="courier" data-price="200" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div class="flex-1">
                 <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер до двери</p>
-                <p class="text-xs text-muted dark:text-muted-dark">1–2 дня · Москва и МО</p>
+                <p class="text-xs text-muted dark:text-muted-dark">1–2 дня · Челябинск · Бесплатно от 1 500 ₽</p>
+              </div>
+              <span class="text-sm font-semibold text-sage dark:text-sage-dark" id="courier-price-label">Бесплатно</span>
+            </div>
+            <!-- Courier address block (default visible) -->
+            <div id="addr-courier-block" class="mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+              <div class="grid sm:grid-cols-3 gap-3 mb-3">
+                <div class="sm:col-span-2 field-wrap">
+                  <label class="form-label">Город *</label>
+                  <input id="f-courier-city" type="text" placeholder="Челябинск" class="form-input" oninput="clearError(this)">
+                  <p class="form-error">Введите город</p>
+                </div>
+                <div class="field-wrap">
+                  <label class="form-label">Индекс</label>
+                  <input id="f-courier-zip" type="text" placeholder="123456" class="form-input">
+                </div>
+              </div>
+              <div class="grid sm:grid-cols-3 gap-3">
+                <div class="sm:col-span-2 field-wrap">
+                  <label class="form-label">Улица *</label>
+                  <input id="f-courier-street" type="text" placeholder="проспект Ленина" class="form-input" oninput="clearError(this)">
+                  <p class="form-error">Введите улицу</p>
+                </div>
+                <div>
+                  <label class="form-label">Дом / кв</label>
+                  <div class="grid grid-cols-2 gap-2">
+                    <input id="f-courier-house" type="text" placeholder="15А" class="form-input">
+                    <input id="f-courier-apt" type="text" placeholder="42" class="form-input">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="radio-card" data-group="delivery" data-val="office-pickup" data-price="0" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Самовывоз из офиса</p>
+                <p class="text-xs text-muted dark:text-muted-dark">Сегодня · Челябинск</p>
               </div>
               <span class="text-sm font-semibold text-sage dark:text-sage-dark">Бесплатно</span>
+            </div>
+            <!-- Office pickup info block -->
+            <div id="addr-office-block" class="hidden mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+              <div class="flex items-start gap-3">
+                <svg class="w-4 h-4 text-accent mt-0.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <div>
+                  <p class="text-sm font-medium text-ink dark:text-ink-dark">Адрес офиса</p>
+                  <p class="text-sm text-muted dark:text-muted-dark mt-0.5">г. Челябинск, ул. Блюхера, 59А</p>
+                  <p class="text-xs text-muted dark:text-muted-dark mt-1">Пн–Пт: 9:00–18:00 · Сб: 10:00–15:00</p>
+                </div>
+              </div>
+            </div>
+            <div class="radio-card" data-group="delivery" data-val="cdek-courier" data-price="350" onclick="selectDelivery(this)">
+              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
+              <div class="flex-1">
+                <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер СДЭК</p>
+                <p class="text-xs text-muted dark:text-muted-dark">2–4 дня · По всей России</p>
+              </div>
+              <span class="text-sm font-semibold text-ink dark:text-ink-dark" id="cdek-courier-price-label">от 350 ₽</span>
+            </div>
+            <!-- CDEK courier address block -->
+            <div id="cdek-courier-block" class="hidden mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+              <div class="grid sm:grid-cols-3 gap-3 mb-3">
+                <div class="sm:col-span-2 field-wrap">
+                  <label class="form-label">Город *</label>
+                  <div class="relative">
+                    <input id="cdek-courier-city" type="text" placeholder="Начните вводить город..." autocomplete="off"
+                      class="form-input"
+                      oninput="cdekCourierCityAutocomplete(this.value);clearError(this)"
+                      onblur="setTimeout(()=>document.getElementById('cdek-courier-sugg').classList.add('hidden'),200)">
+                    <div id="cdek-courier-sugg" class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#221E1A] rounded-xl border border-sand dark:border-sand-dark/40 shadow-lg max-h-40 overflow-y-auto z-50"></div>
+                  </div>
+                  <p class="form-error">Введите город</p>
+                </div>
+              </div>
+              <div class="field-wrap">
+                <label class="form-label">Улица, дом, квартира *</label>
+                <input id="cdek-courier-street" type="text" placeholder="ул. Ленина, 5, кв. 12" class="form-input" oninput="clearError(this)">
+                <p class="form-error">Введите улицу и дом</p>
+              </div>
             </div>
             <div class="radio-card" data-group="delivery" data-val="pickup" data-price="100" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
@@ -573,7 +608,7 @@
               <div id="cdek-pvz-empty">
                 <p class="text-sm text-muted dark:text-muted-dark mb-3">Выберите удобный пункт выдачи</p>
                 <button onclick="openCdekModal()" class="w-full py-2.5 border border-accent text-accent text-sm font-medium rounded-full hover:bg-accent/5 transition-colors">
-                  Показать карту СДЭК →
+                  Найти пункт выдачи →
                 </button>
               </div>
               <div id="cdek-pvz-selected" class="hidden">
@@ -587,14 +622,6 @@
                   <button onclick="openCdekModal()" class="text-xs text-muted dark:text-muted-dark hover:text-accent transition-colors">Изменить</button>
                 </div>
               </div>
-            </div>
-            <div class="radio-card" data-group="delivery" data-val="post" data-price="80" onclick="selectDelivery(this)">
-              <div class="radio-dot"><div class="radio-dot-inner"></div></div>
-              <div class="flex-1">
-                <p class="text-sm font-medium text-ink dark:text-ink-dark">Почта России</p>
-                <p class="text-xs text-muted dark:text-muted-dark">3–7 дней</p>
-              </div>
-              <span class="text-sm font-semibold text-ink dark:text-ink-dark">80 ₽</span>
             </div>
           </div>
 
@@ -799,8 +826,8 @@
 
     <div class="p-5 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5 text-left space-y-3 mb-6">
       <div class="flex items-start gap-3">
-        <span class="text-lg mt-0.5">📱</span>
-        <p class="text-sm text-ink dark:text-ink-dark">Статус заказа придёт в <span class="font-semibold" id="success-messenger">Telegram</span></p>
+        <span class="text-lg mt-0.5">✉️</span>
+        <p class="text-sm text-ink dark:text-ink-dark">Чек и статус заказа придут на <span class="font-semibold" id="success-email"></span></p>
       </div>
       <div class="flex items-start gap-3">
         <span class="text-lg mt-0.5">📦</span>
@@ -817,9 +844,6 @@
     </div>
 
     <div class="flex flex-col sm:flex-row gap-3 mb-8">
-      <button class="flex-1 py-3 border border-sand dark:border-sand-dark/40 rounded-full text-sm font-medium text-ink dark:text-ink-dark hover:border-warm/50 transition-colors">
-        Отследить заказ
-      </button>
       <a href="index.html" class="flex-1 py-3 bg-accent hover:bg-accent/90 text-white font-semibold rounded-full text-sm transition-colors text-center">
         Вернуться в магазин
       </a>
@@ -943,6 +967,7 @@ const PRODUCTS_MAP = {
   15: { name:'Антиоксидантная сыворотка',               emoji:'🍊', price:1890, volume:'30 мл',  color:'from-orange-50 to-red-100' },
   16: { name:'Шампунь для волос',                       emoji:'🧴', price:890,  volume:'250 мл', color:'from-green-50 to-emerald-100' },
   17: { name:'Кондиционер для волос',                   emoji:'💚', price:890,  volume:'250 мл', color:'from-teal-50 to-green-100' },
+  99: { name:'Тест — тестовый товар',                  emoji:'🧪', price:1,   volume:'100 мл', color:'from-gray-50 to-gray-100' },
 };
 
 async function loadCart() {
@@ -978,6 +1003,7 @@ async function saveCart() {
 let cart = [];
 
 const FREE_DELIVERY = 3000;
+const COURIER_FREE_FROM = 1500;
 const PROMOS = { 'MARYA10':'10%', 'WELCOME':'free_delivery' };
 
 let state = {
@@ -1004,6 +1030,11 @@ function discount(){
 }
 function deliveryCost(){
   if (state.promoType === 'free_delivery') return 0;
+  const del = document.querySelector('[data-group="delivery"].selected')?.dataset.val;
+  if (del === 'courier') {
+    const sub = subtotal() - discount();
+    return sub >= COURIER_FREE_FROM ? 0 : 200;
+  }
   const sub = subtotal() - discount();
   if (sub >= FREE_DELIVERY) return 0;
   return state.deliveryCost;
@@ -1201,6 +1232,17 @@ function updateSummary(){
   document.getElementById('sum-delivery').className   = del === 0 ? 'text-sage dark:text-sage-dark font-medium' : 'text-ink dark:text-ink-dark';
   document.getElementById('sum-count').textContent    = cart.reduce((s,p)=>s+p.qty,0);
 
+  // Обновляем лейбл цены курьера
+  const courierLabel = document.getElementById('courier-price-label');
+  if (courierLabel) {
+    const sub2 = subtotal() - discount();
+    const isFree = sub2 >= COURIER_FREE_FROM;
+    courierLabel.textContent = isFree ? 'Бесплатно' : '200 ₽';
+    courierLabel.className = isFree
+      ? 'text-sm font-semibold text-sage dark:text-sage-dark'
+      : 'text-sm font-semibold text-ink dark:text-ink-dark';
+  }
+
   // Обновляем блок баллов
   const bonus = getBonus();
   const tier  = bonusTier(bonus.totalSpent || 0);
@@ -1223,17 +1265,24 @@ function updateSummary(){
 
 function updateDeliveryBanner(){
   const sub = subtotal();
-  const rem = FREE_DELIVERY - sub;
-  const del = document.getElementById('delivery-banner');
   const bar = document.getElementById('delivery-bar');
-  if (rem <= 0 || state.promoType === 'free_delivery'){
+  const deliveryVal = document.querySelector('[data-group="delivery"].selected')?.dataset.val;
+  const threshold = deliveryVal === 'courier' ? COURIER_FREE_FROM : FREE_DELIVERY;
+  const rem = threshold - sub;
+
+  const hintEl = document.getElementById('delivery-banner-hint');
+  if (hintEl) hintEl.textContent = deliveryVal === 'courier' ? 'Бесплатно от 1 500 ₽' : 'Бесплатно от 3 000 ₽';
+
+  if (rem <= 0 || state.promoType === 'free_delivery' || deliveryVal === 'office-pickup'){
     document.getElementById('delivery-banner-text').innerHTML =
       '<span class="text-sage dark:text-sage-dark font-semibold">✓ Бесплатная доставка применена!</span>';
     bar.style.width = '100%';
     bar.className = 'delivery-bar-fill h-full bg-gradient-to-r from-sage to-sage/60 rounded-full';
   } else {
-    document.getElementById('delivery-remaining').textContent = fmt(rem);
-    bar.style.width = Math.min(100, (sub / FREE_DELIVERY) * 100) + '%';
+    document.getElementById('delivery-banner-text').innerHTML =
+      'До бесплатной доставки — <span id="delivery-remaining" class="text-accent font-semibold">' + fmt(rem) + '</span>';
+    bar.style.width = Math.min(100, (sub / threshold) * 100) + '%';
+    bar.className = 'delivery-bar-fill h-full bg-gradient-to-r from-accent to-warm rounded-full';
   }
 }
 
@@ -1323,18 +1372,53 @@ function goStep(n){
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
+function validateFields(pairs){
+  let ok = true;
+  pairs.forEach(([id, msg]) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const wrap = el.closest('.field-wrap');
+    if (!wrap) return;
+    if (!el.value.trim()){ wrap.classList.add('has-error'); wrap.querySelector('.form-error').textContent = msg; ok = false; }
+  });
+  return ok;
+}
+
 function validateStep1(){
   let ok = true;
-  [['f-name','Введите имя'],['f-phone','Введите телефон'],
-   ['f-city','Введите город'],['f-street','Введите улицу']].forEach(([id, msg]) => {
-    const el = document.getElementById(id);
-    const wrap = el.closest('.field-wrap');
-    if (!el.value.trim()){
-      wrap.classList.add('has-error');
-      wrap.querySelector('.form-error').textContent = msg;
+  // Contact
+  ok = validateFields([['f-name','Введите имя'],['f-phone','Введите телефон']]) && ok;
+  // Strict phone
+  const phoneEl = document.getElementById('f-phone');
+  const digits  = phoneEl.value.replace(/\D/g,'');
+  if (digits.length !== 11 || !digits.startsWith('7')){
+    const wrap = phoneEl.closest('.field-wrap');
+    wrap.classList.add('has-error');
+    wrap.querySelector('.form-error').textContent = 'Введите телефон полностью: +7 (___) ___-__-__';
+    ok = false;
+  }
+  // Address — depends on delivery
+  const deliveryVal = document.querySelector('[data-group="delivery"].selected')?.dataset.val;
+  if (deliveryVal === 'office-pickup'){
+    // самовывоз — адрес не нужен
+  } else if (deliveryVal === 'courier'){
+    ok = validateFields([['f-courier-city','Введите город'],['f-courier-street','Введите улицу']]) && ok;
+  } else if (deliveryVal === 'cdek-courier'){
+    ok = validateFields([['cdek-courier-city','Введите город'],['cdek-courier-street','Введите улицу и дом']]) && ok;
+  } else if (deliveryVal === 'pickup'){
+    if (!state.cdekPoint){
+      const pvzEmpty = document.getElementById('cdek-pvz-empty');
+      if (!pvzEmpty.querySelector('.pvz-err')){
+        const err = document.createElement('p');
+        err.className = 'pvz-err text-xs text-red-500 mb-2';
+        err.textContent = 'Выберите пункт выдачи';
+        pvzEmpty.prepend(err);
+      }
       ok = false;
     }
-  });
+  } else if (deliveryVal === 'post'){
+    ok = validateFields([['f-post-city','Введите город'],['f-post-zip','Введите почтовый индекс'],['f-post-street','Введите улицу']]) && ok;
+  }
   return ok;
 }
 
@@ -1351,13 +1435,18 @@ function selectRadio(el){
 
 function selectDelivery(el){
   selectRadio(el);
-  const isCdek = el.dataset.val === 'pickup';
-  document.getElementById('cdek-pvz-block').classList.toggle('hidden', !isCdek);
-  if (isCdek) {
-    state.deliveryCost = state.cdekPoint?.tariff?.delivery_sum || parseInt(el.dataset.price) || 100;
-  } else {
-    state.deliveryCost = parseInt(el.dataset.price) || 0;
-  }
+  const val = el.dataset.val;
+  // Hide all address sub-blocks
+  ['addr-courier-block','cdek-courier-block','cdek-pvz-block','addr-post-block','addr-office-block'].forEach(id =>
+    document.getElementById(id).classList.add('hidden')
+  );
+  // Show the relevant one
+  const blockMap = { courier:'addr-courier-block', 'cdek-courier':'cdek-courier-block', pickup:'cdek-pvz-block', post:'addr-post-block', 'office-pickup':'addr-office-block' };
+  if (blockMap[val]) document.getElementById(blockMap[val]).classList.remove('hidden');
+
+  state.deliveryCost = val === 'pickup'
+    ? (state.cdekPoint?.tariff?.delivery_sum || parseInt(el.dataset.price) || 100)
+    : (parseInt(el.dataset.price) || 0);
   updateSummary();
   updateDeliveryBanner();
 }
@@ -1380,18 +1469,33 @@ function toggleSubscription(){
   updateSummary();
 }
 
+// ── ADDRESS HELPER ─────────────────────────────────────────────────
+function getAddrParts(){
+  const val = document.querySelector('[data-group="delivery"].selected')?.dataset.val || '';
+  const v   = id => document.getElementById(id)?.value?.trim() || '';
+  if (val === 'courier'){
+    return [v('f-courier-city'), v('f-courier-street'), v('f-courier-house'), v('f-courier-apt') ? 'кв. '+v('f-courier-apt') : ''].filter(Boolean).join(', ');
+  } else if (val === 'cdek-courier'){
+    return [v('cdek-courier-city'), v('cdek-courier-street')].filter(Boolean).join(', ');
+  } else if (val === 'pickup'){
+    return state.cdekPoint?.address?.address || state.cdekPoint?.address?.name || '';
+  } else if (val === 'post'){
+    return [v('f-post-city'), v('f-post-zip'), v('f-post-street'), v('f-post-house'), v('f-post-apt') ? 'кв. '+v('f-post-apt') : ''].filter(Boolean).join(', ');
+  } else if (val === 'office-pickup'){
+    return 'Самовывоз: г. Челябинск, ул. Блюхера, 59А';
+  }
+  return '';
+}
+
 // ── REVIEW ────────────────────────────────────────────────────────
 function buildReviewStep(){
   const name    = document.getElementById('f-name').value;
-  const city    = document.getElementById('f-city').value;
-  const street  = document.getElementById('f-street').value;
-  const house   = document.getElementById('f-house').value;
-  const apt     = document.getElementById('f-apt').value;
   const delType = document.querySelector('[data-group="delivery"].selected')?.querySelector('p.font-medium')?.textContent || '';
+  const addrLine = getAddrParts();
 
   document.getElementById('review-address').innerHTML =
     `<span class="font-medium">${name}</span><br>
-     ${city}, ${street}${house?' '+house:''}${apt?', кв. '+apt:''}<br>
+     ${addrLine}<br>
      <span class="text-muted dark:text-muted-dark">${delType}</span>`;
 
   const PAY_NAMES = {card:'Банковская карта',sbp:'СБП',sberpay:'SberPay',cash:'Наличными курьеру'};
@@ -1457,13 +1561,7 @@ async function placeOrder(){
   const bonusEarned = calcBonusEarn(orderBase);
   const certUsed    = certDiscount();
   const deliveryEl  = document.querySelector('[data-group="delivery"].selected');
-  const addrParts = deliveryEl?.dataset.val === 'pickup' && state.cdekPoint
-    ? (state.cdekPoint.address?.address || state.cdekPoint.address?.name || '')
-    : [
-        document.getElementById('f-city')?.value,
-        document.getElementById('f-addr')?.value,
-        document.getElementById('f-apt')?.value,
-      ].filter(Boolean).join(', ');
+  const addrParts   = getAddrParts();
 
   const { data: { session } } = await _supabase.auth.getSession();
 
@@ -1508,17 +1606,38 @@ async function placeOrder(){
       await creditPartnerReward(session.user.id, orderId, orderBase);
     }
 
+    // ── СДЭК: создать заявку (fire-and-forget) ─────────────────────
+    sendToCdek({
+      orderId,
+      delivery:  deliveryEl?.dataset.val || '',
+      name:      document.getElementById('f-name')?.value || '',
+      phone:     document.getElementById('f-phone')?.value || '',
+      email:     session?.user?.email || document.getElementById('f-email')?.value || '',
+      items:     cart.map(p => ({ name: p.name, price: p.price, qty: p.qty, volume: p.volume })),
+    }).catch(e => console.warn('CDEK order error:', e));
+
+    // ── AmoCRM: создать сделку (fire-and-forget, не блокирует UX) ──
+    sendToAmocrm({
+      orderId,
+      email:     session?.user?.email || document.getElementById('f-email')?.value || '',
+      phone:     document.getElementById('f-phone')?.value || '',
+      name:      document.getElementById('f-name')?.value || '',
+      total:     orderTotal,
+      items:     cart.map(p => ({ name: p.name, price: p.price, qty: p.qty })),
+      delivery:  deliveryEl?.dataset.val || 'courier',
+      address:   addrParts,
+      payMethod: state.payMethod || '',
+    }).catch(e => console.warn('AmoCRM send error:', e));
+
     if (state.cert && certUsed > 0) {
       try {
         await _supabase.rpc('apply_gift_certificate', { p_code: state.cert.code, p_order_id: orderId, p_amount: certUsed });
       } catch(e){ console.warn('Ошибка списания сертификата:', e); }
     }
 
-    const messengerNames = { telegram:'Telegram', whatsapp:'WhatsApp', vk:'ВКонтакте', push:'Push-уведомление' };
-    const mesVal = document.querySelector('[data-group="messenger"].selected')?.dataset.val || 'telegram';
     document.getElementById('success-order-num').textContent     = orderId;
     document.getElementById('success-delivery-date').textContent = dateStr;
-    document.getElementById('success-messenger').textContent     = messengerNames[mesVal] || 'Telegram';
+    document.getElementById('success-email').textContent         = session?.user?.email || document.getElementById('f-email')?.value || '';
     if (bonusEarned > 0) {
       document.getElementById('success-bonus-amount').textContent = '+' + bonusEarned + ' баллов';
       document.getElementById('success-bonus-row').classList.remove('hidden');
@@ -1544,6 +1663,7 @@ async function placeOrder(){
     currency:    'RUB',
     invoiceId:   orderId,
     accountId:   session?.user?.email || '',
+    email:       session?.user?.email || document.getElementById('f-email')?.value || '',
     skin:        'mini',
   }, {
     onSuccess: async function() {
@@ -1606,6 +1726,39 @@ async function creditPartnerReward(buyerId, orderId, orderTotal) {
       status:        'pending'
     });
   } catch(e) {}
+}
+
+// ── CDEK ORDER CREATION ───────────────────────────────────────────
+async function sendToCdek({ orderId, delivery, name, phone, email, items }) {
+  if (delivery !== 'pickup' && delivery !== 'cdek-courier') return;
+
+  const payload = {
+    action:       'create_order',
+    orderId,
+    deliveryType: delivery,
+    recipient:    { name, phone, email },
+    items:        items,
+    pvzCode:      delivery === 'pickup' ? state.cdekPoint?.code : undefined,
+    address:      delivery === 'cdek-courier'
+      ? [document.getElementById('cdek-courier-city')?.value, document.getElementById('cdek-courier-street')?.value].filter(Boolean).join(', ')
+      : undefined,
+  };
+
+  await fetch('https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/cdek-token', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify(payload),
+  });
+}
+
+// ── AMOCRM ────────────────────────────────────────────────────────
+const AMOCRM_PROXY = 'https://cizdsiqolarjcgmwbafp.supabase.co/functions/v1/amocrm';
+async function sendToAmocrm(payload) {
+  await fetch(AMOCRM_PROXY, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ action: 'create_order', ...payload }),
+  });
 }
 
 // ── PHONE FORMAT ──────────────────────────────────────────────────
@@ -1860,8 +2013,26 @@ switchZone('face');
     const btn = document.getElementById('auth-nav-btn');
     if (!btn) return;
     const svg = btn.querySelector('svg');
-    if (user) { btn.onclick = () => window.location.href = 'profile.html'; svg.style.color = '#D4956A'; }
-    else { btn.onclick = openAuthModal; svg.style.color = ''; }
+    if (user) {
+      btn.onclick = () => window.location.href = 'profile.html';
+      svg.style.color = '#D4956A';
+      // Pre-fill checkout form
+      const emailEl = document.getElementById('f-email');
+      if (emailEl && !emailEl.dataset.filled) {
+        emailEl.value = user.email || '';
+        emailEl.dataset.filled = '1';
+      }
+      const nameEl = document.getElementById('f-name');
+      if (nameEl && !nameEl.value) {
+        const meta = user.user_metadata || {};
+        nameEl.value = (meta.name || meta.full_name || '').split(' ')[0] || '';
+      }
+    } else {
+      btn.onclick = openAuthModal;
+      svg.style.color = '';
+      const emailEl = document.getElementById('f-email');
+      if (emailEl) { emailEl.value = ''; emailEl.placeholder = 'Войдите в аккаунт'; delete emailEl.dataset.filled; }
+    }
   }
   function openAuthModal() { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); m.classList.add('flex'); document.body.style.overflow = 'hidden'; }
   function closeAuthModal() { const m = document.getElementById('auth-modal'); m.classList.add('hidden'); m.classList.remove('flex'); document.body.style.overflow = ''; }
@@ -2000,9 +2171,14 @@ async function linkReferral(userId) {
     <!-- Поиск -->
     <div class="px-5 py-3 border-b border-sand/40 dark:border-sand-dark/20 shrink-0">
       <div class="flex gap-2">
-        <input id="cdek-city-input" type="text" placeholder="Введите город..."
-          class="flex-1 px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent transition-colors"
-          onkeydown="if(event.key==='Enter') searchCdekCity()">
+        <div class="relative flex-1">
+          <input id="cdek-city-input" type="text" placeholder="Введите город..." autocomplete="off"
+            class="w-full px-4 py-2.5 rounded-xl border border-sand dark:border-sand-dark/40 bg-white dark:bg-[#221E1A] text-ink dark:text-ink-dark text-sm outline-none focus:border-accent transition-colors"
+            oninput="cdekPvzCityAutocomplete(this.value)"
+            onblur="setTimeout(()=>document.getElementById('cdek-pvz-city-sugg').classList.add('hidden'),200)"
+            onkeydown="if(event.key==='Enter') searchCdekCity()">
+          <div id="cdek-pvz-city-sugg" class="hidden absolute left-0 right-0 top-full mt-1 bg-white dark:bg-[#221E1A] rounded-xl border border-sand dark:border-sand-dark/40 shadow-lg max-h-44 overflow-y-auto z-50"></div>
+        </div>
         <button onclick="searchCdekCity()"
           class="px-5 py-2.5 bg-accent text-white rounded-xl text-sm font-medium hover:bg-accent/90 transition-colors">
           Найти
@@ -2037,6 +2213,7 @@ function openCdekModal() {
   document.body.style.overflow = 'hidden';
   document.getElementById('cdek-city-input').value = '';
   document.getElementById('cdek-city-hint').classList.add('hidden');
+  document.getElementById('cdek-pvz-city-sugg').classList.add('hidden');
   document.getElementById('cdek-offices-list').innerHTML =
     '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Введите город для поиска пунктов выдачи</p>';
   setTimeout(() => document.getElementById('cdek-city-input').focus(), 200);
@@ -2049,9 +2226,11 @@ async function searchCdekCity() {
   const hint = document.getElementById('cdek-city-hint');
   list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Ищем город...</p>';
   hint.classList.add('hidden');
+  document.getElementById('cdek-pvz-city-sugg').classList.add('hidden');
   try {
-    const cities = await cdekApi('/v2/location/cities', { city: cityName, country_codes: 'RU', size: 5 });
-    if (!cities || !cities.length) {
+    const raw    = await cdekApi('/v2/location/cities', { city: cityName, country_codes: 'RU', size: 5 });
+    const cities = Array.isArray(raw) ? raw : (raw?.entity || []);
+    if (!cities.length) {
       list.innerHTML = '<p class="text-sm text-muted dark:text-muted-dark text-center py-10">Город не найден. Попробуйте другое название.</p>';
       return;
     }
@@ -2111,6 +2290,61 @@ function selectCdekOffice(office) {
 function closeCdekModal() {
   document.getElementById('cdek-modal').classList.add('hidden');
   document.body.style.overflow = '';
+}
+
+// ── Autocomplete helpers ───────────────────────────────────────────
+function renderCitySuggestions(cities, container, onSelect) {
+  if (!cities.length) { container.classList.add('hidden'); return; }
+  container.innerHTML = cities.map(c => {
+    const label = c.region ? `${c.city}, ${c.region}` : c.city;
+    return `<button type="button"
+      class="w-full text-left px-4 py-2.5 text-sm text-ink dark:text-ink-dark hover:bg-sand/20 dark:hover:bg-sand-dark/10 transition-colors first:rounded-t-xl last:rounded-b-xl"
+      onmousedown="${onSelect}('${c.city}', ${c.code})">${label}</button>`;
+  }).join('');
+  container.classList.remove('hidden');
+}
+
+// PVZ modal autocomplete
+let _pvzCityTimer = null;
+async function cdekPvzCityAutocomplete(val) {
+  clearTimeout(_pvzCityTimer);
+  const sugg = document.getElementById('cdek-pvz-city-sugg');
+  if (val.length < 2) { sugg.classList.add('hidden'); return; }
+  _pvzCityTimer = setTimeout(async () => {
+    try {
+      const raw    = await cdekApi('/v2/location/cities', { city: val, country_codes: 'RU', size: 8 });
+      const cities = Array.isArray(raw) ? raw : (raw?.entity || []);
+      renderCitySuggestions(cities, sugg, 'selectPvzCity');
+    } catch(e) { sugg.classList.add('hidden'); }
+  }, 400);
+}
+async function selectPvzCity(cityName, cityCode) {
+  document.getElementById('cdek-city-input').value = cityName;
+  document.getElementById('cdek-pvz-city-sugg').classList.add('hidden');
+  const hint = document.getElementById('cdek-city-hint');
+  hint.textContent = 'Пункты выдачи в городе: ' + cityName;
+  hint.classList.remove('hidden');
+  const list = document.getElementById('cdek-offices-list');
+  await loadCdekOffices(cityCode, list);
+}
+
+// Courier address autocomplete
+let _courierCityTimer = null;
+async function cdekCourierCityAutocomplete(val) {
+  clearTimeout(_courierCityTimer);
+  const sugg = document.getElementById('cdek-courier-sugg');
+  if (val.length < 2) { sugg.classList.add('hidden'); return; }
+  _courierCityTimer = setTimeout(async () => {
+    try {
+      const raw    = await cdekApi('/v2/location/cities', { city: val, country_codes: 'RU', size: 8 });
+      const cities = Array.isArray(raw) ? raw : (raw?.entity || []);
+      renderCitySuggestions(cities, sugg, 'selectCourierCity');
+    } catch(e) { sugg.classList.add('hidden'); }
+  }, 400);
+}
+function selectCourierCity(cityName, cityCode) {
+  document.getElementById('cdek-courier-city').value = cityName;
+  document.getElementById('cdek-courier-sugg').classList.add('hidden');
 }
 </script>
 </body>

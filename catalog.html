@@ -706,7 +706,7 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['morning'], ingredient: ['retinol'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '☀️', image: 'крем дневной 1.webp', nameColor: '#C07850', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
+    emoji: '☀️', image: 'крем дневной/крем дневной фото 1.webp', images: ['крем дневной/крем дневной фото 1.webp','крем дневной/крем дневной фото 2.webp','крем дневной/крем дневной фото 3.webp','крем дневной/крем дневной фото 4.webp'], nameColor: '#C07850', color: 'from-amber-50 to-orange-100', darkColor: 'from-amber-950/20 to-orange-900/10',
     desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и насыщает клетки кожи кислородом и питательными веществами. DMAE подтягивает овал лица, сквалан и масло ши глубоко питают и смягчают, предотвращая потерю влаги. Регулярное применение защищает от преждевременного старения и сохраняет молодость кожи.'
   },
   {
@@ -716,16 +716,16 @@ const PRODUCTS = [
     skintype: ['normal','dry'], concern: ['aging'],
     time: ['evening'], ingredient: ['ceramides','niacinamide','hyaluronic','retinol','aha'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🌙', image: 'крем ночь 1.webp', nameColor: '#6A5E8A', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
+    emoji: '🌙', image: 'крем ночной/крем ночной фото 1.webp', images: ['крем ночной/крем ночной фото 1.webp','крем ночной/крем ночной фото 2.webp','крем ночной/крем ночной фото 3.webp','крем ночной/крем ночной фото 4.webp'], nameColor: '#6A5E8A', color: 'from-purple-50 to-violet-100', darkColor: 'from-purple-950/20 to-violet-900/10',
     desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и активирует ночные процессы восстановления кожи. Церамиды укрепляют защитный барьер, DMAE подтягивает контуры лица, ниацинамид выравнивает тон, а гиалуроновая кислота обеспечивает интенсивное увлажнение в ночное время. Утром кожа выглядит отдохнувшей, гладкой и сияющей.'
   },
   {
     id: 7, name: 'Крем для век от отёков и тёмных кругов', brand: 'Марья',
     price: 1490, oldPrice: null, rating: 4.7, reviews: 76,
-    zone: 'face', category: 'eye', categories: ['eye'], skintype: ['normal','dry','sensitive'], concern: ['aging'],
+    zone: 'face', category: 'cream', categories: ['cream'], skintype: ['normal','dry','sensitive'], concern: ['aging'],
     time: ['morning','evening'], ingredient: ['hyaluronic','peptides'],
     badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
-    emoji: '👁️', nameColor: '#9A5870', color: 'from-rose-50 to-pink-100', darkColor: 'from-rose-950/20 to-pink-900/10',
+    emoji: '👁️', image: 'Крем для век/Крем для век фото 1.webp', images: ['Крем для век/Крем для век фото 1.webp','Крем для век/Крем для век фото 2.webp','Крем для век/Крем для век фото 3.webp','Крем для век/Крем для век фото 4.webp'], nameColor: '#9A5870', color: 'from-rose-50 to-pink-100', darkColor: 'from-rose-950/20 to-pink-900/10',
     desc: 'Крем для век с экстрактом пиявки активирует микроциркуляцию и уменьшает застойные явления в зоне глаз. Дипептид-2 снижает выраженность отёков, гирудин рассасывает «синяки» под глазами, а гиалуроновая кислота и пептиды разглаживают мимические морщины. Мягкая текстура крема деликатно воздействует на чувствительную кожу вокруг глаз.'
   },
   {
@@ -735,7 +735,7 @@ const PRODUCTS = [
     skintype: ['oily','combo'], concern: ['cleansing','moisture','aging'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '100 мл',
-    emoji: '🪨', nameColor: '#7A5840', color: 'from-stone-50 to-amber-100', darkColor: 'from-stone-950/20 to-stone-900/10',
+    emoji: '🪨', image: 'маска очищающая/маска очищающая фото 1.webp', images: ['маска очищающая/маска очищающая фото 1.webp','маска очищающая/маска очищающая фото 2.webp','маска очищающая/маска очищающая фото 3.webp','маска очищающая/маска очищающая фото 4.webp'], nameColor: '#7A5840', color: 'from-stone-50 to-amber-100', darkColor: 'from-stone-950/20 to-stone-900/10',
     desc: 'Очищающая маска с каолином мягко удаляет загрязнения, избыток кожного сала и омертвевшие клетки, сужает поры и выравнивает текстуру кожи. Экстракт алоэ вера и зелёного чая успокаивают и снимают воспаление, а цинк регулирует работу сальных желёз. Подходит для жирной и комбинированной кожи, склонной к расширенным порам.'
   },
   {
@@ -745,7 +745,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
     time: ['anytime'], ingredient: ['hyaluronic','niacinamide','aha'],
     badge: null, isNew: false, isSale: false, volume: '100 мл',
-    emoji: '✨', nameColor: '#8A7030', color: 'from-yellow-50 to-amber-100', darkColor: 'from-yellow-950/20 to-amber-900/10',
+    emoji: '✨', image: 'маска мгновенной красоты/маска мгновенной красоты фото 1.webp', images: ['маска мгновенной красоты/маска мгновенной красоты фото 1.webp','маска мгновенной красоты/маска мгновенной красоты фото 2.webp','маска мгновенной красоты/маска мгновенной красоты фото 3.webp','маска мгновенной красоты/маска мгновенной красоты фото 4.webp'], nameColor: '#8A7030', color: 'from-yellow-50 to-amber-100', darkColor: 'from-yellow-950/20 to-amber-900/10',
     desc: 'Маска мгновенной красоты — экспресс-уход для быстрого восстановления усталой и тусклой кожи. Масла авокадо, ши и виноградной косточки глубоко питают и смягчают, гиалуроновая кислота интенсивно увлажняет, а ниацинамид выравнивает тон и придаёт сияние. Уже после первого применения кожа выглядит ухоженной, гладкой и отдохнувшей.'
   },
   {
@@ -755,7 +755,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['cleansing'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🌰', nameColor: '#7A5030', color: 'from-amber-50 to-warm/30', darkColor: 'from-amber-950/20 to-warm-dark/10',
+    emoji: '🌰', image: 'скраб для лица и тела/скраб для лица и тела фото 1.webp', images: ['скраб для лица и тела/скраб для лица и тела фото 1.webp','скраб для лица и тела/скраб для лица и тела фото 2.webp','скраб для лица и тела/скраб для лица и тела фото 3.webp','скраб для лица и тела/скраб для лица и тела фото 4.webp'], nameColor: '#7A5030', color: 'from-amber-50 to-warm/30', darkColor: 'from-amber-950/20 to-warm-dark/10',
     desc: 'Скраб для лица и тела с порошком скорлупы фундука мягко отшелушивает ороговевшие клетки, выравнивает микрорельеф и улучшает цвет кожи. Кокосовое масло питает и смягчает, экстракт пиявки улучшает микроциркуляцию, а натуральные растительные масла оставляют кожу гладкой и бархатистой. Подходит для регулярного применения на лице и теле.'
   },
   {
@@ -765,7 +765,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['modelling'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🧂', nameColor: '#5A6A78', color: 'from-gray-50 to-slate-100', darkColor: 'from-gray-950/20 to-slate-900/10',
+    emoji: '🧂', image: 'нежный солевой скраб/нежный солевой скраб фото 1.webp', images: ['нежный солевой скраб/нежный солевой скраб фото 1.webp','нежный солевой скраб/нежный солевой скраб фото 2.webp','нежный солевой скраб/нежный солевой скраб фото 3.webp','нежный солевой скраб/нежный солевой скраб фото 4.webp'], nameColor: '#5A6A78', color: 'from-gray-50 to-slate-100', darkColor: 'from-gray-950/20 to-slate-900/10',
     desc: 'Нежный солевой скраб с кремовой текстурой бережно отшелушивает ороговевшие клетки и полирует кожу, не вызывая раздражения. Мелкие кристаллы морской соли деликатно шлифуют поверхность, кокосовое масло питает и смягчает, а экстракт зелёного чая тонизирует и защищает от свободных радикалов. Кожа после применения гладкая, шелковистая и сияющая.'
   },
   {
@@ -775,7 +775,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🍍', nameColor: '#4E7A60', color: 'from-yellow-50 to-lime-100', darkColor: 'from-yellow-950/20 to-lime-900/10',
+    emoji: '🍍', image: 'энзимный скраб/энзимный скраб фото 1.webp', images: ['энзимный скраб/энзимный скраб фото 1.webp','энзимный скраб/энзимный скраб фото 2.webp','энзимный скраб/энзимный скраб фото 3.webp','энзимный скраб/энзимный скраб фото 4.webp'], nameColor: '#4E7A60', color: 'from-yellow-50 to-lime-100', darkColor: 'from-yellow-950/20 to-lime-900/10',
     desc: 'Энзимный скраб для тела — интенсивный, но комфортный уход для обновления и выравнивания кожи. Бромелайн из ананаса и папаин из папайи мягко растворяют ороговевшие клетки на биохимическом уровне, без механического трения. Результат — гладкая, обновлённая и сияющая кожа уже с первого применения, без ощущения стянутости или дискомфорта.'
   },
   {
@@ -785,7 +785,7 @@ const PRODUCTS = [
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '200 мл',
-    emoji: '🌶️', nameColor: '#8A4A4A', color: 'from-red-50 to-orange-100', darkColor: 'from-red-950/20 to-orange-900/10',
+    emoji: '🌶️', image: 'Антицеллюлит/Скраб антицеллюлитный фото 1.webp', images: ['Антицеллюлит/Скраб антицеллюлитный фото 1.webp','Антицеллюлит/Скраб антицеллюлитный фото 2.webp','Антицеллюлит/Скраб антицеллюлитный фото 3.webp','Антицеллюлит/Скраб антицеллюлитный фото 4.webp'], nameColor: '#8A4A4A', color: 'from-red-50 to-orange-100', darkColor: 'from-red-950/20 to-orange-900/10',
     desc: 'Антицеллюлитный солевой скраб направленно работает с проявлениями «апельсиновой корки», улучшает микроциркуляцию и лимфоотток. Экстракт красного перца разогревает кожу и стимулирует расщепление жировых отложений, гирудин активирует микроциркуляцию, а морская соль отшелушивает и минерализует. Регулярное применение делает кожу более упругой и подтянутой.'
   },
   {
@@ -795,7 +795,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['aging'],
     time: ['morning'], ingredient: ['retinol'],
     badge: null, isNew: false, isSale: false, volume: '50 мл',
-    emoji: '🌞', nameColor: '#A07830', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    emoji: '🌞', image: 'спф/Крем для лица SPF фото 1.webp', images: ['спф/Крем для лица SPF фото 1.webp','спф/Крем для лица SPF фото 2.webp','спф/Крем для лица SPF фото 3.webp','спф/Крем для лица SPF фото 4.webp'], nameColor: '#A07830', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
     desc: 'Лёгкий крем SPF 15 с экстрактом пиявки для ежедневной защиты от УФ-излучения и преждевременного старения. Сквалан и витамин Е питают и защищают кожу от окислительного стресса, а лёгкая нежирная текстура идеально подходит в качестве базы под макияж. Подходит для всех типов кожи, включая чувствительную.'
   },
   {
@@ -805,7 +805,7 @@ const PRODUCTS = [
     skintype: ['normal','dry','oily','combo'], concern: ['aging','moisture'],
     time: ['morning','evening'], ingredient: ['vitaminc','niacinamide','hyaluronic','aha'],
     badge: 'Новинка', isNew: true, isSale: false, volume: '30 мл',
-    emoji: '🍊', nameColor: '#9A5030', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
+    emoji: '🍊', image: 'антиоксидант/антиоксидантная маска фото 1.webp', images: ['антиоксидант/антиоксидантная маска фото 1.webp','антиоксидант/антиоксидантная маска фото 2.webp','антиоксидант/антиоксидантная маска фото 3.webp','антиоксидант/антиоксидантная маска фото 4.webp'], nameColor: '#9A5030', color: 'from-orange-50 to-amber-100', darkColor: 'from-orange-950/20 to-amber-900/10',
     desc: 'Антиоксидантная сыворотка с экстрактом пиявки заряжает кожу энергией и защищает от разрушительного воздействия свободных радикалов. Фульвовая кислота выводит токсины и активирует клеточный метаболизм, витамин С выравнивает тон и усиливает синтез коллагена, а ниацинамид сужает поры и улучшает текстуру кожи. Особенно эффективна для городской кожи, подверженной стрессу и загрязнениям.'
   },
   {
@@ -847,7 +847,7 @@ let state = {
   concern: [],
   time: [],
   ingredient: [],
-  priceMin: 0,
+  priceMin: 490,
   priceMax: 3500,
   sale: false,
   isNew: false,
@@ -1112,21 +1112,35 @@ const CHIP_LABELS = {
   ingredient: { hyaluronic:'Гиалуронка', niacinamide:'Ниацинамид', retinol:'Ретинол', vitaminc:'Витамин С', aha:'AHA/BHA', peptides:'Пептиды', ceramides:'Церамиды' },
 };
 
+function removeChip(type, value) {
+  if (type === 'category') {
+    document.querySelector('input[name="category"][value="all"]').checked = true;
+  } else if (type === 'sale') {
+    document.getElementById('filter-sale').checked = false;
+  } else if (type === 'new') {
+    document.getElementById('filter-new').checked = false;
+  } else {
+    const el = document.querySelector('input[name="' + type + '"][value="' + value + '"]');
+    if (el) el.checked = false;
+  }
+  applyFilters();
+}
+
 function renderChips() {
   const container = document.getElementById('active-chips');
   const chips     = [];
 
-  if (state.category !== 'all') chips.push({ label: CHIP_LABELS.category[state.category], remove: () => { document.querySelector('input[name="category"][value="all"]').checked = true; state.category = 'all'; applyFilters(); } });
-  state.skintype.forEach(v => chips.push({ label: CHIP_LABELS.skintype[v], remove: () => { document.querySelector(`input[name="skintype"][value="${v}"]`).checked = false; state.skintype = state.skintype.filter(x => x !== v); applyFilters(); } }));
-  state.concern.forEach(v => chips.push({ label: CHIP_LABELS.concern[v], remove: () => { document.querySelector(`input[name="concern"][value="${v}"]`).checked = false; state.concern = state.concern.filter(x => x !== v); applyFilters(); } }));
-  state.time.forEach(v => chips.push({ label: CHIP_LABELS.time[v], remove: () => { document.querySelector(`input[name="time"][value="${v}"]`).checked = false; state.time = state.time.filter(x => x !== v); applyFilters(); } }));
-  state.ingredient.forEach(v => chips.push({ label: CHIP_LABELS.ingredient[v], remove: () => { document.querySelector(`input[name="ingredient"][value="${v}"]`).checked = false; state.ingredient = state.ingredient.filter(x => x !== v); applyFilters(); } }));
-  if (state.sale) chips.push({ label: 'Со скидкой', remove: () => { document.getElementById('filter-sale').checked = false; state.sale = false; applyFilters(); } });
-  if (state.isNew) chips.push({ label: 'Новинки', remove: () => { document.getElementById('filter-new').checked = false; state.isNew = false; applyFilters(); } });
+  if (state.category !== 'all') chips.push({ label: CHIP_LABELS.category[state.category], type: 'category', value: state.category });
+  state.skintype.forEach(v   => chips.push({ label: CHIP_LABELS.skintype[v],   type: 'skintype',   value: v }));
+  state.concern.forEach(v    => chips.push({ label: CHIP_LABELS.concern[v],    type: 'concern',    value: v }));
+  state.time.forEach(v       => chips.push({ label: CHIP_LABELS.time[v],       type: 'time',       value: v }));
+  state.ingredient.forEach(v => chips.push({ label: CHIP_LABELS.ingredient[v], type: 'ingredient', value: v }));
+  if (state.sale)  chips.push({ label: 'Со скидкой', type: 'sale',  value: '' });
+  if (state.isNew) chips.push({ label: 'Новинки',    type: 'new',   value: '' });
 
   container.innerHTML = chips.map((c, i) => `
-    <button onclick="(${c.remove})()" class="filter-chip flex items-center gap-1.5 px-2.5 py-1 bg-accent/10 dark:bg-accent-dark/10 border border-accent/20 dark:border-accent-dark/20 rounded-full text-xs text-accent dark:text-accent-dark font-medium hover:bg-accent/20 transition-colors" style="animation-delay:${i*30}ms">
-      ${c.label}
+    <button onclick="removeChip('${c.type}','${c.value}')" class="filter-chip flex items-center gap-1.5 px-2.5 py-1 bg-accent/10 dark:bg-accent-dark/10 border border-accent/20 dark:border-accent-dark/20 rounded-full text-xs text-accent dark:text-accent-dark font-medium hover:bg-accent/20 transition-colors" style="animation-delay:${i*30}ms">
+      ${c.label || c.value}
       <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-width="2" stroke-linecap="round"/></svg>
     </button>
   `).join('');
@@ -1142,7 +1156,7 @@ function resetFilters() {
   if (newEl)  newEl.checked  = false;
   document.getElementById('price-min').value = 490;
   document.getElementById('price-max').value = 3500;
-  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:0, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
+  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:490, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
   document.getElementById('price-from-label').textContent = '490 ₽';
   document.getElementById('price-to-label').textContent   = '3 500 ₽';
   const searchInput = document.getElementById('search-input');
