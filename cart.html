@@ -852,7 +852,7 @@
     <div class="border-t border-sand dark:border-sand-dark/40 pt-6">
       <p class="text-sm font-semibold text-ink dark:text-ink-dark mb-4">Пока ждёте — начните рутину:</p>
       <div class="grid grid-cols-2 gap-3">
-        <a href="#" class="p-4 rounded-xl border border-sand dark:border-sand-dark/40 hover:border-warm/50 transition-colors group">
+        <a id="tracker-btn" href="https://www.cdek.ru/ru/tracking" target="_blank" rel="noopener" class="hidden p-4 rounded-xl border border-sand dark:border-sand-dark/40 hover:border-warm/50 transition-colors group">
           <div class="text-2xl mb-2">▶</div>
           <p class="text-xs font-semibold text-ink dark:text-ink-dark group-hover:text-accent transition-colors">Открыть трекер</p>
         </a>
@@ -1642,6 +1642,13 @@ async function placeOrder(){
       document.getElementById('success-bonus-amount').textContent = '+' + bonusEarned + ' баллов';
       document.getElementById('success-bonus-row').classList.remove('hidden');
     }
+    // Показать трекер только для CDEK-доставок
+    const deliveryType = deliveryEl?.dataset.val || '';
+    const trackerBtn = document.getElementById('tracker-btn');
+    if (trackerBtn && (deliveryType === 'cdek-courier' || deliveryType === 'pickup')) {
+      trackerBtn.classList.remove('hidden');
+    }
+
     cart = [];
     await saveCart();
     showView('success');
