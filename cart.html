@@ -511,7 +511,7 @@
           <!-- Delivery method -->
           <h3 class="text-sm font-semibold text-ink dark:text-ink-dark mb-3">Способ доставки</h3>
           <div class="space-y-2 mb-8">
-            <div class="radio-card selected" data-group="delivery" data-val="courier" data-price="200" onclick="selectDelivery(this)">
+            <div class="radio-card" data-group="delivery" data-val="courier" data-price="200" onclick="selectDelivery(this)">
               <div class="radio-dot"><div class="radio-dot-inner"></div></div>
               <div class="flex-1">
                 <p class="text-sm font-medium text-ink dark:text-ink-dark">Курьер до двери</p>
@@ -519,8 +519,8 @@
               </div>
               <span class="text-sm font-semibold text-sage dark:text-sage-dark" id="courier-price-label">Бесплатно</span>
             </div>
-            <!-- Courier address block (default visible) -->
-            <div id="addr-courier-block" class="mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
+            <!-- Courier address block -->
+            <div id="addr-courier-block" class="hidden mt-1 p-4 rounded-2xl border border-sand dark:border-sand-dark/40 bg-sand/10 dark:bg-sand-dark/5">
               <div class="grid sm:grid-cols-3 gap-3 mb-3">
                 <div class="sm:col-span-2 field-wrap">
                   <label class="form-label">Город *</label>
