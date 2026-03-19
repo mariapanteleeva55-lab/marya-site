@@ -493,19 +493,19 @@
             </button>
             <div class="group-content space-y-4">
               <div class="flex items-center justify-between text-xs text-muted dark:text-muted-dark">
-                <span id="price-from-label">490 ₽</span>
+                <span id="price-from-label">0 ₽</span>
                 <span id="price-to-label">3 500 ₽</span>
               </div>
               <div class="space-y-2">
-                <input type="range" id="price-min" min="490" max="3500" value="490" step="50" oninput="updatePriceRange()">
-                <input type="range" id="price-max" min="490" max="3500" value="3500" step="50" oninput="updatePriceRange()">
+                <input type="range" id="price-min" min="0" max="3500" value="0" step="50" oninput="updatePriceRange()">
+                <input type="range" id="price-max" min="0" max="3500" value="3500" step="50" oninput="updatePriceRange()">
               </div>
               <!-- Быстрые кнопки -->
               <div class="grid grid-cols-2 gap-1.5">
-                <button onclick="setPriceRange(490,1000)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">До 1 000 ₽</button>
+                <button onclick="setPriceRange(0,1000)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">До 1 000 ₽</button>
                 <button onclick="setPriceRange(1000,2000)" class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">1–2 000 ₽</button>
                 <button onclick="setPriceRange(2000,3500)" class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">2–3 500 ₽</button>
-                <button onclick="setPriceRange(490,3500)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">Любая</button>
+                <button onclick="setPriceRange(0,3500)"  class="price-preset py-1 text-xs border border-sand dark:border-sand-dark/40 rounded-lg text-muted dark:text-muted-dark hover:border-accent hover:text-accent transition-colors">Любая</button>
               </div>
             </div>
           </div>
@@ -847,7 +847,7 @@ let state = {
   concern: [],
   time: [],
   ingredient: [],
-  priceMin: 490,
+  priceMin: 0,
   priceMax: 3500,
   sale: false,
   isNew: false,
@@ -1154,10 +1154,10 @@ function resetFilters() {
   const newEl  = document.getElementById('filter-new');
   if (saleEl) saleEl.checked = false;
   if (newEl)  newEl.checked  = false;
-  document.getElementById('price-min').value = 490;
+  document.getElementById('price-min').value = 0;
   document.getElementById('price-max').value = 3500;
-  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:490, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
-  document.getElementById('price-from-label').textContent = '490 ₽';
+  state = { ...state, category:'all', skintype:[], concern:[], time:[], ingredient:[], priceMin:0, priceMax:3500, sale:false, isNew:false, search:'', page:1 };
+  document.getElementById('price-from-label').textContent = '0 ₽';
   document.getElementById('price-to-label').textContent   = '3 500 ₽';
   const searchInput = document.getElementById('search-input');
   if (searchInput) searchInput.value = '';
