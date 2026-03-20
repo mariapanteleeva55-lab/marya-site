@@ -107,6 +107,9 @@ async function findOrCreateContact(email: string, phone: string, name: string, t
 async function createDeal(payload: {
   orderId: string;
   contactId: number | null;
+  name: string;
+  email: string;
+  phone: string;
   total: number;
   items: Array<{ name: string; price: number; qty: number }>;
   delivery: string;
@@ -114,7 +117,7 @@ async function createDeal(payload: {
   payMethod: string;
   token: string;
 }) {
-  const { orderId, contactId, total, items, delivery, address, payMethod, token } = payload;
+  const { orderId, contactId, name, email, phone, total, items, delivery, address, payMethod, token } = payload;
 
   const leadBody: Record<string, unknown> = {
     name: `Заказ ${orderId}`,
@@ -139,6 +142,9 @@ async function createDeal(payload: {
   const itemsList = items.map(i => `• ${i.name} × ${i.qty} = ${i.price * i.qty} ₽`).join('\n');
   const noteText = [
     `🛒 Заказ: ${orderId}`,
+    name    ? `👤 Клиент: ${name}`    : null,
+    phone   ? `📞 Телефон: ${phone}`  : null,
+    email   ? `✉️ Email: ${email}`    : null,
     `💰 Сумма: ${total} ₽`,
     `🚚 Доставка: ${deliveryLabels[delivery] || delivery}`,
     address ? `📍 Адрес: ${address}` : null,
@@ -201,7 +207,7 @@ serve(async (req) => {
       const { orderId, email, phone, name, total, items, delivery, address, payMethod } = body;
       const token = await getAccessToken();
       const contactId = await findOrCreateContact(email, phone, name, token);
-      await createDeal({ orderId, contactId, total, items, delivery, address, payMethod, token });
+      await createDeal({ orderId, contactId, name, email, phone, total, items, delivery, address, payMethod, token });
       return new Response(JSON.stringify({ ok: true }), { headers: { ...cors, 'Content-Type': 'application/json' } });
     }
 
