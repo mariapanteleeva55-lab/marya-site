@@ -1437,11 +1437,12 @@ function selectDelivery(el){
   selectRadio(el);
   const val = el.dataset.val;
   // Hide all address sub-blocks
-  ['addr-courier-block','cdek-courier-block','cdek-pvz-block','addr-post-block','addr-office-block'].forEach(id =>
-    document.getElementById(id).classList.add('hidden')
-  );
+  ['addr-courier-block','cdek-courier-block','cdek-pvz-block','addr-office-block'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.add('hidden');
+  });
   // Show the relevant one
-  const blockMap = { courier:'addr-courier-block', 'cdek-courier':'cdek-courier-block', pickup:'cdek-pvz-block', post:'addr-post-block', 'office-pickup':'addr-office-block' };
+  const blockMap = { courier:'addr-courier-block', 'cdek-courier':'cdek-courier-block', pickup:'cdek-pvz-block', 'office-pickup':'addr-office-block' };
   if (blockMap[val]) document.getElementById(blockMap[val]).classList.remove('hidden');
 
   state.deliveryCost = val === 'pickup'
