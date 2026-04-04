@@ -3,21 +3,43 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Каталог косметики — Марья</title>
-  <meta name="description" content="Каталог натуральной косметики Марья: сыворотки, кремы, маски, тоники, скрабы. Фильтры по типу кожи, проблемам и ингредиентам. Доставка по России." />
+  <title>Каталог косметики — Silis</title>
+  <meta name="description" content="Каталог натуральной косметики Silis: сыворотки, кремы, маски, тоники, скрабы. Фильтры по типу кожи, проблемам и ингредиентам. Доставка по России." />
   <meta name="keywords" content="каталог косметики, купить сыворотку, крем для лица, маска для лица, тоник, уход за кожей" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://mariacosmetics.ru/catalog.html" />
+  <link rel="canonical" href="https://siliscosmetic.ru/catalog.html" />
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Марья" />
-  <meta property="og:title" content="Каталог косметики — Марья" />
+  <meta property="og:site_name" content="Silis" />
+  <meta property="og:title" content="Каталог косметики — Silis" />
   <meta property="og:description" content="Натуральная косметика для лица, тела, волос. Фильтры по типу кожи и проблемам." />
-  <meta property="og:url" content="https://mariacosmetics.ru/catalog.html" />
-  <meta property="og:image" content="https://mariacosmetics.ru/og.jpg" />
+  <meta property="og:url" content="https://siliscosmetic.ru/catalog.html" />
+  <meta property="og:image" content="https://siliscosmetic.ru/og.jpg" />
   <meta property="og:locale" content="ru_RU" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Каталог косметики — Марья" />
-  <meta name="twitter:image" content="https://mariacosmetics.ru/og.jpg" />
+  <meta name="twitter:title" content="Каталог косметики — Silis" />
+  <meta name="twitter:description" content="Натуральная косметика: сыворотки, кремы, маски, тоники. Фильтры по типу кожи." />
+  <meta name="twitter:image" content="https://siliscosmetic.ru/og.jpg" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage",
+        "name": "Каталог косметики Silis",
+        "url": "https://siliscosmetic.ru/catalog.html",
+        "description": "Каталог натуральной косметики Silis: сыворотки, кремы, маски, тоники, скрабы.",
+        "isPartOf": { "@id": "https://siliscosmetic.ru/#website" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://siliscosmetic.ru/" },
+          { "@type": "ListItem", "position": 2, "name": "Каталог" }
+        ]
+      }
+    ]
+  }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -206,7 +228,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6 w-full flex items-center justify-between">
 
     <a href="index.html">
-      <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:30px;width:auto;">
+      <img loading="lazy" src="Лого Силис новый золотой.PNG" alt="Silis" style="height:180px;width:auto;">
     </a>
 
     <nav class="hidden lg:flex items-center gap-7 text-sm font-medium text-muted dark:text-muted-dark">
@@ -591,7 +613,7 @@
   <div class="max-w-7xl mx-auto px-4 sm:px-6">
     <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-10 mb-12">
       <div class="sm:col-span-2 lg:col-span-1">
-        <div class="font-serif text-2xl text-cream mb-3">Марья</div>
+        <div class="font-serif text-2xl text-cream mb-3">Silis</div>
         <p class="text-sm leading-relaxed mb-4">Регенеративная косметика. Честные формулы, научный подход.</p>
         <div class="flex gap-3">
           <a href="#" class="w-8 h-8 bg-cream/10 hover:bg-accent rounded-full flex items-center justify-center transition-colors text-xs">TG</a>
@@ -642,7 +664,7 @@
       </div>
     </div>
     <div class="border-t border-cream/10 pt-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs">
-      <div>© 2026 Марья. Все права защищены.</div>
+      <div>© 2026 Silis. Все права защищены.</div>
       <div class="flex items-center gap-6">
         <a href="#" class="hover:text-cream transition-colors">Политика конфиденциальности</a>
         <a href="#" class="hover:text-cream transition-colors">Оферта</a>
@@ -660,7 +682,7 @@
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const PRODUCTS = [
   {
-    id: 1, name: 'Пенка для умывания с пребиотиками', brand: 'Марья',
+    id: 1, name: 'Пенка для умывания с пребиотиками', brand: 'Silis',
     price: 890, oldPrice: null, rating: 4.8, reviews: 143,
     zone: 'face', category: 'cleanser', categories: ['cleanser'],
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
@@ -670,7 +692,7 @@ const PRODUCTS = [
     desc: 'Пенка для умывания с пребиотиками — это деликатное средство для ежедневного очищения кожи, которое не нарушает естественный защитный барьер. Благодаря пребиотикам и комплексу увлажняющих компонентов пенка поддерживает здоровый баланс микробиома кожи, предотвращает ощущение стянутости и сухости, делает кожу мягкой, гладкой и свежей. Эффективно удаляет загрязнения и макияж.'
   },
   {
-    id: 2, name: 'Тоник увлажняющий с аминокислотами', brand: 'Марья',
+    id: 2, name: 'Тоник увлажняющий с аминокислотами', brand: 'Silis',
     price: 990, oldPrice: null, rating: 4.7, reviews: 98,
     zone: 'face', category: 'toner', categories: ['toner'],
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['moisture','aging'],
@@ -680,7 +702,7 @@ const PRODUCTS = [
     desc: 'Увлажняющий тоник с аминокислотами и гирудином мягко очищает и увлажняет кожу, восстанавливает баланс после умывания. Аминокислоты укрепляют кожный барьер и удерживают влагу, гирудин улучшает микроциркуляцию и придаёт здоровое сияние. Подходит для ежедневного применения утром и вечером.'
   },
   {
-    id: 3, name: 'Мицеллярная вода', brand: 'Марья',
+    id: 3, name: 'Мицеллярная вода', brand: 'Silis',
     price: 790, oldPrice: null, rating: 4.7, reviews: 212,
     zone: 'face', category: 'cleanser', categories: ['cleanser','makeup'],
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['cleansing','moisture','aging'],
@@ -690,7 +712,7 @@ const PRODUCTS = [
     desc: 'Бережно удаляет макияж и загрязнения с лица, глаз и губ, не требует смывания водой. Мицеллы захватывают и растворяют частицы макияжа и загрязнения, не нарушая защитный барьер кожи. Пантенол и экстракт алоэ успокаивают и увлажняют, а экстракт пиявки улучшает цвет лица.'
   },
   {
-    id: 4, name: 'Антивозрастная сыворотка с пептидами', brand: 'Марья',
+    id: 4, name: 'Антивозрастная сыворотка с пептидами', brand: 'Silis',
     price: 2490, oldPrice: null, rating: 4.9, reviews: 187,
     zone: 'face', category: 'serum', categories: ['serum'],
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
@@ -700,7 +722,7 @@ const PRODUCTS = [
     desc: 'Укрепляет каркас дермы, стимулирует синтез коллагена, сокращает выраженность морщин и повышает упругость кожи. Пептидный комплекс в сочетании с гирудином запускает процессы клеточного обновления и улучшает микроциркуляцию, а гиалуроновая кислота обеспечивает глубокое и длительное увлажнение. Результат заметен уже через 2–4 недели применения.'
   },
   {
-    id: 5, name: 'Крем дневной омолаживающий', brand: 'Марья',
+    id: 5, name: 'Крем дневной омолаживающий', brand: 'Silis',
     price: 1990, oldPrice: null, rating: 4.8, reviews: 134,
     zone: 'face', category: 'cream', categories: ['cream'],
     skintype: ['normal','dry'], concern: ['aging'],
@@ -710,7 +732,7 @@ const PRODUCTS = [
     desc: 'Омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и насыщает клетки кожи кислородом и питательными веществами. DMAE подтягивает овал лица, сквалан и масло ши глубоко питают и смягчают, предотвращая потерю влаги. Регулярное применение защищает от преждевременного старения и сохраняет молодость кожи.'
   },
   {
-    id: 6, name: 'Крем ночной омолаживающий', brand: 'Марья',
+    id: 6, name: 'Крем ночной омолаживающий', brand: 'Silis',
     price: 1990, oldPrice: null, rating: 4.8, reviews: 119,
     zone: 'face', category: 'cream', categories: ['cream'],
     skintype: ['normal','dry'], concern: ['aging'],
@@ -720,7 +742,7 @@ const PRODUCTS = [
     desc: 'Ночной омолаживающий крем с экстрактом пиявки усиливает микроциркуляцию и активирует ночные процессы восстановления кожи. Церамиды укрепляют защитный барьер, DMAE подтягивает контуры лица, ниацинамид выравнивает тон, а гиалуроновая кислота обеспечивает интенсивное увлажнение в ночное время. Утром кожа выглядит отдохнувшей, гладкой и сияющей.'
   },
   {
-    id: 7, name: 'Крем для век от отёков и тёмных кругов', brand: 'Марья',
+    id: 7, name: 'Крем для век от отёков и тёмных кругов', brand: 'Silis',
     price: 1490, oldPrice: null, rating: 4.7, reviews: 76,
     zone: 'face', category: 'cream', categories: ['cream'], skintype: ['normal','dry','sensitive'], concern: ['aging'],
     time: ['morning','evening'], ingredient: ['hyaluronic','peptides'],
@@ -729,7 +751,7 @@ const PRODUCTS = [
     desc: 'Крем для век с экстрактом пиявки активирует микроциркуляцию и уменьшает застойные явления в зоне глаз. Дипептид-2 снижает выраженность отёков, гирудин рассасывает «синяки» под глазами, а гиалуроновая кислота и пептиды разглаживают мимические морщины. Мягкая текстура крема деликатно воздействует на чувствительную кожу вокруг глаз.'
   },
   {
-    id: 8, name: 'Маска очищающая с каолином', brand: 'Марья',
+    id: 8, name: 'Маска очищающая с каолином', brand: 'Silis',
     price: 990, oldPrice: null, rating: 4.6, reviews: 88,
     zone: 'face', category: 'mask', categories: ['mask','cleanser'],
     skintype: ['oily','combo'], concern: ['cleansing','moisture','aging'],
@@ -739,7 +761,7 @@ const PRODUCTS = [
     desc: 'Очищающая маска с каолином мягко удаляет загрязнения, избыток кожного сала и омертвевшие клетки, сужает поры и выравнивает текстуру кожи. Экстракт алоэ вера и зелёного чая успокаивают и снимают воспаление, а цинк регулирует работу сальных желёз. Подходит для жирной и комбинированной кожи, склонной к расширенным порам.'
   },
   {
-    id: 9, name: 'Маска мгновенной красоты', brand: 'Марья',
+    id: 9, name: 'Маска мгновенной красоты', brand: 'Silis',
     price: 1190, oldPrice: null, rating: 4.8, reviews: 104,
     zone: 'face', category: 'mask', categories: ['mask'],
     skintype: ['normal','dry','sensitive'], concern: ['moisture','aging'],
@@ -749,7 +771,7 @@ const PRODUCTS = [
     desc: 'Маска мгновенной красоты — экспресс-уход для быстрого восстановления усталой и тусклой кожи. Масла авокадо, ши и виноградной косточки глубоко питают и смягчают, гиалуроновая кислота интенсивно увлажняет, а ниацинамид выравнивает тон и придаёт сияние. Уже после первого применения кожа выглядит ухоженной, гладкой и отдохнувшей.'
   },
   {
-    id: 10, name: 'Скраб для лица и тела с фундуком', brand: 'Марья',
+    id: 10, name: 'Скраб для лица и тела с фундуком', brand: 'Silis',
     price: 890, oldPrice: null, rating: 4.6, reviews: 67,
     zone: 'face', category: 'scrub', categories: ['scrub','cleanser'],
     skintype: ['normal','oily','combo'], concern: ['cleansing'],
@@ -759,7 +781,7 @@ const PRODUCTS = [
     desc: 'Скраб для лица и тела с порошком скорлупы фундука мягко отшелушивает ороговевшие клетки, выравнивает микрорельеф и улучшает цвет кожи. Кокосовое масло питает и смягчает, экстракт пиявки улучшает микроциркуляцию, а натуральные растительные масла оставляют кожу гладкой и бархатистой. Подходит для регулярного применения на лице и теле.'
   },
   {
-    id: 11, name: 'Нежный солевой скраб', brand: 'Марья',
+    id: 11, name: 'Нежный солевой скраб', brand: 'Silis',
     price: 790, oldPrice: null, rating: 4.5, reviews: 54,
     zone: 'body', category: 'scrub', categories: ['scrub'],
     skintype: ['normal','oily','combo'], concern: ['modelling'],
@@ -769,7 +791,7 @@ const PRODUCTS = [
     desc: 'Нежный солевой скраб с кремовой текстурой бережно отшелушивает ороговевшие клетки и полирует кожу, не вызывая раздражения. Мелкие кристаллы морской соли деликатно шлифуют поверхность, кокосовое масло питает и смягчает, а экстракт зелёного чая тонизирует и защищает от свободных радикалов. Кожа после применения гладкая, шелковистая и сияющая.'
   },
   {
-    id: 12, name: 'Энзимный скраб для тела', brand: 'Марья',
+    id: 12, name: 'Энзимный скраб для тела', brand: 'Silis',
     price: 990, oldPrice: null, rating: 4.7, reviews: 61,
     zone: 'body', category: 'scrub', categories: ['scrub'],
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
@@ -779,7 +801,7 @@ const PRODUCTS = [
     desc: 'Энзимный скраб для тела — интенсивный, но комфортный уход для обновления и выравнивания кожи. Бромелайн из ананаса и папаин из папайи мягко растворяют ороговевшие клетки на биохимическом уровне, без механического трения. Результат — гладкая, обновлённая и сияющая кожа уже с первого применения, без ощущения стянутости или дискомфорта.'
   },
   {
-    id: 13, name: 'Антицеллюлитный скраб', brand: 'Марья',
+    id: 13, name: 'Антицеллюлитный скраб', brand: 'Silis',
     price: 990, oldPrice: null, rating: 4.6, reviews: 79,
     zone: 'body', category: 'scrub', categories: ['scrub'],
     skintype: ['normal','oily','combo'], concern: ['anticellulite'],
@@ -789,7 +811,7 @@ const PRODUCTS = [
     desc: 'Антицеллюлитный солевой скраб направленно работает с проявлениями «апельсиновой корки», улучшает микроциркуляцию и лимфоотток. Экстракт красного перца разогревает кожу и стимулирует расщепление жировых отложений, гирудин активирует микроциркуляцию, а морская соль отшелушивает и минерализует. Регулярное применение делает кожу более упругой и подтянутой.'
   },
   {
-    id: 14, name: 'Крем SPF 15', brand: 'Марья',
+    id: 14, name: 'Крем SPF 15', brand: 'Silis',
     price: 1490, oldPrice: null, rating: 4.7, reviews: 93,
     zone: 'face', category: 'spf', categories: ['spf'],
     skintype: ['normal','dry','oily','combo','sensitive'], concern: ['aging'],
@@ -799,7 +821,7 @@ const PRODUCTS = [
     desc: 'Лёгкий крем SPF 15 с экстрактом пиявки для ежедневной защиты от УФ-излучения и преждевременного старения. Сквалан и витамин Е питают и защищают кожу от окислительного стресса, а лёгкая нежирная текстура идеально подходит в качестве базы под макияж. Подходит для всех типов кожи, включая чувствительную.'
   },
   {
-    id: 15, name: 'Сыворотка антиоксидантная', brand: 'Марья',
+    id: 15, name: 'Сыворотка антиоксидантная', brand: 'Silis',
     price: 1990, oldPrice: null, rating: 4.8, reviews: 112,
     zone: 'face', category: 'serum', categories: ['serum'],
     skintype: ['normal','dry','oily','combo'], concern: ['aging','moisture'],
@@ -809,27 +831,27 @@ const PRODUCTS = [
     desc: 'Антиоксидантная сыворотка с экстрактом пиявки заряжает кожу энергией и защищает от разрушительного воздействия свободных радикалов. Фульвовая кислота выводит токсины и активирует клеточный метаболизм, витамин С выравнивает тон и усиливает синтез коллагена, а ниацинамид сужает поры и улучшает текстуру кожи. Особенно эффективна для городской кожи, подверженной стрессу и загрязнениям.'
   },
   {
-    id: 16, name: 'Кондиционер для волос', brand: 'Марья',
+    id: 16, name: 'Кондиционер для волос', brand: 'Silis',
     price: 990, oldPrice: null, rating: 4.7, reviews: 84,
     zone: 'hair', category: 'conditioner', categories: ['conditioner','hair'],
     skintype: [], concern: [],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '400 мл',
     emoji: '💆', nameColor: '#3A7A60', color: 'from-emerald-50 to-green-100', darkColor: 'from-emerald-950/20 to-green-900/10',
-    desc: 'Кондиционер для волос «Марья» помогает быстро привести длину в порядок после мытья головы: разглаживает кутикулу, облегчает расчёсывание и придаёт волосам блеск и шелковистость. Кератин и протеины шелка восстанавливают структуру волоса, а экстракт пиявки улучшает кровообращение кожи головы и стимулирует рост волос.'
+    desc: 'Кондиционер для волос «Silis» помогает быстро привести длину в порядок после мытья головы: разглаживает кутикулу, облегчает расчёсывание и придаёт волосам блеск и шелковистость. Кератин и протеины шелка восстанавливают структуру волоса, а экстракт пиявки улучшает кровообращение кожи головы и стимулирует рост волос.'
   },
   {
-    id: 17, name: 'Шампунь для волос', brand: 'Марья',
+    id: 17, name: 'Шампунь для волос', brand: 'Silis',
     price: 890, oldPrice: null, rating: 4.6, reviews: 71,
     zone: 'hair', category: 'shampoo', categories: ['shampoo','hair'],
     skintype: [], concern: [],
     time: ['anytime'], ingredient: [],
     badge: null, isNew: false, isSale: false, volume: '400 мл',
     emoji: '🚿', nameColor: '#2A7A6E', color: 'from-teal-50 to-cyan-100', darkColor: 'from-teal-950/20 to-cyan-900/10',
-    desc: 'Шампунь для волос «Марья» обеспечивает качественное очищение кожи головы и волос без пересушивания и раздражения. Мягкие сульфатсодержащие ПАВ эффективно удаляют загрязнения и избыток себума, протеины пшеницы укрепляют структуру волоса и придают объём, а экстракт пиявки улучшает питание волосяных фолликулов. Волосы после мытья чистые, лёгкие и блестящие.'
+    desc: 'Шампунь для волос «Silis» обеспечивает качественное очищение кожи головы и волос без пересушивания и раздражения. Мягкие сульфатсодержащие ПАВ эффективно удаляют загрязнения и избыток себума, протеины пшеницы укрепляют структуру волоса и придают объём, а экстракт пиявки улучшает питание волосяных фолликулов. Волосы после мытья чистые, лёгкие и блестящие.'
   },
   {
-    id: 99, name: 'Тест — тестовый товар', brand: 'Марья',
+    id: 99, name: 'Тест — тестовый товар', brand: 'Silis',
     price: 1, oldPrice: null, rating: 5.0, reviews: 0,
     zone: 'face', category: 'serum', categories: ['serum','face'],
     skintype: [], concern: [], time: ['anytime'], ingredient: [],

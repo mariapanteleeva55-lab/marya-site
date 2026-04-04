@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Подарочный сертификат Марья</title>
+  <title>Подарочный сертификат Silis</title>
   <meta name="robots" content="noindex, nofollow"/>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -79,7 +79,7 @@
 <!-- Header -->
 <header class="h-[60px] flex items-center border-b border-sand/50 dark:border-sand-dark/30 px-6">
   <a href="index.html" class="flex items-center gap-2">
-    <img loading="lazy" src="лого новый-nobg.png" alt="Марья" class="dark:invert" style="height:28px;width:auto;">
+    <img loading="lazy" src="Лого Силис новый золотой.PNG" alt="Silis" style="height:84px;width:auto;">
   </a>
 </header>
 
@@ -109,7 +109,7 @@
 
     <!-- Шапка -->
     <div class="text-center mb-8 fade-in">
-      <p class="text-xs font-semibold tracking-[.2em] text-muted dark:text-muted-dark uppercase mb-2">Марья · Подарочный сертификат</p>
+      <p class="text-xs font-semibold tracking-[.2em] text-muted dark:text-muted-dark uppercase mb-2">Silis · Подарочный сертификат</p>
       <h1 class="font-serif text-2xl sm:text-3xl text-ink dark:text-ink-dark">
         Для вас — <span id="cert-recipient-name">...</span>
       </h1>
@@ -406,7 +406,7 @@ async function downloadPDF(){
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: [210, 132.5] });
     pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, 210, 132.5);
-    pdf.save(`Сертификат-Марья-${certData.code}.pdf`);
+    pdf.save(`Сертификат-Silis-${certData.code}.pdf`);
     tpl.innerHTML = '';
   } finally {
     btn.textContent = 'Скачать PDF';

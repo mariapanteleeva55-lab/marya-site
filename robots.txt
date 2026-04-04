@@ -3,5 +3,7 @@ Allow: /
 Disallow: /profile.html
 Disallow: /cart.html
 Disallow: /admin-reviews.html
+Disallow: /admin-dashboard.html
+Disallow: /certificate-view.html
 
-Sitemap: https://mariacosmetics.ru/sitemap.xml
+Sitemap: https://siliscosmetic.ru/sitemap.xml
